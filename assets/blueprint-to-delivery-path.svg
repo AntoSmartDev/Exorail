@@ -1,0 +1,66 @@
+<svg width="680" viewBox="0 0 680 650" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>The blueprint-to-delivery path</title>
+<desc>Six stages from blueprint intake to closure, shown as stations on a vertical rail line; two stations require explicit human authority.</desc>
+<style>
+.card{fill:#f6f8fa;stroke:#d0d7de;}
+.title{fill:#1f2328;font:600 14px -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;}
+.sub{fill:#57606a;font:12px -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;}
+.h1{fill:#1f2328;font:600 19px -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;}
+.leg{fill:#57606a;font:11px -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;}
+.num{fill:#ffffff;font:600 12px -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;}
+.pilltext{fill:#ffffff;font:600 11px -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;}
+.rail{stroke:#8b949e;}
+.step{fill:#0f6e56;}
+.gate{fill:#b45309;}
+@media (prefers-color-scheme: dark){
+.card{fill:#161b22;stroke:#30363d;}
+.title{fill:#e6edf3;}
+.sub{fill:#8b949e;}
+.h1{fill:#e6edf3;}
+.leg{fill:#8b949e;}
+.rail{stroke:#484f58;}
+.step{fill:#1d9e75;}
+.gate{fill:#d97706;}
+}
+</style>
+<text x="24" y="34" class="h1">The blueprint-to-delivery path</text>
+<circle cx="416" cy="29" r="5" class="step"/>
+<text x="428" y="33" class="leg">protocol step</text>
+<circle cx="524" cy="29" r="5" class="gate"/>
+<text x="536" y="33" class="leg">explicit human authority</text>
+<line x1="70" y1="106" x2="70" y2="566" class="rail" stroke-width="3"/>
+<rect x="120" y="70" width="530" height="72" rx="8" class="card"/>
+<text x="140" y="98" class="title">Intake</text>
+<text x="140" y="120" class="sub">Blueprint, documents, repository evidence, or interview</text>
+<circle cx="70" cy="106" r="14" class="step"/>
+<text x="70" y="111" class="num" text-anchor="middle">1</text>
+<rect x="120" y="162" width="530" height="72" rx="8" class="card"/>
+<text x="140" y="190" class="title">Canonical knowledge</text>
+<text x="140" y="212" class="sub">Navigable project sources with explicit gaps</text>
+<circle cx="70" cy="198" r="14" class="step"/>
+<text x="70" y="203" class="num" text-anchor="middle">2</text>
+<rect x="120" y="254" width="530" height="72" rx="8" class="card"/>
+<text x="140" y="282" class="title">Readiness gate</text>
+<text x="140" y="304" class="sub">Baseline must be ready before shaping</text>
+<rect x="490" y="278" width="140" height="24" rx="12" class="gate"/>
+<text x="560" y="294" class="pilltext" text-anchor="middle">human decisions</text>
+<circle cx="70" cy="290" r="14" class="gate"/>
+<text x="70" y="295" class="num" text-anchor="middle">3</text>
+<rect x="120" y="346" width="530" height="72" rx="8" class="card"/>
+<text x="140" y="374" class="title">Planning</text>
+<text x="140" y="396" class="sub">Roadmap and Delivery candidates — not executable work yet</text>
+<circle cx="70" cy="382" r="14" class="step"/>
+<text x="70" y="387" class="num" text-anchor="middle">4</text>
+<rect x="120" y="438" width="530" height="72" rx="8" class="card"/>
+<text x="140" y="466" class="title">Delivery</text>
+<text x="140" y="488" class="sub">Approved contract, just-in-time task, verification</text>
+<rect x="490" y="462" width="140" height="24" rx="12" class="gate"/>
+<text x="560" y="478" class="pilltext" text-anchor="middle">human approval</text>
+<circle cx="70" cy="474" r="14" class="gate"/>
+<text x="70" y="479" class="num" text-anchor="middle">5</text>
+<rect x="120" y="530" width="530" height="72" rx="8" class="card"/>
+<text x="140" y="558" class="title">Closure</text>
+<text x="140" y="580" class="sub">Review, durable result, next action, handoff guidance</text>
+<circle cx="70" cy="566" r="14" class="step"/>
+<text x="70" y="571" class="num" text-anchor="middle">6</text>
+</svg>
