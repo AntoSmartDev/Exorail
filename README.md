@@ -1,10 +1,14 @@
 # Exorail
 
+[![Verify](https://github.com/AntoSmartDev/Exorail/actions/workflows/verify.yml/badge.svg)](https://github.com/AntoSmartDev/Exorail/actions/workflows/verify.yml)
+
 > **From blueprint to delivery: the operating system for supervised AI delivery.**
 
 Exorail gives a software repository durable project memory, explicit authority boundaries, and a next action an LLM-powered coding agent can safely execute. It turns a blueprint, existing documentation, repository evidence, or a guided interview into a governed, resumable flow for supervised LLM-assisted software delivery that remains readable after the chat is gone.
 
 It is not an IDE, a model, or a hosted agent service. It is a small, repository-native control plane for the work that happens around code.
+
+**Status:** `v0.1.0` · Node.js LTS · Codex and Claude Code · one shared cursor with sequential handoff.
 
 **In one sentence:** give Exorail the evidence you have; it helps turn it into a trustworthy project baseline, guides one approved slice of work to a verified result, and leaves the next agent a safe place to resume.
 
