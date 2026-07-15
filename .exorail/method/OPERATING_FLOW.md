@@ -131,6 +131,34 @@ Cursor selection states have narrow meanings:
 These states pause before shaping. They never authorize a Delivery Unit,
 contract approval, task materialization, implementation, or Git action.
 
+### Operator guidance at a human gate
+
+Repository state is canonical, but a cursor is not an operator interface. When
+the current state requires a human choice, answer, approval, validation, or
+protected-action authorization, the agent must end its response with the
+direct next question. A state-only report, a bare file path, or a request for
+the operator to compose another workflow prompt is not a valid stop.
+
+Use this minimum conversational form:
+
+1. **Why paused:** name the state or gate and the action that remains blocked.
+2. **Decision requested:** ask the exact smallest question supported by the
+   cursor, contract, challenge, or canonical evidence.
+3. **Options and recommendation:** give only evidence-supported options;
+   recommend one when proportionate and label it unapproved.
+4. **After the answer:** say which bounded reassessment, shaping, or protected
+   action will occur, then stop.
+
+Apply it to `setup_required`, `awaiting_delivery`,
+`awaiting_context_selection`, `awaiting_context_definition`, candidate shaping
+that awaits contract approval, challenge or blocker routing, human validation,
+closure, and any protected Git action. For `awaiting_delivery` with no known
+candidate, ask the operator to describe the next bounded outcome. When known
+candidates exist, recommend the evidenced first candidate or present the
+smallest genuine choice set. The chat question exposes the gate; only the
+operator's explicit answer, persisted in its existing owning artifact, grants
+authority.
+
 `DeliveryUnitStatus=candidate` applies only after a `CONTRACT.md` has been
 materialized for a proposed Delivery Unit. It is not the same concept as a
 Delivery candidate, which is a non-executable planning record with no contract

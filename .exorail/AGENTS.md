@@ -51,6 +51,28 @@ The complete responsibility and authority model is owned by `.exorail/method/PLA
 - Obtain explicit action-specific approval before every Git mutation.
 - Run configured verification and workflow validation before closure.
 
+## Operator guidance at human gates
+
+When the current state requires a human choice, answer, approval, validation,
+or protected-action authorization, do not end the turn with a state report
+alone. The final response must make the next gate usable without asking the
+operator to invent another prompt:
+
+1. state briefly why work is paused and what remains prohibited;
+2. ask the exact decision as a direct question, using the cursor or owning
+   artifact as the durable source;
+3. present the smallest supported option set and a recommendation when evidence
+   supports one; label the recommendation as unapproved;
+4. say what will happen after the operator answers and stop before that action.
+
+Apply this rule to setup gaps, `awaiting_delivery`, context selection or
+definition, pending contract approval, Contract Challenge or blocker routing,
+human validation, closure, and protected Git actions. For an open-ended
+`awaiting_delivery` state, ask the operator to describe the next bounded
+outcome; recommend a known eligible candidate when one is evidenced. Do not
+make the operator compose a workflow prompt merely to continue. A direct chat
+question does not replace the durable decision record or grant authority.
+
 ## Canonical method
 
 - setup: `.exorail/method/PROJECT_SETUP.md`

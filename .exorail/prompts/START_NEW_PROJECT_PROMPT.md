@@ -85,4 +85,12 @@ Do not invent missing product or architecture decisions.
 Do not start implementation.
 
 When setup requires a human decision, record its actual source before materializing the affected choice. Then create `.exorail/AGENTS.md`, the minimal root `AGENTS.md` bridge, and root `CLAUDE.md` when required, and verify that a clean session can reconstruct readiness and the next step. An agent recommendation or generated proposal never counts as approval. Delivery implementation always requires an approved Delivery Contract.
+
+Do not finish setup with a state-only report. When setup stops at a human gate,
+end the response with the smallest direct question the user must answer, the
+evidence-supported options and recommendation when available, the action that
+remains blocked, and what will happen after the answer. If the result is
+`baseline_ready` / `awaiting_delivery`, recommend a known eligible candidate
+when evidence supports one; otherwise directly ask the user to describe the
+next bounded outcome. Do not ask the user to formulate another workflow prompt.
 ```

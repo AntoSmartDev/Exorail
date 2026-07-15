@@ -32,6 +32,7 @@ Report:
 Cross-check the cursor against readiness, task, result and Git state.
 If they conflict, run a read-only doctor analysis and report the inconsistency before proposing work.
 If readiness is not_ready or invalidated, route to setup instead of implementation.
+If readiness is baseline_ready and the cursor is awaiting_delivery, recommend the next evidenced eligible candidate when one exists; otherwise ask the operator directly to describe the next bounded outcome. Do not end with the status report alone.
 If readiness is baseline_ready and the cursor is awaiting_context_selection, present the known eligible candidates and context options with a recommendation, then ask for the next human choice.
 If readiness is baseline_ready and the cursor is awaiting_context_definition, ask for the missing documentation or run the smallest guided interview for the chosen context.
 If the planning revision observed by the cursor differs from the planning source, stop before shaping and request planning reassessment.
@@ -40,6 +41,11 @@ If the session starts from new project documentation or a new bounded context, r
 If the cursor names a closure target or completion gap, read PROJECT_READINESS.md, ROADMAP.md, relevant milestone plan or bounded-context source, and the latest accepted Delivery Unit evidence. Do not infer completion from an empty queue; run the relevant closure or completion-gap review and present next context/candidate options.
 Expand context when the minimum set is insufficient for a supported decision.
 Before editing, confirm that the recorded transition and repository state are sufficient without reconstructing the previous conversation.
+
+Whenever this resume reaches a human gate, end the response with the exact
+direct decision question, evidence-supported options and recommendation when
+available, the action that remains blocked, and what will happen after the
+answer. Do not ask the operator to compose a follow-up workflow prompt.
 
 If the session-transition record or the handoff guidance includes a concise carryover summary, use it only as a temporary bridge.
 Do not let that summary override the contract, cursor, results, or canonical sources.

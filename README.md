@@ -8,7 +8,7 @@ Exorail gives a software repository durable project memory, explicit authority b
 
 It is not an IDE, a model, or a hosted agent service. It is a small, repository-native control plane for the work that happens around code.
 
-**Status:** `v0.1.0` · Node.js LTS · Codex and Claude Code · one shared cursor with sequential handoff.
+**Status:** `v0.1.1` · Node.js LTS · Codex and Claude Code · one shared cursor with sequential handoff.
 
 **In one sentence:** give Exorail the evidence you have; it helps turn it into a trustworthy project baseline, guides one approved slice of work to a verified result, and leaves the next agent a safe place to resume.
 
@@ -95,7 +95,7 @@ and checks rather than relying on a model's private chat history.
 | **Deterministic guardrails** | Node.js validators mechanically check cursor state, contracts, task transitions, authority records, paths, and text integrity. They expose workflow drift early; they do not pretend to replace engineering review. |
 | **Evidence-backed delivery** | A delivery result records acceptance, checks actually run, limitations, impact, and revalidation. “Done” becomes evidence another engineer or agent can inspect. |
 | **Resumable work and recovery** | A new session, a context compaction, a model change, a changed assumption, or a stale baseline has an explicit route: checkpoint, handoff, challenge, invalidation, or targeted recovery. |
-| **Team-ready direction** | Today Exorail governs one shared cursor and sequential handoff honestly. Its next evolution is explicit shared-cursor and partitioned-work orchestration for teams—not an unearned claim in v0.1.0. |
+| **Team-ready direction** | Today Exorail governs one shared cursor and sequential handoff honestly. Its next evolution is explicit shared-cursor and partitioned-work orchestration for teams—not an unearned claim in v0.1.1. |
 
 This makes Exorail a control plane for agentic software delivery: durable
 project memory plus explicit authority and a mechanically checked next step.
@@ -329,11 +329,11 @@ node .exorail/tools/validate-text-files.mjs AGENTS.md .exorail/AGENTS.md
 # node .exorail/tools/validate-text-files.mjs AGENTS.md CLAUDE.md .exorail/AGENTS.md
 ```
 
-The validators check mechanical consistency and text integrity. They do not replace product review, semantic architecture review, builds, tests, security analysis, or human decisions. GitHub Actions Verify has completed for `v0.1.0` on Windows, Linux, and macOS runners; it validates these Node.js checks only and is not a general platform-support claim.
+The validators check mechanical consistency and text integrity. They do not replace product review, semantic architecture review, builds, tests, security analysis, or human decisions. GitHub Actions Verify completed for `v0.1.0` on Windows, Linux, and macOS runners; every new release must earn the same claim on its exact revision. It validates these Node.js checks only and is not a general platform-support claim.
 
 ## Version and license
 
-Product version: `v0.1.0`.
+Product version: `v0.1.1`.
 
 Workflow schema: `0.5` in `.exorail/WORKFLOW_CONFIG.md`. Product releases and workflow-schema compatibility are separate concerns.
 
