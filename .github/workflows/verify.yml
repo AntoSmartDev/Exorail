@@ -36,6 +36,28 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
+      - name: Verify Exorail payload manifest
+        run: node .exorail/tools/generate-payload-manifest.mjs --check
+
+      - name: Exercise documented Bash installation
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(mktemp -d)"
+          trap 'rm -rf "$target"' EXIT
+          mkdir -p "$target/.exorail"
+          printf 'legacy record\n' > "$target/.exorail/OLD_RECORD.md"
+          awk '/^```bash$/{inside=1; next} inside && /^```$/{exit} inside {print}' README.md |
+            sed "s|^target=/path/to/target-repository$|target='$target'|" |
+            bash
+          test -f "$target/AGENTS.md"
+          test -f "$target/.exorail/AGENTS.md"
+          test ! -e "$target/.exorail/.exorail"
+          retired=("$target"/.exorail-retired-*)
+          test "${#retired[@]}" -eq 1
+          test -f "${retired[0]}/OLD_RECORD.md"
+
       - name: Validate workflow state
         run: node .exorail/tools/validate-workflow.mjs
 
