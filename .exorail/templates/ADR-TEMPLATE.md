@@ -1,24 +1,12 @@
-# ADR-XXX - <Decision title>
+# ADR-<number>: <title>
 
-## Status
-
-`proposed | accepted | superseded | withdrawn`
+- state: `proposed | accepted | superseded`
+- date_utc: `<RFC-3339 UTC>`
+- decision source: `user:<reference> | repository:<path>`
+- related artifacts: `EP-... | FEAT-... | US-... | TASK-...`
 
 ## Context
 
-Describe the problem and forces that require a decision.
-
 ## Decision
 
-Describe the selected direction.
-
-## Consequences
-
-- positive:
-- negative:
-- trade-offs:
-
-## Links
-
-- relevant canonical sources:
-- related Delivery Units or tasks:
+## Alternatives and consequences

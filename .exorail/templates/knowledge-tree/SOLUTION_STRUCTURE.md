@@ -1,33 +1,12 @@
-# SOLUTION_STRUCTURE.md
+# Solution structure
 
-## Purpose
+## Runtime areas
 
-- explain system shape, ownership, and navigation entrypoints
+| Area | Responsibility | Canonical source | Contexts |
+| --- | --- | --- | --- |
+| | | | `CTX-...` |
 
-## System map
+## Rules
 
-- major components or layers:
-- responsibilities:
-
-## Boundaries
-
-- business boundaries:
-- technical boundaries:
-- forbidden coupling:
-
-## Ownership and destination
-
-- canonical owners:
-- expected destinations for new work:
-
-## Structural rules
-
-- layering or dependency rules:
-- cross-cutting concerns:
-
-## Related sources
-
-- module guides:
-- persistence:
-- integrations:
-- migration:
+Record stable boundaries and ownership. User Stories and Tasks reference these
+areas through contexts and affected paths; the solution map is not a work tree.

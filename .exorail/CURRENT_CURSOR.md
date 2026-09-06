@@ -1,44 +1,32 @@
-# CURRENT_CURSOR.md
+# CURRENT_CURSOR.md — First-install guide
+
+This file is not a live position report. It is authoritative only for an empty
+planning workspace. If `.exorail/planning/` contains work, regenerate
+projections and read `.exorail/projections/RESUMPTION.md` instead.
 
 ## Setup
 
 - readiness: `not_ready`
 - source: `.exorail/PROJECT_READINESS.md`
 
-## Position
+## First-install position
 
-- delivery profile: `none`
-- planning revision observed: `0`
-- planning source: `none`
+- epic: `none`
+- feature: `none`
+- user_story: `none`
+- task: `none`
+- task_contract: `none`
+- task_result: `none`
 - milestone: `none`
-- delivery candidate: `none`
-- candidate source: `none`
-- delivery unit: `none`
-- owning module: `none`
-- affected contexts: `none`
-- blueprint increment: `none`
-- closure target: `none`
-- completion gap: `none`
-- contract revision: `none`
-- task candidate: `none`
-- task: `none`
+- contexts: []
 - status: `setup_required`
-- expected branch: `none`
-
-## Last stable result
-
-- task: `none`
-- result: `none`
-- commit: `none`
+- plan_revision: `none`
 
 ## Next step
 
-- action: run initial setup before shaping a Delivery Unit
-- promotion action: `none`
+- action: establish baseline, then select or create a specific User Story
 - required knowledge: `.exorail/PROJECT_READINESS.md`, `.exorail/KNOWLEDGE_INDEX.md`, `.exorail/method/PROJECT_SETUP.md`
 - next human decision: `none`
-- contract file: `none`
-- task file: `none`
 
 ## Required reads
 
@@ -50,9 +38,6 @@
 
 ## Immediate constraints
 
-- do not implement before baseline and delivery readiness pass
+- do not implement before readiness and the Task `ready` guard pass
 - do not infer approval for Git mutations
-
-## Reconstruction rule
-
-If setup artifacts conflict with repository evidence, report the inconsistency and remain in setup.
+- do not manually edit generated projections

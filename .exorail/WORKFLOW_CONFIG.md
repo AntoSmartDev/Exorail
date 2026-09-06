@@ -1,59 +1,38 @@
 # WORKFLOW_CONFIG.md
 
-## Schema
-
-- version: `0.5`
-
-## Project
-
-- mode: `unconfigured`
-- setup profile: `core`
-- delivery profiles: `light,structured`
-
-## Agents
-
-- primary: `codex`
-- supported: `codex,claude`
-
-## Paths
-
+- schema: `0.2`
 - workflow root: `.exorail/`
-- canonical docs root: `.exorail/project/`
-- delivery unit root: `.exorail/delivery-units/`
-- module root: `.exorail/modules/`
-- archive root: `.exorail/archive/`
+- epic root: `.exorail/planning/epics/`
+- context root: `.exorail/planning/contexts/`
+- milestone root: `.exorail/planning/milestones/`
+- projection root: `.exorail/projections/`
+- adapter root: `.exorail/adapters/`
+- default execution mode: `sequential`
+- default human review: `task`
+- allowed review boundaries: `task,story`
+- Story-boundary authority: `required`
+- default verification profile: `standard`
+  - `minimal`: the Task's own acceptance criteria are demonstrated.
+  - `standard`: the above, plus evidence that behaviour the Task did not intend
+    to change still holds. The adopter names those checks in `ENGINEERING.md`;
+    a project with no verification layer records establishing one as work.
+  - `full`: the above, plus evidence across the Story's affected paths rather
+    than the Task's.
+- timing evidence: `optional`
+- Task forecast: `optional`
+- allowed execution isolation: `parallel_safe,parallel_hunk_disjoint,sequential_only`
+- episode: `enabled` # deliberate: selective reusable technical memory is available by default
+- Task Contract requirement: `resolver-derived; exceptional only`
+- git mutation approval: `explicit action-specific`
 
-## State policy
+## Capability activation
 
-- mode: `tracked`
-- tracked paths: `.exorail/; AGENTS.md; CLAUDE.md`
-- ignored paths: `none`
-- backup requirement: `git`
+Presence does not activate an adapter. Add project-level rows only for
+capabilities that may enter this workflow. Row order in `adapter_ids` is the
+deterministic selection order. An absent row, or this empty table, means the
+optional capability is disabled. Requirement is derived separately from the
+consumer contract; it is not an activation mode.
+The only activation modes are `disabled`, `manual`, and `on_demand`.
 
-## Git policy
-
-- approval mode: `explicit`
-- approval scope: `action_specific`
-- structured delivery branch: `required`
-- light delivery branch: `optional`
-- task commit: `propose_after_verification`
-- delivery integration: `propose_after_acceptance`
-
-## Quality commands
-
-- build: `not_configured`
-- test: `not_configured`
-- lint or format: `not_configured`
-- workflow validator: `node .exorail/tools/validate-workflow.mjs`
-
-## Optional artifacts
-
-- context map: `disabled`
-- task routing: `disabled`
-- results index: `disabled`
-- active constraints: `disabled`
-- ready checklist: `disabled`
-
-## Rule
-
-Initial values are deliberately non-project-specific. Setup must replace inferred choices with approved project values before readiness becomes `baseline_ready` or `delivery_ready`.
+| capability | mode | adapter_ids |
+| --- | --- | --- |

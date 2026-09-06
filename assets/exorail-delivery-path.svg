@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 620" width="640" height="620" role="img" aria-labelledby="title desc">
+  <title id="title">The Exorail delivery path</title>
+  <desc id="desc">Four stages from understanding to evolution, shown as stations on a vertical rail line. Three events inside Deliver require explicit human authority: Task acceptance, Story-base integration and whole-Story outcome.</desc>
+
+  <style>
+    .rail   { stroke: #7a8699; stroke-width: 3; }
+    .stop   { fill: #ffffff; stroke: #3f6fb5; stroke-width: 3; }
+    .gate   { fill: #ffffff; stroke: #b5762f; stroke-width: 3; }
+    .stage  { font: 600 17px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #1f2933; }
+    .note   { font: 400 13px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #52606d; }
+    .head   { font: 700 19px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #1f2933; }
+    .key    { font: 400 12px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #52606d; }
+  </style>
+
+  <text class="head" x="40" y="42">The Exorail delivery path</text>
+
+  <!-- legend -->
+  <circle class="stop" cx="404" cy="36" r="7"/>
+  <text class="key" x="418" y="41">protocol stage</text>
+  <circle class="gate" cx="516" cy="36" r="7"/>
+  <text class="key" x="530" y="41">human authority</text>
+
+  <!-- rail -->
+  <line class="rail" x1="72" y1="96" x2="72" y2="560"/>
+
+  <!-- Understand -->
+  <circle class="stop" cx="72" cy="110" r="11"/>
+  <text class="stage" x="104" y="106">Understand</text>
+  <text class="note" x="104" y="128">Repository, intent, constraints and gaps. An unknown stays a visible</text>
+  <text class="note" x="104" y="146">question, risk or blocker — never silent implementation authority.</text>
+
+  <!-- Define -->
+  <circle class="stop" cx="72" cy="206" r="11"/>
+  <text class="stage" x="104" y="202">Define</text>
+  <text class="note" x="104" y="224">One reviewable Story: outcome, acceptance, risk, policy and its</text>
+  <text class="note" x="104" y="242">complete Task backlog. Enough definition, not a full design up front.</text>
+
+  <!-- Deliver -->
+  <circle class="stop" cx="72" cy="302" r="11"/>
+  <text class="stage" x="104" y="298">Deliver</text>
+  <text class="note" x="104" y="320">Only work the derived frontier admits. Verification produces an</text>
+  <text class="note" x="104" y="338">immutable Result — which is evidence, not acceptance.</text>
+
+  <!-- two human gates inside Deliver -->
+  <circle class="gate" cx="72" cy="374" r="9"/>
+  <text class="note" x="104" y="379">Task acceptance — a human accepts the Result</text>
+  <circle class="gate" cx="72" cy="414" r="9"/>
+  <text class="note" x="104" y="419">Story-base integration — recorded against an exact commit</text>
+  <circle class="gate" cx="72" cy="454" r="9"/>
+  <text class="note" x="104" y="459">Whole-Story outcome — a human accepts the delivery slice</text>
+
+  <!-- Evolve -->
+  <circle class="stop" cx="72" cy="546" r="11"/>
+  <text class="stage" x="104" y="542">Evolve</text>
+  <text class="note" x="104" y="564">A material change raises the plan revision and replans future work.</text>
+  <text class="note" x="104" y="582">Completed Tasks, Results and receipts stay exactly as they were.</text>
+</svg>

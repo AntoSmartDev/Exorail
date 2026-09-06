@@ -1,0 +1,11 @@
+{
+  "schema": "0.2",
+  "members": [
+    {
+      "member_id": "<member-id>",
+      "display_name": "<display name>",
+      "status": "active",
+      "roles": ["<role-id>"]
+    }
+  ]
+}

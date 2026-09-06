@@ -11,6 +11,16 @@
 - lint or format:
 - run:
 
+## Delivery target
+
+- usual Story pull request target: `none`, or the remote and branch this
+  project normally targets
+
+Operator-maintained prose, not configuration: no tool reads this line. The
+human still names the target when accepting the Story PR offer. Recording the
+usual answer here saves repeating it, and a value that has gone stale is read
+by a person rather than applied by a tool.
+
 ## Testing and quality
 
 - acceptance strategy:

@@ -1,340 +1,1282 @@
-# Exorail
+# Exorail — AI-Native Software Delivery System
 
 [![Verify](https://github.com/AntoSmartDev/Exorail/actions/workflows/verify.yml/badge.svg)](https://github.com/AntoSmartDev/Exorail/actions/workflows/verify.yml)
 
-> **From blueprint to delivery: the operating system for supervised AI delivery.**
+**AI-assisted delivery with durable context, explicit authority, and a next safe step.**
 
-Exorail gives a software repository durable project memory, explicit authority boundaries, and a next action an LLM-powered coding agent can safely execute. It turns a blueprint, existing documentation, repository evidence, or a guided interview into a governed, resumable flow for supervised LLM-assisted software delivery that remains readable after the chat is gone.
+---
 
-It is not an IDE, a model, or a hosted agent service. It is a small, repository-native control plane for the work that happens around code.
+**New here? Three lines, then read on.**
 
-**Status:** `v0.1.1` · Node.js LTS · Codex and Claude Code · one shared cursor with sequential handoff.
+1. **Install** — copy `.exorail/` and `AGENTS.md` into your repository. The
+   runnable commands, including what to do when a `.exorail/` already exists,
+   are under [Install in a target repository](#install-in-a-target-repository).
+   For the shape of the first hour instead, read
+   [Start in three steps](#start-in-three-steps).
+2. **Start** — tell a capable coding agent to run
+   `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`. Bring whatever you actually
+   have: an idea, a brief, documents, or an existing codebase.
+3. **When a check refuses you** — read `.exorail/method/FINDINGS.md`. It is the
+   operator reference for every validator finding, with the canonical correction
+   for each. Reach for it before reading any tool source.
 
-**In one sentence:** give Exorail the evidence you have; it helps turn it into a trustworthy project baseline, guides one approved slice of work to a verified result, and leaves the next agent a safe place to resume.
+**On Windows, before you create any canonical records:** run
+`git config core.longpaths true` **in the target repository**. Without it Git prints `Filename too long`,
+**exits 0**, stages nothing, and then reports a clean tree — a silent failure
+that looks like success. `.exorail/method/PROJECT_SETUP.md` explains why.
 
-## Start in 60 seconds
+Everything below is context and depth. You do not need it to begin.
+
+---
+
+**Exorail is an AI-native, repository-native software delivery system that makes
+Spec-Driven Delivery Governance (SDDG) operational throughout the software lifecycle.**
+It starts from whatever you have — an idea, incomplete evidence, a specification
+or an existing codebase — and guides delivery through understanding, definition,
+implementation, verification, human acceptance, integration, replanning, recovery
+and continued evolution.
+
+Exorail does not stop when code is generated, a Task is marked finished, or a
+pull request is reviewed. It preserves project meaning, evidence, Decisions,
+delivery history and the next valid action needed to continue later without
+rebuilding the project from chat memory.
+
+Exorail uses durable governance records without reducing software delivery to a
+governance ledger or control plane. It guides understanding, definition, delivery
+and change in the repository where the work lives.
+
+**The complete baseline is intentionally small:**
+
+```text
+your repository + Exorail + one capable LLM-powered coding agent
+```
+
+Any capable coding agent can participate when it can read repository instructions,
+modify repository files, run the required local commands and preserve the Exorail
+workflow contract.
+
+No server, database, broker, hosted control plane, external orchestrator or ALM
+platform is required for the native route.
+
+> **The coding agent can change. The LLM can change. The provider can change.
+> The project should outlive the tools used to build it.**
+
+The practical promise is simple: **less remembering, less rediscovery, fewer
+silent leaps, and a clearer route from the evidence you start with to delivery
+you can defend.**
+
+Exorail is grounded in the core principles of modern **Spec-Driven Development
+(SDD)** and extends them through **Spec-Driven Delivery Governance (SDDG)**.
+It keeps intent connected to execution, evidence, authority, acceptance,
+integration, revision and evolution.
+
+## Why Exorail is different
+
+Exorail is designed for the point at which software work becomes hard to carry
+forward: the specification is incomplete, the codebase has history, people and
+agents need to collaborate, and a plausible implementation is not enough to
+call delivery complete.
+
+**Start from incomplete reality without inventing what is missing.**
+An idea, partial documentation, a brownfield repository or an already delivered
+system is enough to begin. Exorail makes known facts, inferences, gaps and
+Decisions explicit, then defines only the next delivery slice to the level at
+which it can safely be executed.
+[How progressive definition works](#start-from-what-you-have)
+
+**A Project Memory built for people and AI agents.**
+Material knowledge, Decisions, evidence, Results, revisions and delivery
+history remain durable and navigable in the repository, rather than being left
+in a particular person's or agent's chat context. This is operational memory:
+the same state that explains the project also helps determine what may safely
+happen next.
+[How Exorail Project Memory works](#exorail-project-memory)
+
+**See the project across time, and give each actor the context that matters.**
+Past evidence and Decisions, present blockers and active work, and planned or
+currently admissible next work can be reconstructed from durable state. Required
+reads route a new session to the smallest relevant context instead of treating
+accumulated chat history as project truth.
+[How temporal navigation works](#see-the-project-across-time) ·
+[How context engineering works](#context-is-a-resource-not-a-dump)
+
+**Independent work can fan out; delivery still converges under control.**
+Tasks may be carried by separate people, agents, isolated worktrees or optional
+runtimes when declared dependencies and isolation allow it. Verification,
+human acceptance and integration determine where dependent work must converge.
+[How the governed delivery graph works](#governed-delivery-graph)
+
+**Agents can author work, but cannot legitimize their own progression.**
+Deterministic admission and explicit human authority stay separate from
+AI-authored meaning. Ambiguity becomes a Decision or Contract Challenge with
+evidence, impact and options—not an assumption that silently becomes code.
+[How authority and ambiguity are governed](#authority-decisions-and-non-self-legitimizing-agents)
+
+**Execution is evidence, not delivery completion.**
+Result evidence, verification, review preparation, human acceptance, verified
+integration and whole-Story outcome are distinct. A review also remains bound to
+the exact change that was inspected.
+[How evidence-backed completion works](#verification-and-review-scale-with-the-change)
+
+**The project can resume, replan and evolve without losing its history.**
+Material change affects future work through revisions and scoped recovery; it
+does not rewrite completed Results or receipts.
+[How Exorail survives interruption and change](#resumability-replan-and-targeted-recovery)
+
+**A delivery loop has a safe exit, not an endless retry.**
+Controlled attempts are bounded, a terminal candidate closes its attempt slice,
+and a material replan preserves that slice before routing new work through a
+current-revision successor Task.
+[How bounded execution loops recover safely](#controlled-execution-loops-and-successor-tasks)
+
+**Professional from the first repository. Progressive as delivery needs grow.**
+The native route already preserves durable meaning, evidence and authority
+boundaries. Integrations and automation can be added later without replacing
+the project model or making heavyweight infrastructure a prerequisite.
+[How Professional Progressive adoption works](#professional-progressive) ·
+[How adapters add capability without moving authority](#extend-exorail-with-adapters)
+
+## Choose the depth you need
+
+This README is intentionally layered rather than split into separate “beginner”
+and “expert” versions.
+
+- **New to Exorail?** Read *What Exorail gives you*, the
+  [delivery example](#exorail-in-one-delivery-example) and
+  [Start in three steps](#start-in-three-steps). That is enough to understand
+  the product and try it.
+- **Evaluating Exorail for professional use?** Continue through team delivery,
+  verification, SDDG governance, safeguards, portability and the repository
+  architecture.
+
+The same product is being described at increasing depth: **value → example →
+mechanism → architecture → reference**.
+
+## What Exorail gives you
+
+| Need | Exorail keeps durable and actionable |
+| --- | --- |
+| **Start from incomplete reality** | Turn an idea, partial evidence, an existing repository or a delivered system into a progressively defined project without inventing missing facts. |
+| **Know what is fact, inference, decision or still unknown** | Keep observed evidence, supported inference, human authority, contradictions and unverified limits distinguishable instead of flattening them into one AI-generated narrative. |
+| **Plan just enough, just in time** | Keep future intent visible without pretending every future Task is already known; materialize sufficient executable detail only when dependencies, acceptance and evidence make it useful. |
+| **Know what can happen now** | Derive the executable frontier: what may start, what is held, and the reason for every hold. Invalid canonical state cannot authorize new work. |
+| **Detect drift before it becomes hidden workflow debt** | Catch invalid lifecycle state, stale projections, stale review identity, dependency/revision mismatches and declared-versus-observed scope before they silently authorize the next step. |
+| **Keep agents grounded** | Route each session to the smallest relevant knowledge, constraints, Decisions and active work instead of depending on a previous agent's private context. |
+| **Verify before calling work done** | Keep Result evidence, verification, human acceptance, integration and whole-Story acceptance as separate states instead of collapsing them into “the agent finished”. |
+| **Change direction without losing history** | Replan through revisions, preserve completed Results and receipts, and make affected future work explicit. |
+| **Resume after interruption** | Reconstruct the project from repository-native state and derived views rather than from a chat recap. |
+| **Work with people and multiple agents** | Keep provider-neutral attribution, dependencies, scope and isolation explicit while preserving human authority. |
+| **Keep project meaning independent as tools change** | Add, replace or remove LLMs, coding agents, runtimes, ALM providers or adapters without moving durable project meaning out of the repository. |
+
+## Exorail in one delivery example
+
+Suppose the request is:
+
+> **“Add SSO to this existing application.”**
+
+A typical Exorail-guided path looks like this:
+
+```text
+existing repository + request
+        ↓
+read the relevant product, architecture and engineering evidence
+        ↓
+record what is known, missing or requires a human Decision
+        ↓
+define one Story with outcome, acceptance, risk and dependencies
+        ↓
+derive the executable frontier
+
+backend Task ─────┐
+                  ├─→ integration Task
+frontend Task ────┘
+        ↓
+independent Tasks may run in isolated worktrees
+        ↓
+each Task is verified and produces an immutable Result
+        ↓
+human acceptance + verified integration
+        ↓
+dependent work becomes eligible
+        ↓
+whole-Story review
+        ↓
+later defect or requirement change
+        ↓
+original intent + Decisions + evidence + integration history are still available
+```
+
+This example combines several Exorail properties at once: incomplete input can be
+made explicit without inventing facts; dependencies control parallel work;
+execution does not equal acceptance; human authority remains distinct; and the
+delivery history survives the agent or session that produced it.
+
+![The SSO example as a rail: two independent Tasks run in parallel while the integration Task stays held, and human acceptance, verified integration and whole-Story review remain separate gates.](assets/delivery-example.svg)
+
+## Start in three steps
 
 1. Copy `.exorail/` and `AGENTS.md` into the target repository.
-2. Tell a coding agent to run `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`.
-3. Give it the evidence you have: a blueprint, documents, an existing
-   repository, or answers to its focused interview.
+2. Tell a capable coding agent to run `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`.
+3. Give it what you actually have: an idea, brief, documents, existing code, or
+   answers to its focused interview.
 
-The agent produces canonical project knowledge, makes gaps and decisions
-visible, establishes readiness, and proposes the first safe delivery slice. It
-does not silently turn an incomplete brief into implementation authority.
+The agent establishes the **smallest reliable project frame**, makes gaps and
+Decisions visible, and proposes the first safe delivery slice.
 
-Detailed copy and validation commands are [below](#start-in-a-target-repository).
+In Exorail, an assumption does not silently become implementation authority.
 
-## The value at a glance
+Detailed copy and validation commands are [below](#install-in-a-target-repository).
 
-| Starting point | What Exorail adds | What you keep afterwards |
+## Start from what you have
+
+| Your starting point | What Exorail helps establish | What remains durable |
 | --- | --- | --- |
-| A blueprint, brief, or product document | Canonical knowledge, explicit gaps, readiness checks, and decisions that need a human | A baseline another agent can understand without reconstructing the chat |
-| An unfamiliar or existing repository | Evidence routing, trust posture, scoped recovery, and a safe first delivery slice | A visible record of what is observed, inferred, decided, or still unknown |
-| A selected outcome | A just-in-time contract, proportionate task shape, verification plan, and approval boundary | Executable work only when its assumptions and authority are current |
-| A changed assumption, session break, or LLM change | Drift detection, invalidation routing, checkpoint, compaction, or focused handoff guidance | A durable cursor with the next allowed action instead of a fragile chat recap |
-| A completed change | Evidence-backed result, impact and limitation records, revalidation, and proposed next action | A defensible delivery trail—not merely a claim that the agent is “done” |
+| **Idea or incomplete brief** | Intent, open questions, constraints, readiness and the smallest safe next step | A project frame stating what is known, missing or awaiting a Decision |
+| **Specification or product documents** | Canonical knowledge, acceptance, constraints and a first reviewable Story | A baseline another person or agent can understand without reconstructing the conversation |
+| **Existing repository / brownfield system** | Observed behaviour, declared intent, legacy boundaries and non-regression context | A route from existing code to deliberate future work rather than invented history |
+| **Interrupted session or changed assumption** | Explicit replan, preserved history and a resumption route | A durable position with the next allowed action |
+| **Completed delivery** | Accepted Results, evidence, receipts and integration history | The context required to diagnose defects, extend the system and evolve it later |
 
-The promise is deliberately practical: **less remembering, less rediscovery, fewer silent leaps, and a clearer route from the evidence you start with to the delivery you can defend.**
+## The lifecycle Exorail keeps operational
 
-## Why use it
+```text
+Understand → Define → Deliver → Evolve
+```
 
-AI agents are fast at changing files. They are much less reliable at preserving context, recognizing missing decisions, and knowing whether it is safe to continue. Exorail makes those responsibilities explicit and durable.
-
-With Exorail, you get:
-
-- **Durable memory instead of chat memory.** Product intent, architecture, engineering constraints, decisions, readiness, and the current position live in versioned repository artifacts.
-- **A safe next step.** The cursor tells a new agent what to read, what is active, what is blocked, and what it may do next.
-- **A guided path from ambiguity to delivery.** Start with a document, a codebase, or an interview; the workflow identifies gaps before it lets work become executable.
-- **Just-in-time planning.** Keep future work as candidates, shape a Delivery Unit only when it is due, and materialize task detail only when its dependencies and contract are current.
-- **Human control where it matters.** The agent can analyze, propose, and prepare; a human approves material contracts, protected Git actions, and closure decisions.
-- **Continuity across sessions.** The workflow can recommend whether to continue, compact the current session, open a fresh session, or create a focused handoff.
-- **Mechanical drift detection.** Included Node.js validators check cursor, readiness, contracts, task transitions, authority records, and text integrity before a mistake becomes hidden workflow debt.
-
-You should not have to reconstruct project state from chat history or remember the next safe step by hand.
-
-## The blueprint-to-delivery path
-
-![Exorail blueprint-to-delivery path: intake, canonical knowledge, readiness gate, planning, delivery, and closure. Human authority is explicit at readiness and delivery.](assets/blueprint-to-delivery-path.svg)
-
-From intake to closure, the workflow makes the active transition visible. It
-creates knowledge before planning, requires explicit human authority before
-protected work, and records an evidence-backed result before moving on.
-
-The workflow does not force a full task tree on day one. It first establishes a project frame and one sufficiently defined delivery slice. It then advances only when evidence, dependencies, and the required human authority are in place.
-
-This is why Exorail is useful beyond the first plan: each transition leaves a durable state that can be checked, resumed, challenged, or handed to a fresh agent without relying on the original conversation.
-
-## What Exorail does, and what remains yours
-
-| Exorail helps the agent do | A human still decides |
-| --- | --- |
-| Organize evidence into canonical project sources | Product direction, scope, and unresolved trade-offs |
-| Detect missing readiness evidence and route setup recovery | Whether a proposed contract is approved |
-| Preserve the current Delivery Unit, task, result, and next action | Whether a material change is acceptable |
-| Propose branch, commit, merge, pull-request, or deferral actions | Every protected Git mutation and integration action |
-| Revalidate downstream work when a result changes assumptions | Closure of a Delivery Unit, milestone, scope, or project vision |
-| Recommend continue, compact, new session, or handoff | Whether to accept the recommendation or change priorities |
-| Report deterministic workflow and text-integrity findings | Semantic correctness, architecture, builds, tests, and review judgment |
-
-Exorail is deliberately supervisory: it reduces forgotten steps without pretending that a validator or an agent can replace engineering judgment.
-
-## Built for the realities of AI-assisted delivery
-
-The terms below are not a collection of marketing labels. They name the
-operational problems Exorail addresses in a repository, with durable artifacts
-and checks rather than relying on a model's private chat history.
-
-| Recognizable theme | What it means in Exorail |
-| --- | --- |
-| **Durable project memory** | A versioned, inspectable “second brain” for the project: evidence, decisions, readiness, contracts, results, and the current cursor live with the code. It is project memory, not an opaque personal memory owned by one model or vendor. |
-| **Context engineering** | The active work names the smallest relevant canonical reads, reasoning posture, and context-pressure response for LLM coding agents. This helps avoid both blind execution and repeatedly loading an entire project into every chat. |
-| **Model portability** | A focused switch prompt lets an incoming supported LLM coding agent reconstruct the required state from the repository. You can move from Codex to Claude Code, or back, without restarting the delivery from a fragile chat recap. |
-| **Controlled autonomy** | The agent can investigate, propose, prepare, and validate within explicit boundaries. It cannot treat a candidate as executable work, invent human approval, or silently resolve a material conflict. |
-| **Human-in-the-loop governance** | Product direction, contracts, protected Git actions, exceptions, residual risk, and closure remain deliberate human decisions with durable rationale. |
-| **Deterministic guardrails** | Node.js validators mechanically check cursor state, contracts, task transitions, authority records, paths, and text integrity. They expose workflow drift early; they do not pretend to replace engineering review. |
-| **Evidence-backed delivery** | A delivery result records acceptance, checks actually run, limitations, impact, and revalidation. “Done” becomes evidence another engineer or agent can inspect. |
-| **Resumable work and recovery** | A new session, a context compaction, a model change, a changed assumption, or a stale baseline has an explicit route: checkpoint, handoff, challenge, invalidation, or targeted recovery. |
-| **Team-ready direction** | Today Exorail governs one shared cursor and sequential handoff honestly. Its next evolution is explicit shared-cursor and partitioned-work orchestration for teams—not an unearned claim in v0.1.1. |
-
-This makes Exorail a control plane for agentic software delivery: durable
-project memory plus explicit authority and a mechanically checked next step.
-
-## Operational guidance from intake to delivery
-
-Exorail does not just leave a plan in the repository. It continuously tells an
-agent what kind of work it is doing, what evidence it needs, and when it should
-stop or change its approach.
-
-| Moment | Guidance kept in the repository | Why it helps |
+| Phase | Exorail makes operational | Human responsibility remains |
 | --- | --- | --- |
-| **Intake** | Classifies a blueprint, existing documents, codebase evidence, or interview answers as canonical, reference-only, provisional, or missing | Prevents an agent from treating a plausible assumption as established fact |
-| **Knowledge routing** | Records the smallest required reads for the active work instead of asking every agent to reload the whole project | Keeps attention on relevant evidence and avoids a broad, diluted context window |
-| **Readiness** | Separates project-frame readiness, slice readiness, baseline readiness, and delivery readiness | Stops implementation before missing decisions, structure, or verification make it unsafe |
-| **Reasoning calibration** | A Delivery Contract or task records `low`, `medium`, or `deep` reasoning appropriate to the work | Helps the operator calibrate the reasoning effort for the task; Exorail does not choose an LLM model for you |
-| **Candidate shaping** | Holds future work as non-executable candidates, then exposes contract assumptions, scope, dependencies, acceptance, and verification before approval | Avoids turning a vague roadmap row into unreviewed implementation |
-| **Task transitions** | Rechecks contract revision, dependency results, repository changes, decisions, and assumptions before the next task materializes | Detects stale downstream work instead of letting it inherit invalid context |
-| **Material changes** | Routes a mismatch to clarification, contract revision, task reshaping, a blocker, or setup invalidation | Makes disagreement and changed evidence visible rather than silently patching around them |
-| **Git actions** | Proposes a branch, commit, merge, pull request, tag, or deferral with scope and rationale | Preserves human approval for every protected mutation; no Git action is implied by an agent recommendation |
-| **Session pressure** | Records whether the next step should continue, compact, open a new session, or hand off | Keeps durable state in the repository instead of carrying an ever-larger chat forward |
-| **LLM change** | Provides a focused switch prompt and durable required reads for the next agent | Lets you move, for example, from Codex to Claude Code without reconstructing project state from memory |
-| **Closure** | Records acceptance, checks actually run, evidence references, limitations, impact, revalidation, and the next selection | Replaces an uninspectable “done” with an auditable result and a safe recovery point |
+| **Understand** | Evidence classification, focused discovery, knowledge routing, gaps, readiness and Decisions | Product direction and unresolved trade-offs |
+| **Define** | Outcome, acceptance, risk, dependencies, Policy and a reviewable delivery slice | Whether the proposed slice is valuable and ready to authorize |
+| **Deliver** | Executable frontier, scoped work, verification, immutable Results, receipts, review readiness and integration state | Acceptance, consequential authority and whole-Story outcome |
+| **Evolve** | Material change, plan revision, supersession, resumption, fixes and future work | Whether to change scope, accept risk or close an outcome |
+
+![The Exorail delivery path: Understand, Define, Deliver and Evolve, with explicit human authority at Task acceptance, Story-base integration and whole-Story outcome.](assets/exorail-delivery-path.svg)
+
+The canonical work path is `Epic → Feature → User Story → Task`. A Milestone
+collects Stories and a Context tags work; neither is a parent. Definition remains
+progressive: establish a reliable frame, define a useful slice, execute, learn,
+then refine or replan.
+
+Progressive does not mean vague. Exorail keeps the future visible at the level
+that is currently justified, while requiring sufficient non-generic detail only
+for the work that is about to become executable. This preserves direction without
+turning speculative future decomposition into false certainty.
+
+## Team development without a shared cursor
+
+Exorail is designed so several people or agents can work from the same repository
+without turning one developer's session position into global project state.
+
+The key separation is:
+
+```text
+shared repository
+→ project state, work attribution, dependencies, Results, Decisions and receipts
+
+local machine / worktree / session
+→ current developer identity and disposable working position
+```
+
+A developer therefore does **not** commit a personal live cursor such as
+`"I am currently on Task X"` for everybody else to inherit. Local identity lives
+outside shared Git state, while the repository keeps the durable facts that every
+developer must agree on. After a pull, branch switch, worktree switch or machine
+restart, shared project state can be reconstructed without overwriting another
+person's current position.
+
+### How work is divided
+
+| Mechanism | What it gives the team |
+| --- | --- |
+| **Provider-neutral team attribution** | Stable project-member references keep ownership, assignment and historical completion independent from GitHub, Azure DevOps, Jira or another provider. |
+| **Owner, assignee and completed-by remain different** | Responsibility for an outcome, the person currently carrying it forward, and the person who actually completed recorded work are not collapsed into one field. |
+| **Team View** | A generated team-wide view shows active/planned work by member without becoming another source of truth. |
+| **Local identity** | The shipped `.exorail/local/.gitignore` ignores `.exorail/local/identity.json`, so each clone or machine can identify its current project member without changing shared repository state. |
+| **Feature / Story decomposition** | Work is divided into coherent delivery slices instead of a global queue that every developer edits blindly. |
+| **Context and bounded-context knowledge** | Cross-cutting Contexts tag relevant work, while bounded-context and context-boundary knowledge describe domain/architecture boundaries that help people and agents understand where a change belongs. |
+
+A `Context` is deliberately **not** another parent in the work hierarchy. It is a
+cross-cutting classification. Likewise, bounded-context documentation improves
+scope and knowledge routing, but it does not by itself authorize parallelism.
+Parallel safety still comes from explicit Task scope, dependencies, isolation
+and integration state.
+
+### Parallel work without hidden dependency races
+
+Exorail derives an executable frontier from the current project state. Independent
+Tasks may appear in the frontier together; a dependent Task remains blocked.
+
+```text
+Task A ─────┐
+            ├─→ Task C
+Task B ─────┘
+```
+
+If `C` depends on `A` and `B`, two developers or agents can work on `A` and `B`
+in parallel, while `C` stays held until the required upstream conditions are
+satisfied. A runtime reporting success is not enough to release `C`: the relevant
+Result, acceptance and verified integration state still matter.
+
+For parallel work, Exorail uses **separate branches/worktrees when isolation is
+required**. This prevents two active Tasks from sharing the same mutable working
+directory and reduces accidental overwrites, mixed diffs and commits containing
+another Task's changes. Local Git mechanics remain Git; Exorail adds the delivery
+semantics that determine which work is independent, what scope belongs to each
+Task, and when downstream work may safely begin.
+
+The closeout becomes serial where it must be serial:
+
+```text
+parallel implementation
+→ Task verification
+→ required human acceptance
+→ verified integration
+→ dependency release
+→ whole-Story review
+```
+
+This is why team parallelism in Exorail is not just “run several agents at once”.
+It is **governed concurrency over one durable project state**.
+
+### What is shared and what stays personal
+
+| Shared and versioned | Local / derived |
+| --- | --- |
+| Team/member registry and durable attribution | Current local developer identity |
+| Stories, Tasks and dependencies | Personal working position |
+| Results and evidence | Disposable session state |
+| Decisions and receipts | Agent/runtime scratch context |
+| Plan revisions and integration history | Local worktree state |
+| Team-wide projections | Personalized filtering/navigation |
+
+This separation is what prevents a repository sync or another developer's commit
+from becoming a shared-cursor problem.
+
+**Current boundary:** the shared team model, local identity, team-wide view,
+parallel isolation and dependency/integration rules are part of the 0.2 delivery
+model. Richer actor-resolution states and a fully personalized
+`current actor ∩ executable frontier` resume are a post-0.2 Runtime refinement,
+not a capability this README claims as already automatic.
+
+## See the project across time
+
+Exorail is not only a description of the current work. Its repository-native
+state lets a person or agent inspect **where the project came from, where it
+stands now, and what can happen next**.
+
+| Time | What you can inspect |
+| --- | --- |
+| **Past — why are we here?** | Accepted Results, evidence, Decisions, receipts, integration identity, prior plan revisions, superseded work and historical attribution. |
+| **Present — where are we now?** | Active Stories and Tasks, readiness, blockers, executable frontier, current review scope, Team View and resumption state. |
+| **Next — what may happen after this?** | Planned work, dependencies, held Tasks and their reasons, pending Decisions, material-change consequences, replanning and future evolution. |
+
+Because the durable state is repository-native and largely Markdown, it remains
+readable with ordinary Git and editor tooling. Teams may also use Markdown
+knowledge readers or future derived projections to navigate the same material
+more richly. Those readers and views
+do not become a second source of truth: canonical project meaning stays in the
+repository, and generated projections remain rebuildable.
+
+## Operational guidance during delivery
+
+| Moment | Exorail provides | Why it matters |
+| --- | --- | --- |
+| **Understand** | Evidence classification, knowledge routing, readiness and visible gaps | A plausible assumption does not become established truth |
+| **Clarify / Decide** | Typed Decision requests and Contract Challenges with evidence, impact and options | Ambiguity becomes an explicit route to resolution rather than an invented continuation |
+| **Plan** | Revisioned Story intent, acceptance, dependencies, risk, Policy and Task backlog | Planning stays connected to durable intent |
+| **Start** | Machine-readable executable frontier with eligible and blocked work plus reason codes | Work begins only from admissible state |
+| **Execute** | Scope, isolation and verification profile; optional controlled execution | The agent can act productively without acquiring authority it does not have |
+| **Review** | Result evidence, receipt-bound review identity, review readiness and Review Brief that separates scope, evidence, review focus, unverified areas and open Decisions | A later `HEAD` cannot silently replace the commit actually reviewed, and the reviewer does not need to reconstruct what to inspect or decide from scattered context |
+| **Integrate** | Explicit acceptance and verified integration receipts | Merge/integration remains separate from “code ran successfully” |
+| **Change** | Material-change procedure, plan revision, replan-needed and superseded work | New reality changes future work without rewriting completed history |
+| **Resume** | Required reads, projections, Team View and resumption route | Interruption becomes an ordinary recovery path |
 
 ### Context is a resource, not a dump
 
-For each task, the workflow names the relevant canonical sources and the
-expected reasoning level. It can recommend a fresh session when durable state
-is sufficient, or `compact_then_continue` when immediate continuity still has
-material value. This reduces needless re-reading and avoids carrying unrelated
-or stale conversation into the next decision.
+`.exorail/KNOWLEDGE_INDEX.md` routes the smallest relevant canonical source set
+for active work. A short handoff or summary may orient an agent, but it does not
+replace the Story, Task, Decisions, Results, receipts and required reads stored
+in the repository.
 
-When a small amount of temporary context still matters, Exorail asks for a
-short chat summary or a focused handoff. These are temporary bridges, not a
-second source of truth: the contract, cursor, decisions, results, and required
-reads remain authoritative. That separation can reduce token waste and context
-dilution without pretending that a new session alone guarantees correctness.
+Exorail also keeps session changes explicit. A compaction or task-boundary
+handoff can preserve the small amount of temporary context that still matters
+without turning conversation history into project truth. When a different coding
+agent or LLM takes over, `.exorail/prompts/SWITCH_LLM_PROMPT.md` routes it back
+through the repository state and required reads before it continues.
 
-### Switch coding agents without restarting the project
+The goal is not to preserve every chat message. It is to preserve the durable
+project meaning required for a new session, person or agent to safely reconstruct
+the current position.
 
-Need a different coding agent for the next phase? Run
-`.exorail/prompts/SWITCH_LLM_PROMPT.md` in the target repository. It directs the
-incoming agent to inspect the durable state, required reads, current cursor,
-and outstanding authority before continuing. In practical terms, you can move
-from Codex to Claude Code—or back again—with a focused prompt and continue the
-same governed delivery instead of rebuilding the project from chat history.
+### Verification and review scale with the change
 
-The new agent still performs its required reads and validations; Exorail does
-not claim that one model inherits another model’s private conversation. What it
-preserves is the project state needed to resume safely.
+Every Story selects a verification profile — `minimal`, `standard` or `full`.
+A Task may keep or strengthen that profile, but it may not weaken the Story's
+required level. Before a Task is reported ready for review, the agent must
+compare the implementation with its acceptance references, run the selected
+verification, remediate safely within the bounded retry cycle, and record what
+was actually verified in the Result.
 
-### A realistic recovery at 70% context
+The project testing strategy defines the verification layers that may apply:
 
-An agent reaches 70% reliable context usage while completing a task. Exorail
-recommends compaction and a durable checkpoint before the agent expands its
-working set. The checkpoint records the current cursor, required reads,
-contract revision, decisions, results, and the next allowed action. You can
-then open a fresh Codex or Claude Code session, use the handoff or switch
-prompt, and have the incoming agent validate that state before continuing.
+| Verification layer | Use it when | Skip only when |
+| --- | --- | --- |
+| **Unit tests** | New logic or regression risk is introduced | No supported unit boundary exists |
+| **Integration tests** | The Task crosses component or service boundaries | No integration boundary is affected |
+| **Structural / architecture checks** | Structural constraints or architecture rules are in scope | No structural rule is affected |
+| **Text / workflow checks** | Workflow artifacts change | No workflow artifact is touched |
+| **Project-specific / manual checks** | The project's engineering strategy requires them | The project strategy explicitly makes them inapplicable |
 
-The useful outcome is not an attempt to preserve every chat message. It is a
-controlled resumption from the project facts that matter, with less token waste
-and less risk that stale conversational detail drives the next change.
+Verification rigor follows the **nature and risk of the change**, not raw diff
+size. A small security-sensitive, data-sensitive, migration, public-API,
+architectural or parallel-integration change may deserve stronger evidence than
+a much larger low-risk edit.
 
-When the active client exposes reliable context-usage telemetry, the workflow
-uses graduated guidance:
+Security and trust-boundary changes are therefore treated as change-driven
+review concerns rather than ceremonial checkpoints. The workflow expects
+proportionate evidence, makes unresolved or residual risk visible to the human
+reviewer, and never turns a green mechanical validator into a security approval.
 
-| Context used | Guidance |
+The Result keeps the reviewer-facing proof surface explicit: evidence,
+acceptance-criterion coverage, `review_focus`, and `not_verified`. Review
+readiness also checks the actual Git range, canonical readability, projection
+freshness, declared versus observed paths, stale review identity and open
+Decisions.
+
+A clean Task becomes `review_pending`; it is not accepted or integrated. Human
+review may occur per Task or at the Story boundary according to Policy, but
+Story-level batching never removes the mandatory final whole-Story review after
+all Tasks are integrated.
+
+Today 0.2 carries these profiles, testing rules and evidence fields, but it does
+**not** yet mechanically prove that every verification layer implied by a
+particular change has sufficient evidence. That stronger verification-sufficiency
+derivation remains a post-0.2 evolution.
+
+### Exorail also knows when not to proceed
+
+An unmet dependency, open Decision, invalid lifecycle state, unsafe scope or
+unavailable required capability becomes an explicit block. Recovery remains
+available through focused Decisions, Contract Challenges, replan, projection
+refresh or a documented native route.
+
+Recovery is scoped rather than destructive: setup or knowledge can be invalidated
+without discarding unrelated accepted project history. Repeated failure is also
+bounded. A Task gets at most three safe remediation cycles; if the blocker
+persists, Exorail stops the loop and surfaces the evidence, blocker, required
+human decision or need for a materially different plan.
+
+## SDD, SDDG and the **G**
+
+**Exorail is grounded in the core principles of modern Spec-Driven Development
+(SDD) and extends them through Spec-Driven Delivery Governance (SDDG).**
+
+SDD gives the specification a central role in connecting intent to implementation.
+Exorail keeps that discipline connected to the wider software lifecycle — before
+the specification is complete, throughout execution and verification, and after
+delivery when the system must be fixed or evolved.
+
+```text
+SDD
+→ makes specification the durable driver of development
+
+SDDG
+→ extends that discipline across delivery: execution, evidence, authority,
+  acceptance, integration, revision and evolution
+
+Exorail
+→ makes that governed lifecycle operational and durable in the repository
+```
+
+The **Governance** in SDDG is not a branding label. It names concrete operating
+responsibilities backed by durable state, deterministic checks, explicit evidence
+and protected authority boundaries.
+
+| Governance area | What it protects in practice |
 | --- | --- |
-| Below 50% | Continue without a context prompt. |
-| At or above 50% | Offer compaction once and state whether preserving the current chat still has material value. |
-| At or above 70% | Recommend compaction and prepare a durable checkpoint before broadening context further. |
-| At or above 85% | Avoid optional context expansion; strongly recommend compaction or a controlled handoff. |
+| **Knowledge** | What the project knows, where it comes from, what is missing and what must be read before acting. |
+| **Consistency** | Whether canonical state, dependencies, revisions and derived views remain mechanically coherent. |
+| **Evidence & verifiability** | What demonstrates that work happened, what was checked and what remains unverified. |
+| **Decision & authority** | Which choices require protected human authority and how Exorail prevents an agent, role or tool from manufacturing it. |
+| **Review, acceptance & integration** | Keeps implementation, verification, acceptance and integration as distinct auditable events. |
+| **Change & revision** | Lets the project evolve without rewriting completed history or silently changing prior meaning. |
+| **Execution** | Governs what may start, within what scope and constraints, while keeping execution success distinct from accepted completion. |
+| **Portability & anti-lock-in** | Keeps project meaning independent from the current LLM, coding agent, runtime, ALM or provider. |
 
-If an operator declines, the workflow does not repeat the same prompt every
-turn. It raises the question again only at a higher band, before a
-context-intensive phase, or when the risk of losing material state changes.
-When telemetry is unavailable, it describes context pressure as an estimate
-rather than inventing a percentage.
+These governance areas describe **what Exorail protects**. They are different
+from implementation layers such as Core, Runtime, Policy, Adapters, Projection
+and Guidance, which describe **where those responsibilities live technically**.
 
-### It also knows when not to proceed
+## What 0.2 makes concrete
 
-The workflow can pause active work when a contract assumption conflicts with
-repository evidence, when a required source is stale, when a planned task is
-not yet independently verifiable, or when a human decision is still missing.
-It may recommend a simpler Light Delivery Unit, a Structured unit with
-explicit decomposition, a contract challenge, incremental setup recovery, or a
-completion-gap review. The point is not to add ceremony; it is to make the
-smallest next safe move explicit.
+The 0.2 line adds substantially more than a richer specification format. Its
+important product capabilities include:
 
-## Fine-grained safeguards that change day-to-day work
+| Capability | Concrete value |
+| --- | --- |
+| **Durable project memory** | Intent, architecture, constraints, Decisions, Results and evidence survive sessions, models and providers. |
+| **Progressive definition** | Start before a perfect specification exists and refine only as evidence becomes sufficient. |
+| **Admission-gated executable frontier** | Operational derivations refuse lifecycle-invalid canonical state and report both eligible and blocked Tasks with reasons. Executable Tasks carry observable acceptance, Story-linked criteria and a Quality gate rather than only a status label. |
+| **Hierarchy-aware routes** | Epic and Feature routes name the concrete Story and executable Task below them; terminal work either names its determined Feature for re-entry or asks the human question that selects one. |
+| **Mechanical drift detection** | Lifecycle, dependency/revision, projection-freshness, scope and review-identity checks expose stale or inconsistent state before it becomes the basis for new work. |
+| **Decision & Challenge routing** | Missing or contested meaning becomes a typed route to human resolution. |
+| **Immutable Results and evidence trail** | Completed execution is recorded separately from acceptance, integration and Story outcome. |
+| **Exact review identity** | Review readiness and receipts bind review to the actual reviewed commit/content instead of assuming current `HEAD` is equivalent. |
+| **Generated review orientation** | Read-only Review Brief and review-readiness outputs help reviewers understand current scope without becoming approval. |
+| **Resumption and replan** | Interrupted work and material change recover from durable state while completed history stays interpretable. |
+| **Context-efficient handoff** | Selective required reads, compaction/task-boundary handoffs and the switch-agent prompt let a new session or LLM resume from project state instead of replaying chat history. |
+| **Scoped invalidation and targeted recovery** | A false or stale foundation can block the affected route without erasing unrelated accepted history. |
+| **Bounded remediation and successor loops** | A Task has at most three contiguous attempts per plan revision. A terminal candidate closes that slice; after exhaustion, a Decision, replan or split routes work forward without rewriting its attempted history. |
+| **Governed parallel work** | Dependencies, task isolation, separate workspaces and integration gates prevent parallel reports from silently releasing downstream work. |
+| **Provider-neutral team attribution** | Owner, assignee and reviewer routing remain portable; attribution never becomes authentication or protected authority. |
+| **Trust-aware guidance** | Mechanically observed facts, agent declarations, human Decisions and unverified limits remain distinguishable. |
+| **Reusable technical knowledge with provenance** | Episodes become durable only when grounded in accepted Result provenance. |
+| **Controlled execution history** | Minimal execution-run history can survive the disappearance or replacement of an external runtime. |
+| **Consequential external actions** | Protected side effects use explicit authority, evidence and project-global idempotency instead of treating capability availability as permission. |
+| **Fail-closed optional capabilities** | Descriptor presence, Policy activation, local availability and invocation are separate. Installed does not mean enabled; enabled does not mean authorized. |
+| **Rebuildable projections** | Derived navigation and review surfaces are digest-checked, regenerable and never compete with canonical state. |
+| **Payload integrity** | The distributable carries a manifest of the Exorail-owned payload so adoption and release checks can reason about the exact shipped files rather than an informal copy of the workflow. |
+| **Provider/runtime portability** | Adapter descriptors and history keep provider details outside durable project semantics so implementations can be added or replaced without ordinary project migration. |
+| **Complete no-adapter path** | Repository + Exorail + one capable coding agent remains a complete first-class workflow, not a degraded fallback. |
 
-The value is in the small controls that prevent an agent from making a locally
-plausible but globally unsafe move.
+## A few safeguards that matter every day
 
-- **Evidence has a trust posture.** During greenfield, brownfield, or mixed
-  work, Exorail distinguishes observed facts, supported inferences, user
-  decisions, legacy evidence, contradictions, and unresolved gaps. Source code
-  proves current behavior; it does not silently become desired architecture.
-- **Authority is proportionate.** A small contract can use a concise decision
-  brief; a material revision, process exception, residual risk, or structured
-  closure requires a fuller decision record. Silence, a chat reaction, and an
-  agent recommendation never count as approval.
-- **Work shape follows risk.** A Light Delivery Unit is for one atomic outcome
-  and one verification boundary. A Structured unit is used when dependencies,
-  boundaries, risk, session length, or shared acceptance justify decomposition.
-  A unit can be promoted from Light to Structured when evidence makes that
-  safer.
-- **Ownership stays optional and explicit.** Modules are introduced only when a
-  stable bounded context truly owns the work. Cross-cutting work remains at the
-  root with affected boundaries recorded, rather than being forced into an
-  artificial hierarchy.
-- **Verification is planned, then evidenced.** The workflow asks what was
-  actually run, where later readers can inspect it, which layers were omitted,
-  and what limitations remain. A green validator is not substituted for tests,
-  review, or product acceptance.
-- **Security review is triggered by change, not ceremony.** A changed trust
-  boundary, sensitive-data path, authorization rule, untrusted input, or
-  infrastructure exposure requires proportionate evidence and residual-risk
-  recording.
-- **Changed assumptions have a route.** A Contract Challenge captures an
-  infeasible, unsafe, inconsistent, or no-longer-atomic approved approach. It
-  pauses affected work, exposes the smallest correction and alternatives, and
-  requires a human resolution before protected work resumes.
-- **Baseline invalidation is scoped.** Structural evidence can invalidate setup
-  without discarding the whole project state. The workflow records what is
-  affected, pauses only related work, and routes targeted recovery.
-- **Repeated failure changes the method.** After the same blocker recurs, the
-  agent preserves evidence, expands the required context, and must choose a
-  materially different plan rather than retrying the same hypothesis.
-- **Closure has levels.** A task result is not automatically a completed
-  Delivery Unit, milestone, bounded context, current scope, or project vision.
-  Empty queues trigger a completion-gap review instead of a false declaration
-  of completion.
-- **Parallel work has an honest boundary.** One shared cursor is sequential.
-  Real parallel work must first be partitioned by branch, workflow root, or
-  independently scoped Delivery Unit, then integrated through normal review.
-## What happens during delivery
+- **Execution is not completion.** A clean Task and its Result are not human
+  acceptance, verified integration or a whole-Story outcome.
+- **Closure has levels.** Task cleanliness, Task acceptance, integration and
+  whole-Story outcome remain separate. Feature, Milestone and project closure
+  are higher-level human outcome decisions, not automatic consequences of an
+  empty queue.
+- **Verification is proportionate.** The selected profile and project testing
+  strategy must be applied to the actual risk and change surface; a green
+  Exorail validator is never a substitute for builds, tests, security analysis
+  or engineering review.
+- **The LLM may author meaning, but it does not legitimize its own progression.**
+  Operational work must pass deterministic admission before it can advance.
+- **Authority cannot be inferred.** Only an explicit protected
+  `user:<decision-reference>` can supply authority where the workflow requires it.
+- **Review stays attached to the right change.** Acceptance and integration
+  retain reviewed identity so later commits or rebases cannot silently make an
+  older review current.
+- **Replan preserves history.** Material change creates a new revision and
+  affects future work; completed Results and receipts are not rewritten.
+- **Capability is not authorization.** An adapter may exist and be healthy while
+  still being disabled or unauthorized for a consequential action.
+- **Derived views cannot become truth.** Projections can be deleted and rebuilt
+  from their declared inputs.
+- **Recovery remains available when state is broken.** Diagnostic and projection
+  tooling can explain or repair derived state without falsely authorizing work.
 
-### 1. Establish a trustworthy baseline
+## Progressive capability without architectural migration
 
-The agent reads the available evidence, identifies what is authoritative and what is only provisional, and turns the result into navigable canonical sources. If important knowledge is missing, it asks focused questions instead of silently inventing a plan.
+Exorail is useful before any external integration exists. Capability can be
+added progressively as the project or organization needs it:
 
-### 2. Decide what is ready
+```text
+repository + Exorail + LLM-powered coding agent
+↓
+Git / CI observations
+↓
+optional ALM / identity integration
+↓
+optional external knowledge / retrieval
+↓
+optional execution runtime
+↓
+optional multi-agent orchestration infrastructure / long-running execution
+↓
+additional projections and enterprise integrations
+```
 
-Readiness separates a project frame from an executable slice. A roadmap can contain future candidates, but a candidate does not grant implementation authority. This prevents a plausible-looking plan from quietly becoming work.
+Three adapter families keep those extensions outside the durable Core:
 
-### 3. Shape only the work that is due
+| Adapter family | Adds | Does not own |
+| --- | --- | --- |
+| **Integration** | ALM/CI, external identity, external observations, retrieval and authorized external mutations | Canonical planning, project authority or project meaning |
+| **Execution** | Long-running execution, retries, pause/resume, runtime-specific parallelism or sub-agents | Dependency release, Result acceptance or human authority |
+| **Projection** | PR descriptions, review surfaces, HTML/IDE/dashboard or other optimized views | Canonical state |
 
-When a candidate is selected, Exorail guides the agent to draft a Delivery Contract, surface assumptions and verification, and request approval. The contract becomes executable only after the recorded human decision. Complex outcomes can then receive task-level detail just in time.
+Adapters extend Exorail; they do not complete it. Their implementations can
+change independently while the project continues to use the same durable
+semantics.
 
-### 4. Keep work recoverable while it changes
+## Extend Exorail with adapters
 
-Before a task proceeds, the workflow checks its contract revision, dependencies, repository changes, decisions, and assumptions. If something material changes, it routes the work to clarification, revision, reshaping, or a recorded blocker instead of allowing silent drift.
+**Adapters let Exorail use external systems without letting those systems become
+the source of project meaning or authority.** They add optional capability
+around the repository-native model; they do not move canonical planning,
+Decisions, Results, evidence semantics, acceptance, integration or the
+executable frontier into a provider.
 
-### 5. Close with evidence, not a vague “done”
+The current 0.2 contract defines the capability boundary, portable descriptors,
+deterministic selection and fail-closed activation. The named products below
+are **planned Exorail integrations**: roadmap targets, not adapters that ship
+with 0.2. The native route remains complete without any of them.
 
-A result records acceptance, executed checks, limitations, impact, and what must be reconsidered next. Exorail then proposes the appropriate Git action and session transition; it does not perform protected actions without explicit approval.
+### The adapter model in one minute
 
-## Why it is more than spec → plan → tasks
+An adapter profile describes a portable family and capability contract. A local
+binding supplies the implementation, credentials and provider configuration.
+Project Policy decides whether a capability is enabled; Runtime selects an
+eligible adapter in declared order, invokes it with the least necessary scope,
+and normalizes what comes back. Only a material governed outcome is recorded
+in durable project history.
 
-A specification is necessary, but a continuing project also needs to answer:
+```text
+describe → bind → enable → select → invoke → observe → record when required
+```
 
-- Is the current evidence sufficient to begin?
-- Which decision is missing, and who can make it?
-- Is this candidate ready to become a contract?
-- Did a previous result invalidate the next task?
-- What must a new agent read before it acts?
-- Should the current context continue, compact, or hand off?
+This is deliberately not a marketplace model. The three standard families are
+**Integration**, **Execution** and **Projection**. Opaque namespaced extension
+families are permitted by the descriptor model, but they gain no implicit Core
+privilege and do not create a fourth public family.
 
-Exorail keeps those answers in the repository and checks their mechanical consistency. A spec-first flow is excellent at creating a starting plan; Exorail carries that plan through readiness, authority, execution, changing evidence, verification, and resumable delivery. That is the difference between a one-time planning sequence and a control surface for continuing AI-assisted delivery.
+The current portable Integration capability space includes
+`integration.observe_facts@1`, `integration.retrieve_context@1` and
+`integration.consequential_side_effect@1`. A project configures a capability
+activation mode as `disabled`, `manual` or `on_demand`; the declared adapter
+order provides deterministic selection when more than one eligible binding can
+satisfy it.
+
+| Family | Planned integration lane | What it can add | Exorail still owns |
+| --- | --- | --- | --- |
+| **Integration — ALM** | Azure DevOps, Jira, GitHub/GitLab-class systems | Work-item and PR observations, provider identity mapping, explicitly authorized provider-facing mutations | Canonical planning, Decisions, Results, authority and lifecycle semantics |
+| **Integration — CI** | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins and equivalent CI | Normalized build and test observations/evidence | Acceptance and lifecycle authority; a green CI run is not acceptance |
+| **Integration — Identity** | Entra ID, enterprise directories and organization identity providers | Provider identity mapping, routing and discoverability | Provider-neutral member semantics and protected authority |
+| **Integration — Knowledge** | Corporate RAG, document repositories, internal wikis, search and semantic services | Permitted external context retrieval with source provenance | Project Memory and the truth/authority boundary |
+| **Execution** | LangGraph, OpenAI Agents SDK, Claude Agent SDK, Microsoft Agent Framework and Google ADK | Long-running work, runtime fan-out, retries, observation, pause/resume and cancel | Admissible frontier, human acceptance, dependency release and delivery semantics |
+| **Projection** | PR/review, IDE, dashboard, HTML and delivery-topology views | Optimized, rebuildable navigation and provider-facing descriptions | Canonical review, acceptance and project state |
+
+Changing an ALM, knowledge source, runtime or projection should ordinarily
+change an adapter, binding or its configuration—not reinterpret canonical
+project history. That is portability, not a promise of zero operational work.
+
+### Integration Adapters: observe, map, retrieve and act under authority
+
+Integration Adapters connect Exorail to external systems for observations,
+provider identity mapping, permitted knowledge retrieval and explicitly
+authorized consequential mutations. An ALM adapter can observe external work
+state or pull-request context, map an Exorail member to an Azure DevOps or Jira
+identity, and perform a provider-facing action only through Exorail's existing
+authority and External Action boundary. The provider does not become the owner
+of planning or project history.
+
+`integration.observe_facts@1` keeps external observations distinct from
+canonical project meaning. `integration.consequential_side_effect@1` represents
+the separately governed provider-facing route: it still requires the explicit
+authority, idempotency and evidence required for an External Action.
+
+Likewise, CI integrations can normalize observations from GitHub Actions,
+Azure Pipelines, GitLab CI, Jenkins or equivalent systems. Those observations
+can inform verification evidence; they never make a CI provider the project
+authority, and a green run never equals acceptance.
+
+Identity integration is a separate planned lane. It improves mapping, routing
+and discoverability, but **identity mapping is neither Exorail authentication
+nor protected authority**. Roles, provider accounts and member attribution
+cannot synthesize `user:<decision-reference>`.
+
+#### Knowledge Integration Adapter: external context, not external truth
+
+Knowledge is an **Integration** Adapter, not a fourth standard family. The
+shipped portable anchor is `integration.retrieve_context@1`. A planned
+Knowledge Integration Adapter can expose many logical sources behind that one
+normalized retrieval boundary:
+
+```text
+corporate-rag · architecture-docs · security-kb · product-docs
+local-engineering-docs · cross-project-knowledge
+```
+
+Source configuration belongs to the adapter; capability activation belongs to
+Exorail Policy. Enabling `integration.retrieve_context@1` does not silently
+enable every configured corporate source, and enabling a source does not grant
+the project capability. More than one eligible binding may expose that same
+portable capability—for example, a local and a corporate knowledge adapter—and
+Policy still selects one deterministically. Internally, a source may use an
+HTTP API, SDK, MCP, local process, database reader or another transport. The
+portable abstraction remains conceptually:
+
+```text
+retrieve_context(request) → normalized context bundle
+```
+
+Retrieved context is **not verified truth** merely because it crossed a
+recognized adapter boundary. It can inform a Decision, Contract Challenge,
+Result evidence or durable knowledge update, but only material outcomes are
+selectively promoted into canonical state.
+
+```text
+Project Memory                 → durable internal project meaning
+Knowledge Integration Adapter  → permitted external context
+Context Engineering            → selects relevant internal + external context
+Decision / Result / evidence   → promotes material outcomes when justified
+```
+
+This keeps RAG, vector stores, embeddings, chunking, ranking and transport as
+replaceable implementation details rather than Exorail Core semantics.
+
+### Execution Adapters: runtime mechanics, not delivery authority
+
+A planned Execution Adapter can connect Exorail to LangGraph, OpenAI Agents
+SDK, Claude Agent SDK, Microsoft Agent Framework or Google ADK for long-running
+execution, runtime-specific parallelism, sub-agents, retries, observation,
+pause/resume and cancellation. None of these named integrations ships with 0.2.
+
+The current capability contract already recognizes `execution.durable@1`,
+`execution.observe@1`, `execution.pause_resume@1` and `execution.cancel@1`.
+Those portable execution semantics remain separate from any one runtime.
+
+**LangGraph execution success is not Exorail completion.** The runtime must not
+own executable-frontier authority, protected human authority, acceptance,
+dependency release or whole-Story outcome. It receives Exorail-admissible work
+and returns normalized observations or result candidates; Exorail governs the
+delivery semantics around them.
+
+Execution adapters do not directly chain to arbitrary other adapters. When a
+runtime needs permitted external knowledge, the boundary remains governed:
+
+```text
+Execution Adapter → normalized capability request → Exorail Runtime
+                  → integration.retrieve_context@1 → Knowledge Integration Adapter
+```
+
+### Projection Adapters: views that can always be rebuilt
+
+Projection Adapters derive useful views from Exorail state: review or PR
+surfaces, IDE navigation, dashboards, HTML views and team/delivery topology.
+The current contract recognizes `projection.render@1`. A rendered
+provider-facing description is a Projection; publishing or mutating it in a
+provider is a separately authorized Integration side effect.
+
+Projections remain derived, rebuildable and non-authoritative. They improve
+ergonomics without becoming a competing project model.
+
+### Compose adapters around one Project Memory
+
+One planned composition can combine Azure DevOps or Jira observations, a
+multi-source Knowledge Integration Adapter, a LangGraph Execution Adapter and
+a review or IDE Projection Adapter:
+
+```text
+ALM / CI / identity ──┐       corporate knowledge ──┐
+                       └── Integration Adapters ────┤
+                                                     ↓
+                    Exorail: Project Memory · Decisions · authority
+                              evidence · delivery graph · revision history
+                                                     ↓
+                          Execution Adapter → runtime execution
+                                                     ↓
+                          Projection Adapter → review / IDE / dashboard
+```
+
+This can add enterprise observations, external context, long-running or
+multi-agent runtime mechanics and optimized navigation while Exorail retains
+canonical meaning, authority, Results, acceptance, integration semantics and
+delivery topology.
+
+### Fail closed, least privilege, replaceable by design
+
+Adapter presence does not activate a capability. Presence, Policy activation,
+local availability, invocation and authority remain separate; missing optional
+binding blocks only the delegated route, never the repository-native route.
+Selection is deterministic, based on the ordered eligible adapter IDs in
+Policy, rather than an AI choosing a provider ad hoc.
+
+Each route receives only the scope it needs: a knowledge adapter receives a
+query, work identity and permitted source scope; an execution adapter receives
+a governed work envelope and deliberately routed knowledge; a projection
+adapter receives only the state needed to render its view. Credentials remain
+local and binding-owned. This supports enterprise integration without claiming
+that Exorail is an IAM system.
+
+Professional Progressive means adding this operational power without upgrading
+from a weak project model to a different enterprise one. The same durable
+semantics survive expansion from the complete native route to planned ALM, CI,
+identity, knowledge, execution and projection integrations.
+
+## Architectural deep dives
+
+### Exorail Project Memory
+
+**Project Memory** is the name for the durable, navigable project continuity
+created when Exorail keeps material knowledge and governed delivery state in the
+repository. It is not a new database, a hosted service or a separate canonical
+record type. It is the combined effect of repository-native intent,
+architecture, constraints, Decisions, Stories, Tasks, Results, receipts,
+revisions, evidence and rebuildable navigation.
+
+It has useful similarities to a *second brain*: a person, session or agent may
+forget, while the project does not have to. The analogy stops there. Exorail is
+not a personal note store or an undifferentiated archive; it preserves
+project-relevant meaning with provenance, lifecycle and authority boundaries.
+
+It also has useful **LLM-oriented wiki** properties: the knowledge is
+human-readable, machine-consumable, persistent, incrementally maintained and
+available to a new coding agent. A wiki mainly answers “what do we know?”;
+Exorail additionally keeps “why do we believe it?”, “what was decided?”, “what
+changed?”, “what was verified?”, “what remains uncertain?” and “what may happen
+next?” connected to delivery. It is therefore not merely a wiki.
+
+Project Memory is intentionally selective. It preserves material changes that
+enter canonical project meaning or governed delivery state; it is **not** a
+transcript of every prompt, chat message, token, keystroke, tool call, runtime
+event, checkpoint or heartbeat. Minimal Execution Runs retain the durable
+governance summary of a controlled attempt while runtime telemetry remains
+runtime-owned.
+
+The relationships are graph-shaped without requiring a graph database, ontology
+or graph-query platform:
+
+```text
+Decision ──affects──→ Story ──contains──→ Task ──produces──→ Result
+                              ↑                 │              │
+revision ──supersedes future work                └─evidence────┘
+                              │
+                         dependencies
+```
+
+![Decision affects Story, Story contains Task, Task produces Result, with plan revisions, dependencies and receipts beneath them. Project Memory keeps material meaning and leaves runtime telemetry runtime-owned.](assets/project-memory.svg)
+
+These connected records let a reader navigate **Past / Present / Next**:
+
+| View | What it answers | Examples |
+| --- | --- | --- |
+| **Past** | Why are we here? | Decisions, accepted Results, evidence, receipts, integration identity and superseded revisions |
+| **Present** | What is true or blocked now? | Active work, readiness, open Decisions, review state and the executable frontier |
+| **Next** | What is planned or currently admissible? | Held dependencies, possible executable work, pending Decisions, replanning and evolution routes |
+
+“Next” is not a prediction. It is the planned or admissible future currently
+represented by durable project state.
+
+**Context engineering** is how this memory becomes usable in a particular
+session. `.exorail/KNOWLEDGE_INDEX.md`, the active Story or Task, required reads,
+Decisions, constraints and evidence identify the smallest relevant canonical
+source set. Handoffs and model switches orient the incoming actor back through
+that state. Exorail does not require RAG, embeddings, a vector database or a
+context server, and no summary acquires authority merely because it is concise.
+
+Trust remains explicit inside that context. A mechanically observed fact, an
+agent declaration, a supported inference, a human Decision and an unverified
+limit are not interchangeable forms of truth. Exorail keeps those distinctions
+visible so a convenient summary or plausible generated statement cannot quietly
+become durable authority. Reusable technical Episodes require accepted Result
+provenance; that grounds reusable knowledge without claiming automatic semantic
+validation of arbitrary prose.
+
+This is why Project Memory is operational rather than passive: it makes gaps,
+pending Decisions, stale revisions, held dependencies, review needs and the next
+admissible work visible. It helps determine what may happen next, while explicit
+human authority remains a separate requirement for protected progression.
+
+Preserved Decisions, evidence, Results, receipts, review identity and revisions
+also make delivery more auditable as an emergent outcome. This is traceability
+for the project, not a claim of compliance certification or a separate audit
+subsystem.
+
+### Governed delivery graph
+
+Exorail behaves as a **governed delivery graph**. This describes delivery
+semantics, not an execution-graph runtime or scheduler.
+
+```text
+canonical project state
+        ↓
+dependencies + declared scope + Policy + authority
+        ↓
+executable frontier
+        ↓
+independent eligible Tasks may fan out
+        ↓
+people / coding agents / isolated sessions / optional runtimes
+        ↓
+Results + proportionate verification
+        ↓
+human acceptance + verified integration
+        ↓
+dependent work can converge into a new frontier
+```
+
+Exorail may declare `sequential` or `parallel` execution policy where required,
+but these are not separate product modes. Policy can constrain concurrency; the
+actual delivery topology is derived from dependencies, declared scope,
+isolation, authority, acceptance and integration state. A parallel wave is
+permitted only when that governed state allows it, and a sequential Story cannot
+be bypassed. Parallelism is therefore not a claim that Exorail natively spawns
+agents: it is a governed option for independent work, while closeout remains
+serial where review, acceptance, integration or a dependency requires it.
+
+This has useful properties often associated with graph-engineered agent
+workflows, while Exorail deliberately owns delivery semantics rather than
+execution-graph runtime mechanics.
+
+The graph also explains why more agents do not mean less control. Authoring,
+deterministic validation, protected authority, human acceptance and integration
+are deliberately separate. An LLM can propose meaning and carry out scoped
+work, but it cannot manufacture the authority that validates its own mutation or
+advance the project by declaring success.
+
+### Authority, Decisions and non-self-legitimizing agents
+
+The LLM may author meaning, but it must never be the authority that decides its
+own canonical mutation is valid enough to advance the project. Authoring,
+deterministic validation, protected authority, human acceptance and integration
+are distinct operations.
+
+Where an ambiguity, contradiction, unsafe scope or missing evidence blocks
+work, Exorail routes it as a Decision or typed Contract Challenge. The request
+records evidence, impact, options, recommendation, requested decision and the
+next permitted action; it does not pretend to infer a semantic truth. Where
+protected authority is required, it must be supplied explicitly through
+`user:<decision-reference>`; roles, member attribution, agents, chats and
+runtimes cannot synthesize or inherit it.
+
+Authority is therefore an input to a mechanical operation, never a product of
+one. This prevents an agent from converting a plausible assumption, successful
+execution or its own review into permission to progress governed project state.
+
+![Authoring, deterministic admission, protected human authority, acceptance and integration as five separate operations, with the shortcut from authoring to authority explicitly blocked.](assets/authority-separation.svg)
+
+### Fail-closed capabilities
+
+**Available does not mean enabled; enabled does not mean authorized.**
+
+An adapter descriptor may be present without being activated by project Policy.
+An activated capability may be unavailable on the local host. A locally
+available capability may still lack the explicit authority required for a
+consequential action. Exorail therefore separates:
+
+```text
+presence ≠ activation ≠ availability ≠ invocation ≠ authority
+```
+
+Capability resolution also checks the selected descriptor, local binding, live
+capability, conformance and health before an optional delegated route is used.
+Failure blocks that route rather than creating new permission; it does not make
+the repository invalid or remove the complete native route. Adapters extend the
+workflow, but never acquire canonical authority merely by being installed,
+reachable or self-declared.
+
+![Five independently required conditions: presence, activation, availability, explicit human authority and invocation. They are not stages, and none of them implies the next.](assets/fail-closed.svg)
+
+### Controlled execution and consequential external actions
+
+**A reachable tool is not permission to mutate the world.**
+
+For consequential or destructive external mutations, Exorail records a durable
+External Action rather than treating a successful tool call as sufficient
+governance:
+
+```text
+intent → classification → explicit authority → invocation → outcome / evidence
+```
+
+The record carries the target, consequence, authority and evidence, while a
+project-global idempotency key identifies the logical mutation across adapter
+changes. This makes retries and replacement adapters less likely to repeat the
+same consequential action. It is not enterprise IAM, a transaction manager or
+a promise to govern routine reads and non-consequential writes.
+
+Controlled execution is similarly bounded. A minimal Execution Run preserves
+the governed attempt, terminal outcome and relevant evidence after an external
+runtime disappears or changes; worker topology, prompts, checkpoints,
+heartbeats and event streams remain runtime-owned.
+
+### Review integrity and orientation
+
+**A review stays attached to the exact change that was reviewed.**
+
+Review readiness observes the explicit Git range and receipt-bound review
+identity rather than assuming a later `HEAD` is equivalent. It checks declared
+and observed scope, canonical readability, stale projections, stale review
+identity and open Decisions, so a later commit or rebase cannot silently turn an
+older review into approval of different code.
+
+The generated Review Brief is read-only orientation: it gathers scope, evidence,
+review focus, unverified areas and open Decisions from declared sources so a
+reviewer does not reconstruct the task from scattered context. It is never an
+approval record. `ready_for_review` is preparation, not acceptance or
+integration; when the identity becomes stale, the range must be regenerated and
+the changed scope resolved before human acceptance is requested.
+
+These checks establish review preparation and mechanical identity, not arbitrary
+semantic correctness, build quality, security approval or a whole-Story outcome.
+
+### Resumability, replan and targeted recovery
+
+Exorail is intended for continuing software work, not a one-shot agent run.
+When a session ends, a person changes, an LLM is replaced or the plan meets new
+evidence, durable state and required reads provide the route back in. Local
+identity, worktree state and runtime scratch context remain local rather than
+becoming shared project truth.
+
+A material change creates a new plan revision and identifies the affected
+future work. Completed Results and receipts stay interpretable; unrelated
+accepted history is not erased merely because one route becomes stale. Recovery
+is also bounded: repeated safe remediation stops after three cycles and surfaces
+the blocker, evidence, required Decision or need for a materially different plan
+rather than retrying indefinitely.
+
+This is mechanical discipline, not a claim of automatic semantic understanding.
+0.2 detects defined lifecycle, dependency/revision, projection, scope and review
+identity drift, but semantic preflight, conservative change-impact analysis and
+convergence assessment remain post-0.2 capabilities.
+
+### Controlled execution loops and successor Tasks
+
+An execution attempt is a durable, controlled slice of one Task at one plan
+revision. Attempts are contiguous (`1`, `2`, `3`) and each earlier attempt must
+be terminal before the next can start. A terminal `result_candidate` closes that
+slice: it is routed to review and acceptance rather than retried. A fourth
+attempt is rejected. This makes the stop visible instead of treating a stuck
+agent, session handoff or recurring failure as permission to keep trying.
+
+The bounded limit is an exit into a decision, not a dead end. When new evidence
+requires a material replan, Exorail preserves the old revision and its immutable
+attempt records. An unattempted affected Task can move to the current revision.
+A Task with one or more recorded attempts stays on its original revision, is
+marked `superseded`, and receives a successor Task at the current revision that
+starts again at attempt `1`. The resolved Decision records the successor and
+the protected authority; the Story remains `replan-needed` until current work is
+again ready, blocked or active.
+
+That separation lets a returning person or agent distinguish the next valid
+action: continue a remaining contiguous attempt, resolve the blocking Decision,
+or take the named successor. It does not automatically decide whether to replan,
+split work or accept an outcome. Those remain explicit human and project
+decisions. The complete ordered procedure is in the
+[operating flow](.exorail/method/OPERATING_FLOW.md#change-and-parallel-work).
+
+### Professional Progressive
+
+**Professional Progressive** describes Exorail's adoption philosophy:
+professional delivery semantics from the first repository, with progressively
+richer operational depth as the project needs it.
+
+The small native baseline—repository + Exorail + one capable LLM-powered coding
+agent—already keeps durable project meaning, explicit Decisions, evidence,
+authority boundaries, verification discipline, review integrity, history and
+resumability. It is not a weak “starter mode”. Git/CI observation, identity and
+ALM integration, external knowledge, execution runtimes, optional multi-agent
+orchestration infrastructure and specialized projections may be introduced later
+to improve automation, scale and ergonomics.
+
+Those additions extend routes; they do not own canonical project meaning or
+force an architectural migration. The result is portability: different tools can
+be used where they are useful, while the project remains readable and governable
+without being locked to a particular provider, runtime or adapter. This enables
+a practical best-tool-per-task outcome; it does not claim that Exorail
+automatically chooses the best model, agent or runtime.
+
+## What Exorail deliberately does not claim
+
+Exorail guides and governs delivery; it does not pretend to replace engineering
+judgment.
+
+- `ready_for_review` is preparation, **not approval**.
+- A Result is not acceptance; acceptance is not integration; integration is not
+  a whole-Story outcome.
+- Team attribution is not authentication and does not grant protected authority.
+- Repository validation proves declared mechanical invariants, not arbitrary
+  semantic correctness, architecture quality, build correctness, security or
+  every product property.
+- External knowledge is retrieved context, not automatically verified truth.
+- An optional capability being unavailable does not make the repository invalid.
+- No specific LLM, coding-agent vendor, runtime or ALM is required.
+
+**Semantic preflight, conservative change-impact analysis and convergence
+assessment remain post-0.2 capabilities and are not claimed by this release.**
+Likewise, richer deterministic verification-requirement coverage is an evolution
+area; 0.2 already carries verification profiles and evidence, but the README
+does not claim that every applicable test class is automatically derived and
+proved complete.
 
 ## Who it is for
 
-Exorail is for structured, continuing software work where durable context, verification, handoff, and explicit authority justify a small process overhead. It is especially useful when an agent returns after a session break, the repository is unfamiliar, requirements arrive as documents, or a change affects future work.
+Exorail is for continuing software work where durable context, explicit
+authority, verifiability and handoff justify a small process overhead:
+greenfield systems, unfamiliar or brownfield repositories, modernization,
+work shared by people and AI agents, parallel delivery, and software expected to
+change after its first release.
 
-It is not intended for throwaway scripts, brief experiments, or trivial one-off edits. Today it governs one shared delivery cursor with sequential handoff; team-scale parallel coordination is a future extension, not a claim of the current release.
+It is not intended for throwaway scripts, brief experiments or trivial one-off
+edits.
 
 ## What is stored in the repository
 
 | Artifact | Purpose |
 | --- | --- |
-| `AGENTS.md` | Fail-closed entrypoint for coding agents |
-| `.exorail/PROJECT_READINESS.md` | What is sufficient, missing, or invalidated |
-| `.exorail/KNOWLEDGE_INDEX.md` | Where durable project knowledge lives and what to read |
-| `.exorail/DECISIONS.md` | Human authority, rationale, and durable consequences |
-| `.exorail/CURRENT_CURSOR.md` | Current state, required reads, and next allowed action |
-| Delivery Contracts, tasks, and results | Approved intent, execution evidence, impact, and recovery path |
-| Node.js validators | Deterministic checks for state, authority, paths, and text integrity |
+| `AGENTS.md` and `.exorail/AGENTS.md` | Entrypoint and shared operating contract |
+| `.exorail/WORKFLOW_CONFIG.md` and `.exorail/PROJECT_READINESS.md` | Schema, roots, policy defaults, readiness and invalidation |
+| `.exorail/KNOWLEDGE_INDEX.md` | Routing to durable intent, architecture, constraints and evidence |
+| `.exorail/DECISIONS.md` | Human authority, rationale and durable consequences |
+| `.exorail/planning/**` | Epics, Features, Stories, Tasks, exceptional Contracts and immutable Results |
+| `.exorail/projections/**` | Generated navigation and review views, never manual authority |
+| `.exorail/TEAM.json` | Project-local provider-neutral attribution, created during setup; not identity or authority |
+| `.exorail/tools/**` | Deterministic validation and read-only derivations; none grants authority |
 
-## Start in a target repository
+## Install the clean break
 
-Copy `.exorail/` and `AGENTS.md` into the target repository root. They are required. `CLAUDE.md` is optional and only needed when the target uses Claude Code.
+Exorail 0.2 is a clean break.
 
-The installed workflow does not require PowerShell. The commands below are only copy alternatives.
+Nothing from an earlier version is converted, and no upgrade path is provided.
+If the target already has a workflow container, the commands below move it aside
+so this one installs correctly; what you keep from it afterwards is your call.
+
+Your own source, tests, documentation and build files are not part of the
+workflow container and are never touched by adoption. They are the project:
+nothing here moves, rewrites or backfills them.
+
+Follow the shipped route:
+
+```text
+AGENTS.md → .exorail/method/PROJECT_SETUP.md → .exorail/method/OPERATING_FLOW.md → .exorail/tools/README.md
+```
+
+On Windows, enable `core.longpaths` before creating canonical records; their
+paths can exceed the ordinary Windows limit, and Git otherwise reports success
+while staging nothing.
+
+## Install in a target repository
+
+Copy `.exorail/` and `AGENTS.md` into the target repository root. They are
+required. `CLAUDE.md` is optional and only needed when the target uses Claude
+Code. The workflow itself does not require PowerShell; the commands below are
+only copy alternatives.
+
+The bash form is the route on Linux and macOS. The PowerShell form is the route
+on Windows; PowerShell 7 runs elsewhere, but 0.2 does not promise the PowerShell
+form as a cross-platform path and does not test it as one.
 
 ### Bash
 
 ```bash
 target=/path/to/target-repository
+
+# Move an existing container aside first. Copying onto one does not replace it:
+# it nests the new payload inside the old one, and the entry point keeps
+# resolving to the old rules with no error shown.
+if [ -e "$target/.exorail" ]; then
+  mv "$target/.exorail" "$target/.exorail-retired-$(date +%Y%m%d)"
+fi
+
 cp -R .exorail "$target/.exorail"
 cp AGENTS.md "$target/AGENTS.md"
 # Optional for Claude Code:
 # cp CLAUDE.md "$target/CLAUDE.md"
+
+# Prove the payload landed where the entry point looks:
+test -f "$target/.exorail/AGENTS.md" && test ! -e "$target/.exorail/.exorail"
 ```
 
 ### PowerShell
 
 ```powershell
 $target = 'C:\path\to\target-repository'
+
+# Move an existing container aside first, for the same reason as above.
+$existing = Join-Path $target '.exorail'
+if (Test-Path $existing) {
+  Move-Item $existing "$existing-retired-$(Get-Date -Format 'yyyyMMdd')"
+}
+
 Copy-Item .exorail (Join-Path $target '.exorail') -Recurse
 Copy-Item AGENTS.md (Join-Path $target 'AGENTS.md')
 # Optional for Claude Code:
 # Copy-Item CLAUDE.md (Join-Path $target 'CLAUDE.md')
+
+# Prove the payload landed where the entry point looks:
+(Test-Path (Join-Path $target '.exorail/AGENTS.md')) -and -not (Test-Path (Join-Path $target '.exorail/.exorail'))
 ```
 
-Do not overwrite existing root instruction files or an existing workflow container without reviewing and deliberately merging the durable rules.
+The workflow container is replaced, never merged: a hybrid container is the
+failure this section exists to prevent. Root instruction files are overwritten
+too, so move aside anything you want to keep before running the commands.
 
-Then ask the chosen coding agent:
+Then tell the chosen coding agent:
 
 > Read and execute `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`. Configure this repository from the available evidence, identify blocking gaps, and propose the first safe delivery slice.
 
-## Validate
+## Commands an adopter can use
 
-Use a maintained Node.js LTS release from the target repository root:
+Run these from the target repository with a maintained Node.js LTS release:
 
-```bash
-node .exorail/tools/validate-workflow.mjs
-node .exorail/tools/validate-text-files.mjs AGENTS.md .exorail/AGENTS.md
-# Include CLAUDE.md only when you copied the optional bridge:
-# node .exorail/tools/validate-text-files.mjs AGENTS.md CLAUDE.md .exorail/AGENTS.md
-```
+| Need | Command |
+| --- | --- |
+| Validate canonical workflow state | `node ./.exorail/tools/validate-workflow.mjs` |
+| Regenerate derived navigation | `node ./.exorail/tools/generate-projections.mjs` |
+| See executable work | `node ./.exorail/tools/derive-executable-frontier.mjs --story US-<slug>` |
+| Prepare a review range | `node ./.exorail/tools/derive-review-readiness.mjs --base-sha <base> --head-sha <head> --json` |
+| Create a review orientation | `node ./.exorail/tools/derive-review-brief.mjs --story US-<slug> --base-sha <base> --head-sha <head> --json` |
+| Inspect declared team attribution | `node ./.exorail/tools/derive-team-view.mjs --json` |
+| Check workflow text encoding | `node ./.exorail/tools/validate-text-files.mjs AGENTS.md .exorail/AGENTS.md` |
 
-The validators check mechanical consistency and text integrity. They do not replace product review, semantic architecture review, builds, tests, security analysis, or human decisions. GitHub Actions Verify completed for `v0.1.0` on Windows, Linux, and macOS runners; every new release must earn the same claim on its exact revision. It validates these Node.js checks only and is not a general platform-support claim.
+`generate-payload-manifest.mjs` is maintainer-only: it identifies the Exorail
+payload during package closeout and is not part of a target project's workflow.
+
+To move work to a different LLM-powered coding agent, have the incoming agent
+read and execute `.exorail/prompts/SWITCH_LLM_PROMPT.md`; it re-enters through
+durable repository state rather than inheriting another agent's private chat.
+
+Every `derive-*` command is read-only. Its output can orient work and review,
+but never grants authority, opens a pull request, merges, publishes or contacts
+a provider. `validate-workflow.mjs` emits stable findings, and
+`.exorail/method/FINDINGS.md` describes the correction for each one.
+
+## Recover when the workflow stops
+
+When Exorail blocks a path, read the named finding and the active Story or
+Task. The next action is deliberately practical:
+
+| You see | Recover by |
+| --- | --- |
+| Missing readiness | Satisfying the named dependency, current Contract where required, and verification |
+| Missing `user:` authority | Presenting evidence, impact, options and the requested decision to the human; never inventing authority |
+| Unavailable optional capability | Using the documented native route or binding an adapter locally |
+| Stale review identity | Deriving the range from the receipt's `reviewed_sha`, regenerating readiness and resolving changed scope |
+| Invalid lifecycle or stale projection | Recording the blocker or replanning, regenerating derived views, then resuming from canonical state |
+
+These checks guide recovery; they do not automate a protected decision.
+
+## Configure local team identity
+
+`.exorail/TEAM.json` is the shared, provider-neutral member registry. Owner,
+assignee, reviewer and approval owner are routing concepts only. Collectively,
+none grants protected `user:` authority.
+The effective assignee for `ready` or `active` work must resolve to an active
+team member; a member may become inactive after completed work so historical
+attribution remains valid.
+
+For a personal derived view, create `.exorail/local/identity.json` with one
+`member_id` from that registry. The shipped `.exorail/local/.gitignore` keeps
+this binding out of Git; it binds only the local clone or machine and is neither
+authentication nor authority.
+
+## Optional extensions
+
+Adapters can later add external identity mapping, ALM or CI integration,
+execution runtimes, knowledge retrieval and projected views. They are
+replaceable: provider and runtime details stay local to their adapter while
+Exorail retains the durable project meaning, Result evidence and authority
+trail.
+
+Their absence affects only a delegation route, never the native repository route.
+That route remains complete.
+
+## Further reading
+
+- [Operating flow](.exorail/method/OPERATING_FLOW.md)
+- [Setup](.exorail/method/PROJECT_SETUP.md)
+- [Workflow rules](.exorail/method/WORKFLOW_RULES.md)
+- [Structure reference](.exorail/method/STRUCTURE_REFERENCE.md)
+- [Finding reference](.exorail/method/FINDINGS.md)
+- [Tool reference](.exorail/tools/README.md)
 
 ## Version and license
 
-Product version: `v0.1.1`.
+Release: `v0.2.0`.
 
-Workflow schema: `0.5` in `.exorail/WORKFLOW_CONFIG.md`. Product releases and workflow-schema compatibility are separate concerns.
+Workflow schema: `0.2` in `.exorail/WORKFLOW_CONFIG.md`. Product releases and
+workflow-schema compatibility are separate concerns.
 
 Licensed under the [MIT License](LICENSE).

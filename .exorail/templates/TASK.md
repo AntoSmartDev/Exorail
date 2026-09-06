@@ -1,101 +1,108 @@
-# TASK.md - TXXX - <Title>
+---
+schema: "0.2"
+id: TASK-<slug>
+type: task
+title: <specific executable outcome>
+parent: US-<parent-slug>
+status: planned
+plan_revision: 1
+depends_on: []
+affected_paths: []
+contract_required: not_required
+# Optional ownership. Uncomment to populate TEAM_VIEW, which lists only records
+# naming a role. Role IDs use [a-z][a-z0-9_-]*, for example delivery_owner.
+# owner_role: <owner-role-id>
+# reviewer_role: <reviewer-role-id>
+# owner_member_id: <member-id>
+# assignee_member_id: <member-id>
+# reviewer_member_id: <member-id>
+# Optional Task overrides — omit all three unless this Task must be at least as
+# restrictive as its parent Story: execution_mode: sequential | parallel;
+# verification_profile: minimal | standard | full.
+# execution_mode: sequential
+# verification_profile: standard
+# Controlled-execution fields — copy only when a Task enters controlled work:
+# execution:
+#   contract: controlled-task@1
+# acceptance_refs: [US-<slug>-AC-1]
+# execution_isolation: parallel_safe | parallel_hunk_disjoint | sequential_only
+# change_scope:
+#   change_class: routine
+#   risk: low
+#   corroborated_paths: []
+#   material_replan: false
+# Optional forecast; resolved Policy may require it for selected work.
+# forecast:
+#   effort_band: M
+#   confidence: medium
+#   assumptions: []
+created_at_utc: <RFC-3339 UTC>
+updated_at_utc: <RFC-3339 UTC>
+---
 
-## Identity
+# Task: <title>
 
-- delivery unit: `DUxxx-name`
-- milestone: `none | Mxx-name`
-- task candidate: `none | TCxxx-name`
-- status: `ready | in_progress | verifying | blocked | completed`
+## Intent
 
-## Contract basis
+<why this executable task is needed>
 
-- contract: `<delivery-unit-path>/CONTRACT.md`
-- based on contract revision: `1`
-- depends on: `none | Txxx-name, ...`
+## Expected outcome
 
-## Transition check
+<observable implementation outcome>
 
-- status: `valid | update_required | reshape_required | blocked`
-- checked at: `YYYY-MM-DD`
-- source task candidate: `none | TCxxx-name`
-- previous result reviewed: `yes | no | not_applicable`
-- contract revision current: `yes | no`
-- dependency results reviewed: `yes | no | not_applicable`
-- repository changes reviewed: `yes | no`
-- decisions and canonical sources reviewed: `yes | no`
-- assumptions still valid: `yes | no`
-- outcome:
+## Open questions
 
-## Outcome
+<open decisions or write none>
 
-Describe one observable result.
+<!-- Blocked Decision-record example: copy and uncomment only when this Task is blocked.
+  A non-empty record states the concrete blocker, the next human or dependency
+  action, and the condition that permits resumption. It records context only;
+  an open typed Challenge remains in `## Decision requests` and is not repeated
+  here.
 
-## Scope
+  ## Decision record
 
-### In scope
+  - blocker: <concrete blocker>
+  - next action: <human decision or dependency action>
+  - resume when: <observable resumption condition>
+-->
 
-- ...
+<!-- Decision-request example: copy and uncomment only when a runtime request is needed.
+  A Challenge is hosted only by its affected Task. Keep `resolution` and
+  `authority_ref` empty while it is open; after human resolution both are
+  required. `DECISIONS.md` is the durable project-decision register, never a
+  runtime request host.
 
-### Out of scope
+  ## Decision requests
 
-- ...
+  | request_id | kind | trigger | evidence | impact | options | recommendation | requested_decision | resolution | authority_ref | plan_revision | recorded_at_utc |
+  | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+  | DR-0001 | challenge | concrete_risk | Evidence observed. | Delivery impact. | Confirm or replan. | Confirm the plan. | Confirm current plan. |  |  | 1 | <RFC-3339 UTC> |
+-->
 
-## Required reads
+## Contract requirement
 
-- `.exorail/PROJECT_READINESS.md`
-- `<delivery-unit-path>/CONTRACT.md`
-- ...
-
-## Preconditions
-
-- blocking decisions: `none`
-- required blueprint entries:
-- expected branch:
-- security prerequisites: `none | <required rule, approval, secret handling, auth expectation>`
-
-## Execution guidance
-
-- reasoning level: `low_reasoning | medium_reasoning | deep_reasoning`
-
-## Assumptions and trade-offs
-
-- confirmed assumptions:
-- material uncertainty: `none`
-- alternative interpretations: `none`
-- simpler approach considered:
-- security-sensitive assumptions: `none`
+`contract_required` is `not_required` for normal work. Set it to `required`
+only when the approved resolver identifies an exceptional boundary; only that
+case needs a sibling Task Contract before execution.
 
 ## Acceptance
 
-- [ ] ...
+<task-specific acceptance conditions>
 
-## Verification
+## Execution and review
 
-- planned layers: `unit | integration | architecture | manual`
-- command or manual check:
-- expected evidence:
-- evidence reference target:
-- omitted layers and rationale: `none`
+<acceptance_refs, derived execution isolation, dependencies, verification profile,
+and whether human acceptance is required before Story-base integration>
 
-## Plan and checks
+## Quality gate
 
-1. step:
-   - verify:
-2. step:
-   - verify:
+Run the derived verification profile and compare the implementation with every
+acceptance reference. Remediate only while the attempt remains safe and within
+scope, for at most three cycles. A clean result is `review_pending`, not
+accepted or integrated. Stop for a typed human Decision when a blocker,
+material replan, unsafe scope, missing evidence or non-convergence occurs.
 
-## Candidate changes
+## Handoff
 
-- ...
-
-## Contract challenge (conditional)
-
-Omit this section when no material challenge occurred. When a challenge opens or is resolved, materialize the complete record defined by the Contract Challenge Rule in `.exorail/method/OPERATING_FLOW.md`.
-
-Resolution fields inside the challenge record are local specializations of the canonical authority decision record defined in `STRUCTURE_REFERENCE.md`.
-
-## Notes
-
-This task is the executable materialization of the named task candidate. Do not
-duplicate canonical project context or future backlog items. Reference their
-owning sources.
+<evidence, reviewer, review/integration route, and next workflow state>

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 676" width="880" height="676" role="img" aria-labelledby="title desc">
+  <title id="title">One Exorail delivery, end to end</title>
+  <desc id="desc">The SSO example as a rail: Understand, Define, Deliver, Accept and Evolve. Two independent Tasks run in parallel while the integration Task stays held; human acceptance, verified integration and whole-Story review are separate amber gates.</desc>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="ah" d="M 0 0 L 10 5 L 0 10 z"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .head { font-size: 19px; font-weight: 700; fill: #1f2933; }
+    .stage { font-size: 15px; font-weight: 600; fill: #1f2933; }
+    .body { font-size: 13.5px; fill: #1f2933; }
+    .note { font-size: 12.5px; fill: #52606d; }
+    .key { font-size: 12px; fill: #52606d; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; fill: #52606d; }
+    .box { fill: #3f6fb5; fill-opacity: .07; stroke: #3f6fb5; stroke-width: 2; }
+    .boxh { fill: #b5762f; fill-opacity: .09; stroke: #b5762f; stroke-width: 2; }
+    .boxm { fill: #7a8699; fill-opacity: .06; stroke: #7a8699; stroke-width: 2; stroke-dasharray: 5 4; }
+    .stop { fill: #3f6fb5; }
+    .gate { fill: #b5762f; }
+    .rail { stroke: #7a8699; stroke-width: 3; fill: none; }
+    .arrow { stroke: #7a8699; stroke-width: 2; fill: none; marker-end: url(#a); }
+    .ah { fill: #7a8699; }
+    .blocked { stroke: #b5762f; stroke-width: 2.5; fill: none; stroke-dasharray: 6 5; }
+    .cross { stroke: #b5762f; stroke-width: 2.5; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) {
+      .head, .stage, .body { fill: #e6edf3; }
+      .note, .key, .mono { fill: #9aa7b4; }
+      .box { fill: #6ea8fe; fill-opacity: .12; stroke: #6ea8fe; }
+      .boxh { fill: #e0a34a; fill-opacity: .14; stroke: #e0a34a; }
+      .boxm { fill: #8b98a5; fill-opacity: .10; stroke: #8b98a5; }
+      .stop { fill: #6ea8fe; }
+      .gate { fill: #e0a34a; }
+      .rail, .arrow { stroke: #8b98a5; }
+      .ah { fill: #8b98a5; }
+      .blocked, .cross { stroke: #e0a34a; }
+    }
+  </style>
+
+  <text class="head" x="40" y="34">One delivery, end to end</text>
+  <text class="mono" x="40" y="58">"Add SSO to this existing application."</text>
+  <circle class="stop" cx="612" cy="54" r="7"/>
+  <text class="key" x="626" y="58">protocol stage</text>
+  <circle class="gate" cx="742" cy="54" r="7"/>
+  <text class="key" x="756" y="58">human authority</text>
+  <line class="rail" x1="150" y1="104" x2="150" y2="606"/>
+  <circle class="stop" cx="150" cy="118" r="9"/>
+  <text class="stage" x="40" y="114">Understand</text>
+  <rect class="box" x="190" y="94" width="650" height="56" rx="8"/>
+  <text class="body" x="206" y="120">Read the relevant product, architecture and engineering evidence</text>
+  <text class="note" x="206" y="139">Record what is known, what is missing, what needs a human Decision</text>
+  <circle class="stop" cx="150" cy="200" r="9"/>
+  <text class="stage" x="40" y="196">Define</text>
+  <rect class="box" x="190" y="176" width="650" height="56" rx="8"/>
+  <text class="body" x="206" y="202">Define one Story: outcome, acceptance, risk and dependencies</text>
+  <text class="note" x="206" y="221">Derive the executable frontier — what may start, and what is held</text>
+  <circle class="stop" cx="150" cy="300" r="9"/>
+  <text class="stage" x="40" y="296">Deliver</text>
+  <rect class="box" x="190" y="254" width="210" height="44" rx="8"/>
+  <text class="body" x="295" y="281" text-anchor="middle">backend Task</text>
+  <rect class="box" x="190" y="310" width="210" height="44" rx="8"/>
+  <text class="body" x="295" y="337" text-anchor="middle">frontend Task</text>
+  <path class="arrow" d="M 400 276 L 470 276 L 470 292 L 552 292"/>
+  <path class="arrow" d="M 400 332 L 470 332 L 470 312 L 552 312"/>
+  <rect class="boxm" x="560" y="260" width="280" height="66" rx="8"/>
+  <text class="body" x="700" y="284" text-anchor="middle">integration Task</text>
+  <text class="note" x="700" y="303" text-anchor="middle">held until upstream work is</text>
+  <text class="note" x="700" y="320" text-anchor="middle">accepted and integrated</text>
+  <text class="note" x="190" y="380">Independent Tasks may run in isolated worktrees; the dependent Task stays held.</text>
+  <rect class="box" x="190" y="396" width="650" height="44" rx="8"/>
+  <text class="body" x="206" y="423">Each Task is verified and produces an immutable Result (review_pending)</text>
+  <circle class="gate" cx="150" cy="478" r="9"/>
+  <text class="stage" x="40" y="474">Accept</text>
+  <rect class="boxh" x="190" y="456" width="310" height="44" rx="8"/>
+  <text class="body" x="345" y="483" text-anchor="middle">Human acceptance</text>
+  <rect class="boxh" x="530" y="456" width="310" height="44" rx="8"/>
+  <text class="body" x="685" y="483" text-anchor="middle">Verified integration</text>
+  <text class="note" x="190" y="522">Only now does the dependent Task become eligible.</text>
+  <rect class="boxh" x="190" y="534" width="650" height="44" rx="8"/>
+  <text class="body" x="206" y="561">Whole-Story review — mandatory once every Task is integrated</text>
+  <circle class="stop" cx="150" cy="606" r="9"/>
+  <text class="stage" x="40" y="602">Evolve</text>
+  <rect class="box" x="190" y="594" width="650" height="56" rx="8"/>
+  <text class="body" x="206" y="620">A later defect or requirement change starts here, not from zero</text>
+  <text class="note" x="206" y="639">Original intent, Decisions, evidence and integration history are still there</text>
+</svg>

@@ -23,7 +23,10 @@ Use a separate ADR only for significant architectural decisions that require det
 
 - a `proposed` decision with `Blocking: yes` prevents readiness
 - an accepted human decision records `user:<decision-reference>` as its actual source
-- policy or process exceptions and material residual-risk acceptances record their affected scope and concise rationale; the complete Human Decision Brief remains in chat
+- routine Decision requests record a recommendation, evidence and the requested
+  human decision; material changes, exceptions, residual-risk acceptance and
+  Story outcome acceptance additionally record impact, practical options and
+  consequences
 - a `deferred` decision must be explicitly non-blocking for active or next work
 - a `superseded` decision points to its replacement
 - do not duplicate full ADR content here

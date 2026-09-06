@@ -1,59 +1,30 @@
 # WORKFLOW_CONFIG.md
 
-## Schema
-
-- version: `0.5`
-
-## Project
-
-- mode: `unconfigured | greenfield | brownfield`
-- setup profile: `core | structured`
-- delivery profiles: `light | structured | light,structured`
-
-## Agents
-
-- primary: `codex | claude | other`
-- supported: `codex,claude`
-
-## Paths
-
+- schema: `0.2`
 - workflow root: `.exorail/`
-- canonical docs root: `.exorail/project/`
-- delivery unit root: `.exorail/delivery-units/`
-- module root: `.exorail/modules/`
-- archive root: `.exorail/archive/`
+- epic root: `.exorail/planning/epics/`
+- context root: `.exorail/planning/contexts/`
+- milestone root: `.exorail/planning/milestones/`
+- projection root: `.exorail/projections/`
+- adapter root: `.exorail/adapters/`
+- default execution mode: `sequential`
+- default human review: `task`
+- allowed review boundaries: `task,story`
+- Story-boundary authority: `required`
+- default verification profile: `standard`
+- timing evidence: `optional`
+- Task forecast: `optional`
+- allowed execution isolation: `parallel_safe,parallel_hunk_disjoint,sequential_only`
+- git mutation approval: `explicit action-specific`
 
-## State policy
+## Capability activation
 
-- mode: `tracked | local | hybrid`
-- tracked paths:
-- ignored paths:
-- backup requirement:
+Presence does not activate an adapter. Add project-level rows only for
+capabilities that may enter this workflow. Row order in `adapter_ids` is the
+deterministic selection order. An absent row, or this empty table, means the
+optional capability is disabled. Requirement is derived separately from the
+consumer contract; it is not an activation mode.
+The only activation modes are `disabled`, `manual`, and `on_demand`.
 
-## Git policy
-
-- approval mode: `explicit`
-- approval scope: `action_specific`
-- structured delivery branch: `required`
-- light delivery branch: `optional`
-- task commit: `propose_after_verification`
-- delivery integration: `propose_after_acceptance`
-
-## Quality commands
-
-- build:
-- test:
-- lint or format:
-- workflow validator:
-
-## Optional artifacts
-
-- context map: `enabled | disabled`
-- task routing: `enabled | disabled`
-- results index: `enabled | disabled`
-- active constraints: `enabled | disabled`
-- ready checklist: `enabled | disabled`
-
-## Rule
-
-Paths, enabled artifacts, and policy values in this file are authoritative for mechanical validation. Semantic readiness remains in `PROJECT_READINESS.md`.
+| capability | mode | adapter_ids |
+| --- | --- | --- |

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 472" width="880" height="472" role="img" aria-labelledby="title desc">
+  <title id="title">Fail-closed optional capabilities</title>
+  <desc id="desc">Five independently required conditions under one brace: presence, activation, availability, explicit human authority and invocation. They are not stages and no arrows connect them. A crossed line shows any single failure blocks only the delegated route. A separate band carries the one real sequence, the fixed order of a consequential external action, and a closing band states the native repository route stays complete.</desc>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="ah" d="M 0 0 L 10 5 L 0 10 z"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .head { font-size: 19px; font-weight: 700; fill: #1f2933; }
+    .stage { font-size: 15px; font-weight: 600; fill: #1f2933; }
+    .body { font-size: 13.5px; fill: #1f2933; }
+    .note { font-size: 12.5px; fill: #52606d; }
+    .key { font-size: 12px; fill: #52606d; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; fill: #52606d; }
+    .box { fill: #3f6fb5; fill-opacity: .07; stroke: #3f6fb5; stroke-width: 2; }
+    .boxh { fill: #b5762f; fill-opacity: .09; stroke: #b5762f; stroke-width: 2; }
+    .boxm { fill: #7a8699; fill-opacity: .06; stroke: #7a8699; stroke-width: 2; stroke-dasharray: 5 4; }
+    .stop { fill: #3f6fb5; }
+    .gate { fill: #b5762f; }
+    .rail { stroke: #7a8699; stroke-width: 3; fill: none; }
+    .arrow { stroke: #7a8699; stroke-width: 2; fill: none; marker-end: url(#a); }
+    .ah { fill: #7a8699; }
+    .blocked { stroke: #b5762f; stroke-width: 2.5; fill: none; stroke-dasharray: 6 5; }
+    .cross { stroke: #b5762f; stroke-width: 2.5; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) {
+      .head, .stage, .body { fill: #e6edf3; }
+      .note, .key, .mono { fill: #9aa7b4; }
+      .box { fill: #6ea8fe; fill-opacity: .12; stroke: #6ea8fe; }
+      .boxh { fill: #e0a34a; fill-opacity: .14; stroke: #e0a34a; }
+      .boxm { fill: #8b98a5; fill-opacity: .10; stroke: #8b98a5; }
+      .stop { fill: #6ea8fe; }
+      .gate { fill: #e0a34a; }
+      .rail, .arrow { stroke: #8b98a5; }
+      .ah { fill: #8b98a5; }
+      .blocked, .cross { stroke: #e0a34a; }
+    }
+  </style>
+
+  <text class="head" x="40" y="34">Available ≠ enabled ≠ authorized</text>
+  <text class="note" x="40" y="58">Five separate conditions. Each must hold on its own — none of them implies the next.</text>
+  <text class="key" x="451" y="88" text-anchor="middle">all independently required</text>
+  <path class="rail" d="M 40 122 q 0 -14 14 -14 H 437 q 14 0 14 -14 q 0 14 14 14 H 848 q 14 0 14 14"/>
+  <rect class="box" x="36" y="132" width="150" height="62" rx="8"/>
+  <text class="body" x="111" y="158" text-anchor="middle">presence</text>
+  <text class="key" x="111" y="178" text-anchor="middle">a descriptor exists</text>
+  <rect class="box" x="206" y="132" width="150" height="62" rx="8"/>
+  <text class="body" x="281" y="158" text-anchor="middle">activation</text>
+  <text class="key" x="281" y="178" text-anchor="middle">Policy enables it</text>
+  <rect class="box" x="376" y="132" width="150" height="62" rx="8"/>
+  <text class="body" x="451" y="158" text-anchor="middle">availability</text>
+  <text class="key" x="451" y="178" text-anchor="middle">the host can bind it</text>
+  <rect class="boxh" x="546" y="132" width="150" height="62" rx="8"/>
+  <text class="body" x="621" y="158" text-anchor="middle">authority</text>
+  <text class="key" x="621" y="178" text-anchor="middle">an explicit human act</text>
+  <rect class="box" x="716" y="132" width="150" height="62" rx="8"/>
+  <text class="body" x="791" y="158" text-anchor="middle">invocation</text>
+  <text class="key" x="791" y="178" text-anchor="middle">only then does it run</text>
+  <path class="blocked" d="M 451 194 L 451 226"/>
+  <line class="cross" x1="443" y1="234" x2="459" y2="250"/>
+  <line class="cross" x1="459" y1="234" x2="443" y2="250"/>
+  <text class="note" x="440" y="276" text-anchor="middle">Any one of them failing blocks that delegated route — and only that route.</text>
+  <rect class="boxm" x="40" y="300" width="800" height="66" rx="8"/>
+  <text class="stage" x="56" y="326">Only a consequential external action runs as a sequence, and it is this one:</text>
+  <text class="mono" x="56" y="348">intent → classification → explicit authority → invocation → outcome / evidence</text>
+  <rect class="box" x="40" y="388" width="800" height="62" rx="8"/>
+  <text class="stage" x="56" y="414">The native repository route stays complete</text>
+  <text class="note" x="56" y="435">A missing, disabled or unhealthy adapter never invalidates the repository, and never creates permission.</text>
+</svg>

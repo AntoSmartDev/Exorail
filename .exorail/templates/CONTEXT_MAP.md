@@ -20,4 +20,3 @@ Map project areas to canonical sources without duplicating their content.
 ## Rule
 
 Keep this file as a routing index. Remove stale rows and do not summarize the source documents here.
-
