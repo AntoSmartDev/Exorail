@@ -60,6 +60,13 @@ the schema.
   `acceptance_refs` mapped to the parent Story criteria, an `## Acceptance`
   explanation and a `## Quality gate` that names pass/fail evidence; it needs
   a current Contract only when `contract_required` is `required`.
+- A `task_acceptance_criteria` condition is observable when it names an
+  inspectable `output`, `result`, `report`, `evidence`, `receipt`, `response`,
+  `status`, `artifact`, `record`, `file`, `listing`, `diff`, or `assertion`.
+  It is not satisfied by the generic values `done`, `works`, `improved`,
+  `tests pass`, `tbd`, `todo`, or `none`. The `## Quality gate` also names an
+  evidence action: `run`, `verify`, `inspect`, `assert`, `check`, `compare`,
+  `review`, or `execute`.
 - A light future Task may remain `planned` without that detail. It is valid
   backlog but is not offered by the executable frontier until refined.
 - Active work follows the approved scope. Perform proportionate verification
@@ -67,6 +74,28 @@ the schema.
   are contiguous and terminal before another starts. A terminal
   `result_candidate` closes that slice; after three non-candidate attempts,
   record a Decision, replan or split rather than creating attempt `4`.
+- ExoRail supports two dispatch paths. In the native path, derive the
+  `governance_input_digest` while the Task is `ready`, then move it to `active`;
+  the terminal Run is recorded when the work completes. Use the read-only
+  `tools/derive-governance-input-digest.mjs` command for that native digest;
+  it is not a Run identity, does not prove dispatch, and cannot repair an
+  already-active native Task. The validator checks only the digest shape, so
+  never invent a value. In the Runtime dispatch path, initial admission requires a `ready` Task
+  with no current-revision Run; derive its envelope, create its `open` Run, then
+  complete the same logical transition to `active` before validating the
+  complete working tree. A retry is admitted after either path when the Task is
+  `active`, its latest current-revision Run is terminal `failed`, no Run is
+  open, fewer than three attempts exist, and the same current Decision,
+  revision, dependency and readiness guards hold. Its digest is derived through
+  retry admission while the Task is `active`. Only the Runtime path repairs an
+  interrupted `open`-Run transition. A `blocked` Task with no Run returns to
+  `ready`; one blocked after a failed Run returns to `active`. A blocked Task
+  with an open Run receives no new admission; the Runtime must suspend that
+  existing Run, which ExoRail does not itself enforce.
+- If a Run is `open` after an interrupted dispatch transition, complete the
+  Task transition to `active`; do not infer whether invocation began from the
+  canonical records. A later attempt after `cancelled` or `abandoned` is not
+  resumable on the same Task: supersede it and create a successor Task.
 - A completed Task writes immutable Result evidence in `review_pending`.
   It becomes accepted only through the required human route. Human review is
   Task-level by default; a Story review boundary requires explicit current
@@ -127,8 +156,10 @@ not dependant unlock, that a refusal reliably prevents.
 
 `completed` on a Task is an execution fact and is never withdrawn: the work was
 done. Acceptance is a separate human fact. Refusing acceptance does not
-un-complete the work, and a completed Task is never reopened — which is what
-lets the validator prove that a finished revision was not rewritten.
+un-complete the work, and a completed Task is never reopened in the supported
+lifecycle route. The validator checks the current snapshot's lifecycle and
+revision constraints. It does not by itself prove historical non-rewrite or
+integrity of prior Git history.
 Task-boundary acceptance uses `none` before integration. At the Story boundary,
 a later `task_acceptance` repeats the exact integration commit it accepts.
 `story_acceptance` always uses `none`; its aggregate belongs in `reviewed_sha`.
@@ -210,14 +241,28 @@ Do not rewrite historical receipts or completed Task revisions. Recompute the
 executable frontier after a replan; no cached or adapter-produced frontier can
 authorize work at the new revision.
 
-Controlled execution fields are optional until a Task selects a versioned
-`execution.contract`, then they are a closed contract: `acceptance_refs`,
-`change_scope`, `execution_isolation`, and optional `logical_regions`.
+A light `planned` Task carries none of the controlled execution fields.
+Refining it to `ready` is what closes its contract: a `ready` or `active` Task
+carries `task_acceptance_criteria` and `acceptance_refs`, and either of those
+makes `execution.contract`, `change_scope` and `execution_isolation` required
+too, with optional `logical_regions`. `templates/TASK.md` shows the block whole.
+The supported `execution.contract` is `controlled-task@1`.
 Runtime binding, workspace, branch, checkpoint and event data remain local.
 `change_scope.change_class` is one of `routine`,
 `externally_consequential`, `destructive`, `security_sensitive`,
 `data_sensitive`, `migration`, `public_api`, `architecture`, or
 `parallel_integration`; its risk is `low`, `medium`, `high`, or `critical`.
+`routine` applies only when no exceptional meaning applies. An
+`externally_consequential` change affects an outside party or system;
+`destructive` removes or irreversibly changes data or capability;
+`security_sensitive` affects a security boundary; `data_sensitive` handles
+protected data; `migration` changes a live representation; `public_api`
+changes a published consumer contract; `architecture` changes an accepted
+system boundary; and `parallel_integration` joins independently produced work.
+When the class is uncertain, open a Decision request before refining the Task;
+do not select a different exceptional class merely because it is stricter.
+`corroborated_paths` is required as an array for resolver consistency; an empty
+list is correct when no corroborating path exists.
 `execution_isolation` is `parallel_safe`, `parallel_hunk_disjoint`, or
 `sequential_only`. Exceptional scope requires the current approved Task
 Contract.
@@ -243,9 +288,10 @@ execution-mode overrides.
 
 `review_boundary` is `task` for the default human review of each completed
 Task, or `story` only when resolved Policy permits it and
-`review_mode_confirmation` carries current `user:` authority for the selected
-Story revision. The selected boundary is durable lifecycle state; defaults are
-Policy and Task records do not duplicate it.
+`review_mode_confirmation` carries the current declared `user:`
+authority-reference form for the selected Story revision. The selected boundary
+is durable lifecycle state; defaults are Policy and Task records do not
+duplicate it.
 
 `verification_profile` is `minimal`, `standard`, or `full`. A Task may keep or
 strengthen its Story's verification profile, but it may not weaken it:
@@ -262,8 +308,13 @@ strengthen its Story's verification profile, but it may not weaken it:
 Pause at approval, acceptance, blocker, supersession, material replan and
 Contract Challenge decisions. State the evidence, impact, options,
 recommendation, requested decision, consequence and next permitted action.
-Only `user:<decision-reference>` supplies protected authority; agent review,
-roles and chat labels never substitute for human review.
+Protected routes require the declared `user:<decision-reference>`
+authority-reference form; agent review, roles and chat labels never substitute
+for the required human decision. The baseline checks that form in the current
+snapshot and does not attest human origin or authenticate identity. An agent
+must not add, copy or simulate a `user:` reference or receipt. Stop at the
+gate, present the requested decision, and wait for the owner to issue the
+reference before recording it.
 
 ## Decision request kinds
 
@@ -323,9 +374,10 @@ revision.
 
 ## Execution summaries and Result timing
 
-A controlled attempt creates one `execution_run` in `open` before dispatch and
-terminalizes it exactly once as `result_candidate`, `failed`, `cancelled`, or
-`abandoned`. Retries create a new attempt. Progress events, checkpoints,
+The Runtime dispatch path creates one `execution_run` in `open` before
+dispatch and terminalizes it exactly once as `result_candidate`, `failed`,
+`cancelled`, or `abandoned`. The native path records that terminal Run at
+completion. Retries create a new Runtime attempt. Progress events, checkpoints,
 heartbeats, prompts, workers and retry schedules remain runtime-owned. A
 controlled Result links its terminal Run; a failed or cancelled Run needs no
 Result. Bind the Run to `governance_input_digest`, derived only from the
@@ -351,3 +403,12 @@ native repository route when it covers the work; never invent a binding or
 treat its absence as permission for a provider side effect. Only a `consequential` or `destructive`
 external mutation creates `external_action`; reads and routine
 non-consequential writes do not create canonical integration activity.
+
+The standard Adapter Profile `family` values are `integration`, `execution`,
+and `projection`. A standard capability is valid only for its matching family:
+`integration.observe_facts@1 → integration`,
+`integration.consequential_side_effect@1 → integration`,
+`integration.retrieve_context@1 → integration`,
+`execution.durable@1 → execution`, `execution.observe@1 → execution`,
+`execution.pause_resume@1 → execution`, `execution.cancel@1 → execution`, and
+`projection.render@1 → projection`.

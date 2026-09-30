@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 386" width="880" height="386" role="img" aria-labelledby="title desc">
-  <title id="title">Exorail Project Memory as connected records</title>
+  <title id="title">ExoRail Project Memory as connected records</title>
   <desc id="desc">Decision affects Story, Story contains Task, Task produces Result. Below them, plan revisions supersede future work, dependencies hold and release, and receipts bind the reviewed commit. A closing band states that Project Memory is selective, not a transcript.</desc>
 
   <defs>

@@ -24,5 +24,5 @@ for it.
 
 Stop for human approval when a material Story replan, blocker, supersession,
 policy exception or Contract Challenge requires a decision. Offer evidence,
-impact, options and a recommendation; record protected authority only as
-`user:<decision-reference>`.
+impact, options and a recommendation; record the declared protected
+`user:<decision-reference>` authority-reference form.

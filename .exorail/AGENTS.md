@@ -10,6 +10,8 @@ a hierarchy node. Adapter profiles declare portable contracts and capabilities;
 local bindings and provider mappings remain outside Core. Presence is not
 activation and activation is not invocation: absent capability Policy is
 fail-closed, while the ordinary no-adapter workflow remains complete.
+Without a capability activation and local binding, adapter-specific instructions
+do not apply; use the native repository route instead.
 
 ## Start of session
 
@@ -57,11 +59,16 @@ fail-closed, while the ordinary no-adapter workflow remains complete.
 - A Task gets at most three safe remediation cycles. A blocker, non-convergence,
   unsafe scope, material replan or approved-plan contradiction creates a typed
   Decision or Contract Challenge instead of invented continuation.
-- Record accepted durable decisions in `DECISIONS.md` or an ADR. Protected
-  authority is only `user:<decision-reference>`; roles, agents and chat labels
-  are descriptive only. Do not create pre-0.2 hierarchy or candidate nodes.
+- Record accepted durable decisions in `DECISIONS.md` or an ADR. A protected
+  route requires the declared `user:<decision-reference>` authority-reference
+  form; roles, agents and chat labels are descriptive only. The baseline checks
+  that form, not human origin or identity, and a fully privileged repository
+  writer can create it. An agent must not add, copy or simulate a `user:`
+  reference or receipt: stop, present the decision, and wait for the owner to
+  issue the reference before recording it. Do not create pre-0.2 hierarchy or
+  candidate nodes.
 - Preserve historical records as history. They are not runtime authority.
-- A runtime executes; Exorail computes the frontier, supplies scope, validates
+- A runtime executes; ExoRail computes the frontier, supplies scope, validates
   normalized outcomes, records Result/evidence/authority, and authorizes
   progression. Runtime checkpoints, events and bindings are never canonical.
 - Adapter family and capability names grant no dispatch. Resolve activation,
@@ -74,7 +81,7 @@ fail-closed, while the ordinary no-adapter workflow remains complete.
   Story PR. Do not create Task PRs or infer approval.
 - Preserve unrelated worktree changes and obtain explicit approval for Git
   mutations.
-- All Exorail-owned files are English. User-facing messages use the interaction
+- All ExoRail-owned files are English. User-facing messages use the interaction
   locale, and project deliverables follow their configured output locale.
 
 ## Canonical method
@@ -86,3 +93,12 @@ fail-closed, while the ordinary no-adapter workflow remains complete.
 - structure: `.exorail/method/STRUCTURE_REFERENCE.md`
 - commands: `.exorail/tools/README.md`
 - correcting a finding: `.exorail/method/FINDINGS.md`
+
+## Optional deployment boundary
+
+An adopter may configure deployment-owned file protection, but ExoRail does not
+enforce it. See `method/STRUCTURE_REFERENCE.md#optional-deployment-capability-boundary`
+for the one canonical installed-project classification and its operational
+costs. File-level protection cannot isolate `authority_ref` values inside
+otherwise ordinary work records, and it does not establish human origin or
+identity.

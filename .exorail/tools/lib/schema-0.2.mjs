@@ -32,7 +32,9 @@ export const findingMessages = {
   AG622: 'Task cannot enter executable work: add a Quality gate that names verification evidence.',
   AG623: 'Task cannot create attempt 4: record a replan, split, or human decision after attempt 3',
   AG624: 'Task attempt sequence is not resumable',
-  AG625: 'Task cannot start another attempt after a terminal result candidate: use the existing review/acceptance route or a Decision/replan successor Task.'
+  AG625: 'Task cannot start another attempt after a terminal result candidate: use the existing review/acceptance route or a Decision/replan successor Task.',
+  AG626: 'Ready Task has a current-revision execution Run: complete recovery, resume a failed attempt, supersede, or use the Result route according to its latest Run.',
+  AG628: 'Task cannot start another current-revision attempt after cancelled or abandoned: supersede it and create a successor Task.'
 };
 
 export const typeInfo = {
@@ -83,6 +85,13 @@ const standardCapabilities = new Map([
 ]);
 
 export function add(findings, id, severity = 'ERROR', detail = '') { findings.push({ severity, id, message: `AG${id.slice(2)}: ${findingMessages[id]}${detail ? ` (${detail})` : ''}` }); }
+function observed(value) {
+  if (value === undefined || value === null) return 'missing';
+  if (value === '') return 'empty';
+  return JSON.stringify(value);
+}
+function locus(relative, field, found, expected) { return `${relative}; field: ${field}; found: ${observed(found)}; expected: ${expected}`; }
+function addLocus(findings, id, relative, field, found, expected) { add(findings, id, 'ERROR', locus(relative, field, found, expected)); }
 export function slash(value) { return value.split(path.sep).join('/'); }
 export function sha256(value) { return createHash('sha256').update(value).digest('hex'); }
 export function listFiles(directory) {
@@ -99,19 +108,20 @@ export function frontMatter(file, findings, relative = '') {
   if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) { add(findings, 'AG207'); return null; }
   const text = bytes.toString('utf8');
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!match) { add(findings, 'AG206', 'ERROR', relative); return null; }
+  if (!match) { addLocus(findings, 'AG206', relative, 'front matter', text.split(/\r?\n/)[0] ?? '', 'a record opens with --- , a front matter block, and a closing --- line'); return null; }
   const data = {}; let nested = null;
-  for (const raw of match[1].split(/\r?\n/)) {
+  const lines = match[1].split(/\r?\n/);
+  for (const [index, raw] of lines.entries()) {
     if (!raw.trim() || raw.trimStart().startsWith('#')) continue;
     const indent = raw.match(/^ */)[0].length;
     const m = raw.trim().match(/^([a-z][a-z0-9_]*):\s*(.*?)\s*$/);
-    if (!m || indent > 2 || (indent === 2 && !nested)) { add(findings, 'AG206', 'ERROR', relative); continue; }
+    if (!m || indent > 2 || (indent === 2 && !nested)) { addLocus(findings, 'AG206', relative, `front matter line ${index + 2}`, raw, indent > 2 || (indent === 2 && !nested) ? 'a top-level key, or two-space nesting under a key with an empty value' : 'one inline `key: value` per line; a list is JSON flow style and a block sequence is not read'); continue; }
     const [, key, literal] = m;
     if (indent === 0) {
-      if (Object.hasOwn(data, key)) add(findings, 'AG206', 'ERROR', relative);
+      if (Object.hasOwn(data, key)) addLocus(findings, 'AG206', relative, `front matter line ${index + 2}`, key, 'each key appears once at its level');
       if (literal === '') { data[key] = {}; nested = key; }
       else { data[key] = parseValue(literal); nested = null; }
-    } else { if (Object.hasOwn(data[nested], key)) add(findings, 'AG206', 'ERROR', relative); else data[nested][key] = parseValue(literal); }
+    } else { if (Object.hasOwn(data[nested], key)) addLocus(findings, 'AG206', relative, `front matter line ${index + 2}`, `${nested}.${key}`, 'each key appears once at its level'); else data[nested][key] = parseValue(literal); }
   }
   return { data, body: match[2], text };
 }
@@ -150,17 +160,18 @@ export function validate(root) {
   for (const record of records) {
     const { data, type, info, relative, body } = record;
     if (data.schema !== '0.2') add(findings, 'AG601');
-    for (const key of Object.keys(data)) if (!allowedFields[type].includes(key) && !key.startsWith('x_')) add(findings, 'AG206', 'ERROR', `${relative}:${key}`);
-    for (const key of requiredFields[type]) if (data[key] === undefined) add(findings, type === 'task_result' ? 'AG303' : type === 'milestone' ? 'AG203' : 'AG206', 'ERROR', `${relative}:${key}`);
+    for (const key of Object.keys(data)) if (!allowedFields[type].includes(key) && !key.startsWith('x_')) addLocus(findings, 'AG206', relative, key, data[key], `a field this ${type} declares, or an x_ prefixed extension`);
+    for (const key of requiredFields[type]) if (data[key] === undefined) { const missing = type === 'task_result' ? 'AG303' : type === 'milestone' ? 'AG203' : 'AG206'; if (missing === 'AG206') addLocus(findings, 'AG206', relative, key, undefined, `a value: every ${type} declares ${key}`); else add(findings, missing, 'ERROR', `${relative}:${key}`); }
     if (typeof data.id !== 'string' || !data.id.startsWith(info.prefix)) add(findings, 'AG201', 'ERROR', relative);
-    if (!info.statuses.includes(data.status)) add(findings, 'AG301', 'ERROR', relative);
-    if (type === 'execution_run') { if (!isUtc(data.started_at_utc)) add(findings, 'AG208'); }
-    else if (!isUtc(data.created_at_utc) || (type !== 'task_result' && !isUtc(data.updated_at_utc))) add(findings, 'AG208');
+    if (!info.statuses.includes(data.status)) addLocus(findings, 'AG301', relative, 'status', data.status, `one of ${info.statuses.join(', ')}`);
+    if (type === 'execution_run') { if (!isUtc(data.started_at_utc)) addLocus(findings, 'AG208', relative, 'started_at_utc', data.started_at_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z'); }
+    else if (!isUtc(data.created_at_utc)) addLocus(findings, 'AG208', relative, 'created_at_utc', data.created_at_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z');
+    else if (type !== 'task_result' && !isUtc(data.updated_at_utc)) addLocus(findings, 'AG208', relative, 'updated_at_utc', data.updated_at_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z');
     if (!['task_contract', 'task_result', 'execution_run', 'external_action'].includes(type) && (!data.title || String(data.title).length > 120)) add(findings, 'AG210');
     if (byId.has(data.id)) add(findings, 'AG205'); else byId.set(data.id, record);
     for (const heading of info.headings) if (!hasRequiredSection(body, heading)) add(findings, 'AG210');
     validateLinks(record, exo, findings);
-    if (!canonicalPath(relative, data, type)) add(findings, 'AG202');
+    if (!canonicalPath(relative, data, type)) addLocus(findings, 'AG202', relative, 'path', relative, canonicalPathShape(type, data.id));
     if (data.risk && !['low', 'medium', 'high', 'critical'].includes(data.risk)) add(findings, 'AG212');
     for (const key of ['owner_role', 'reviewer_role', 'approval_owner_role', 'handoff_to']) if (data[key] !== undefined && !isRole(data[key])) add(findings, 'AG211', 'ERROR', relative);
     for (const key of ['owner_member_id', 'assignee_member_id', 'reviewer_member_id', 'completed_by_member_id']) if (data[key] !== undefined && !team.members.has(data[key])) add(findings, 'AG211', 'ERROR', `${relative}:${key}`);
@@ -168,6 +179,7 @@ export function validate(root) {
     if (type === 'context' && (!data.name || !Array.isArray(data.owners) || !data.owners.length || !data.owners.every(isRole))) add(findings, 'AG211', 'ERROR', relative);
   }
   for (const record of records) validateRecord(record, byId, findings, policy);
+  validateTaskRunLifecycle(records, findings);
   validateRunAndActionUniqueness(records, findings);
   validateProjections(root, records, team.members, findings);
   return { findings: dedupe(findings), records };
@@ -197,6 +209,19 @@ function validateLinks(record, exo, findings) {
     if (!slash(path.relative(exo, resolved)) || slash(path.relative(exo, resolved)).startsWith('..') || !existsSync(resolved)) add(findings, 'AG209');
   }
 }
+function canonicalPathShape(type, id) {
+  const slug = String(id || '<slug>').replace(/^(EP|FEAT|US|TASK|MS|CTX|ADAPTER|RUN|ACT)-/, '').replace(/:(contract|result)$/, '');
+  const shapes = {
+    context: `planning/contexts/CTX-${slug}.md`, milestone: `planning/milestones/MS-${slug}/MILESTONE.md`,
+    epic: `planning/epics/EP-${slug}/EPIC.md`, feature: 'planning/epics/EP-<slug>/features/FEAT-<slug>/FEATURE.md',
+    user_story: 'planning/epics/EP-<slug>/features/FEAT-<slug>/stories/US-<slug>/STORY.md',
+    task: '.../stories/US-<slug>/tasks/TASK-<slug>/TASK.md',
+    task_contract: '.../tasks/TASK-<slug>/CONTRACT.md', task_result: '.../tasks/TASK-<slug>/RESULT.md',
+    adapter_profile: `adapters/ADAPTER-${slug}.md`, execution_run: `runs/RUN-${slug}.md`,
+    external_action: `external-actions/ACT-${slug}.md`, episode: `episodes/${id}-<slug>/EPISODE.md`
+  };
+  return shapes[type] ? `${shapes[type]}, with the slug this record declares` : 'the canonical path for this record type';
+}
 function canonicalPath(relative, data, type) {
   const id = data.id || ''; const slug = id.replace(/^(EP|FEAT|US|TASK|MS|CTX|ADAPTER|RUN|ACT)-/, '').replace(/:(contract|result)$/, '');
   const patterns = {
@@ -212,7 +237,7 @@ function canonicalPath(relative, data, type) {
 }
 function validateRecord(record, byId, findings, policy) {
   const { data, type, body, relative } = record; const parent = data.parent && byId.get(data.parent);
-  if (['blocked', 'superseded'].includes(data.status) && !hasRequiredSection(body, 'Decision record')) add(findings, 'AG301', 'ERROR', relative);
+  if (['blocked', 'superseded'].includes(data.status) && !hasRequiredSection(body, 'Decision record')) addLocus(findings, 'AG301', relative, 'Decision record', 'missing', `a Decision record while status is ${data.status}`);
   if (['feature', 'user_story', 'task', 'task_contract', 'task_result'].includes(type) && !parent) add(findings, 'AG201', 'ERROR', relative);
   const expectedParents = { feature: 'epic', user_story: 'feature', task: 'user_story', task_contract: 'task', task_result: 'task' };
   if (expectedParents[type] && parent?.type !== expectedParents[type]) add(findings, 'AG201', 'ERROR', relative);
@@ -223,7 +248,7 @@ function validateRecord(record, byId, findings, policy) {
     if (!all([data.execution_mode], ['sequential', 'parallel']) || !all([data.review_boundary], ['task', 'story']) || !all([data.execution_policy?.verification_profile], ['minimal', 'standard', 'full'])) add(findings, 'AG401', 'ERROR', relative);
     const tasks = [...byId.values()].filter((x) => x.type === 'task' && x.data.parent === data.id);
     if (data.status === 'ready' && !tasks.length) add(findings, 'AG302');
-    if (data.status === 'active' && !tasks.some((task) => ['ready', 'active', 'blocked'].includes(task.data.status))) add(findings, 'AG301', 'ERROR', relative);
+    if (data.status === 'active' && !tasks.some((task) => ['ready', 'active', 'blocked'].includes(task.data.status))) addLocus(findings, 'AG301', relative, 'child Task statuses', tasks.map((task) => `${task.data.id}:${task.data.status}`), 'at least one child Task in ready, active, or blocked state');
     if (data.status === 'completed' && !tasks.filter((task) => task.data.status !== 'superseded').every((task) => task.data.status === 'completed')) add(findings, 'AG303');
   }
   if (type === 'user_story' || type === 'task') validateDecisionRequests(record, byId, findings);
@@ -240,7 +265,7 @@ function validateRecord(record, byId, findings, policy) {
     const contract = [...byId.values()].find((x) => x.type === 'task_contract' && x.data.parent === data.id);
     if (data.contract_required !== undefined && !['required', 'not_required'].includes(data.contract_required)) add(findings, 'AG302');
     if (data.contract_required === 'required' && ['ready', 'active', 'blocked'].includes(data.status) && !contract) add(findings, 'AG302');
-    if (data.status === 'completed') { const result = [...byId.values()].find((x) => x.type === 'task_result' && x.data.parent === data.id); if (!result || !Array.isArray(result.data.evidence) || !result.data.evidence.length) add(findings, 'AG303'); if (parent?.data.status === 'completed' && (!hasExecutionReceipt(parent.body, data.id, 'task_acceptance', data.plan_revision) || !hasExecutionReceipt(parent.body, data.id, 'task_integration', data.plan_revision))) add(findings, 'AG606', 'ERROR', relative); }
+    if (data.status === 'completed') { const result = [...byId.values()].find((x) => x.type === 'task_result' && x.data.parent === data.id); if (!result || !Array.isArray(result.data.evidence) || !result.data.evidence.length) add(findings, 'AG303'); const missingReceipts = ['task_acceptance', 'task_integration'].filter((kind) => !hasExecutionReceipt(parent?.body ?? '', data.id, kind, data.plan_revision)); if (parent?.data.status === 'completed' && missingReceipts.length) addLocus(findings, 'AG606', relative, 'Task completion receipts', missingReceipts.map((kind) => `missing ${kind}`), `task_acceptance and task_integration for plan revision ${data.plan_revision}`); }
     if (isParallelMember(data) && (!parent?.data.parallel_eligible || parent?.data.execution_mode !== 'parallel')) add(findings, 'AG403', 'ERROR', relative);
     if (isParallelMember(data)) {
       const wave = [...byId.values()].filter((x) => x.type === 'task' && x.data.parent === data.parent && isParallelMember(x.data));
@@ -249,7 +274,8 @@ function validateRecord(record, byId, findings, policy) {
       const closeouts = [...byId.values()].filter((x) => x.type === 'task' && x.data.parent === data.parent && !isParallelMember(x.data) && wave.every((member) => asArray(x.data.depends_on).includes(member.data.id)));
       if (wave.length < 2 || !closeouts.length) add(findings, 'AG405', 'ERROR', relative);
     }
-    for (const dep of asArray(data.depends_on)) { const task = byId.get(dep); const result = task && [...byId.values()].find((x) => x.type === 'task_result' && x.data.parent === dep); const accepted = parent?.data.review_boundary === 'story' || hasExecutionReceipt(parent?.body ?? '', dep, 'task_acceptance', task?.data.plan_revision); if (['ready', 'active'].includes(data.status) && (!task || !result || !accepted || !hasExecutionReceipt(parent?.body ?? '', dep, 'task_integration', task.data.plan_revision))) add(findings, 'AG404', 'ERROR', relative); }
+    const receipts = executionReceipts(parent?.body ?? '').items;
+    for (const dep of asArray(data.depends_on)) if (['ready', 'active'].includes(data.status) && !dependencyReleased(parent, byId.get(dep), byId, receipts)) add(findings, 'AG404', 'ERROR', relative);
   }
   if (type === 'task_contract') { const task = parent; if (!task || !['ready', 'active', 'blocked', 'completed'].includes(task.data.status) || data.based_on_plan_revision !== task.data.plan_revision || !asArray(data.implementation_paths).every((p) => asArray(task.data.affected_paths).includes(p))) add(findings, 'AG302'); }
   if (type === 'task_result') { if (!parent || data.based_on_plan_revision !== parent.data.plan_revision || !Array.isArray(data.evidence) || !data.evidence.length) add(findings, 'AG303'); validateReviewContext(data, findings, relative); validateResultExecution(record, parent, byId, findings); validateTiming(record, findings, policy); }
@@ -263,22 +289,41 @@ function validateRecord(record, byId, findings, policy) {
   if (type === 'user_story' && /generic|catch.?all/i.test(`${data.title} ${body}`) && !/\S/.test(body.match(/^## Acceptance criteria\s*\n([\s\S]*?)(?=^##|$)/m)?.[1] ?? '')) add(findings, 'AG214');
 }
 function validateDecisionRequests(record, byId, findings) {
-  const requests = decisionRequests(record.body); if (requests.invalid) { add(findings, 'AG608'); return; }
+  const requests = decisionRequests(record.body); if (requests.invalid) { addLocus(findings, 'AG608', record.relative, 'Decision requests table', 'malformed', 'the shipped header, separator, and complete table rows'); return; }
   const story = record.type === 'user_story' ? record : byId.get(record.data.parent); const seen = new Set();
   const triggers = ['repository_mismatch', 'unverifiable_acceptance', 'missing_dependency_or_boundary', 'unavoidable_scope_expansion', 'concrete_risk', 'task_not_atomic', 'materially_simpler_or_safer_solution'];
   const resolutions = ['plan_confirmed', 'clarification_recorded', 'plan_revision_required', 'task_split_required', 'blocked_or_deferred'];
   for (const request of requests.items) {
     const open = !request.resolution && !request.authority_ref;
     const revision = Number(request.plan_revision);
-    const invalid = !story || !request.request_id || seen.has(request.request_id) || !['decision', 'challenge'].includes(request.kind) || !request.evidence || !request.impact || !request.options || !request.recommendation || !request.requested_decision || !Number.isInteger(revision) || revision < 1 || (open ? revision !== story.data.plan_revision : revision > story.data.plan_revision) || !isUtc(request.recorded_at_utc) || (!open && (!resolutions.includes(request.resolution) || !isAuthorityReference(request.authority_ref))) || ((request.resolution === '') !== (request.authority_ref === ''));
-    if (invalid) { add(findings, 'AG608'); continue; }
+    const row = decisionRequestIssue(request, story, seen, open, revision, resolutions);
+    if (row) { addLocus(findings, 'AG608', record.relative, row.field, row.found, row.expected); continue; }
     seen.add(request.request_id);
-    if (open && record.type === 'task' && record.data.status !== 'blocked') { add(findings, 'AG608'); continue; }
-    if (request.kind === 'decision') { if (request.trigger || (open && record.type === 'user_story' && record.data.status === 'ready')) add(findings, 'AG608'); continue; }
-    if (record.type !== 'task' || !triggers.includes(request.trigger)) { add(findings, 'AG608'); continue; }
+    if (open && record.type === 'task' && record.data.status !== 'blocked') { addLocus(findings, 'AG608', record.relative, 'status', record.data.status, 'blocked while a Task request is open'); continue; }
+    if (request.kind === 'decision') {
+      if (request.trigger) addLocus(findings, 'AG608', record.relative, 'Decision request trigger', request.trigger, 'empty for a Decision');
+      else if (open && record.type === 'user_story' && record.data.status === 'ready') addLocus(findings, 'AG608', record.relative, 'status', record.data.status, 'a non-ready Story while a Decision is open');
+      continue;
+    }
+    if (record.type !== 'task') { addLocus(findings, 'AG608', record.relative, 'Challenge host type', record.type, 'task'); continue; }
+    if (!triggers.includes(request.trigger)) { addLocus(findings, 'AG608', record.relative, 'Challenge trigger', request.trigger, `one of ${triggers.join(', ')}`); continue; }
     const hasTaskOutcome = [...byId.values()].some((item) => item.type === 'task_result' && item.data.parent === record.data.id) || ['task_acceptance', 'task_integration', 'result_adoption'].some((kind) => hasExecutionReceipt(story.body, record.data.id, kind, story.data.plan_revision));
-    if (open && (record.data.status !== 'blocked' || hasTaskOutcome)) { add(findings, 'AG608'); continue; }
+    if (open && (record.data.status !== 'blocked' || hasTaskOutcome)) addLocus(findings, 'AG608', record.relative, hasTaskOutcome ? 'Task outcome' : 'status', hasTaskOutcome ? 'Result or current-plan receipt exists' : record.data.status, hasTaskOutcome ? 'no Result or receipt while a Challenge is open' : 'blocked while a Challenge is open');
   }
+}
+function decisionRequestIssue(request, story, seen, open, revision, resolutions) {
+  if (!story) return { field: 'parent Story', found: 'missing', expected: 'an existing parent Story' };
+  if (!request.request_id) return { field: 'request_id', found: request.request_id, expected: 'a non-empty unique request id' };
+  if (seen.has(request.request_id)) return { field: 'request_id', found: request.request_id, expected: 'a request id not used by an earlier row' };
+  if (!['decision', 'challenge'].includes(request.kind)) return { field: 'kind', found: request.kind, expected: 'decision or challenge' };
+  for (const field of ['evidence', 'impact', 'options', 'recommendation', 'requested_decision']) if (!request[field]) return { field, found: request[field], expected: 'a non-empty value' };
+  if (!Number.isInteger(revision) || revision < 1) return { field: 'plan_revision', found: request.plan_revision, expected: 'a positive integer' };
+  if (open ? revision !== story.data.plan_revision : revision > story.data.plan_revision) return { field: 'plan_revision', found: request.plan_revision, expected: open ? `the current Story plan revision ${story.data.plan_revision}` : `no later than current Story plan revision ${story.data.plan_revision}` };
+  if (!isUtc(request.recorded_at_utc)) return { field: 'recorded_at_utc', found: request.recorded_at_utc, expected: 'a UTC timestamp' };
+  if (!open && !resolutions.includes(request.resolution)) return { field: 'resolution', found: request.resolution, expected: `one of ${resolutions.join(', ')}` };
+  if (!open && !isAuthorityReference(request.authority_ref)) return { field: 'authority_ref', found: request.authority_ref, expected: 'a user: authority reference' };
+  if ((request.resolution === '') !== (request.authority_ref === '')) return { field: request.resolution === '' ? 'resolution' : 'authority_ref', found: request.resolution === '' ? request.resolution : request.authority_ref, expected: 'both resolution and authority_ref empty, or both populated' };
+  return null;
 }
 function decisionRequests(body) {
   const section = body.match(/^## Decision requests\s*\r?\n([\s\S]*?)(?=^##\s|(?![\s\S]))/m); if (!section) return { items: [], invalid: false };
@@ -300,7 +345,7 @@ function validateEpisode(record, byId, findings) {
   if (typeof sourceResult !== 'string' || byId.get(sourceResult)?.type !== 'task_result') add(findings, 'AG203', 'ERROR', relative);
   if (data.status === 'active' && (!sourceResult || !hasRequiredSection(body, 'Applicability'))) add(findings, 'AG303', 'ERROR', relative);
   const successor = body.match(/^\s*-\s*superseded by:\s*`?(EP-\d{4})`?\s*$/mi)?.[1];
-  if (data.status === 'superseded' && (!successor || successor === data.id || byId.get(successor)?.type !== 'episode' || byId.get(successor)?.data.status !== 'active')) add(findings, 'AG301', 'ERROR', relative);
+  if (data.status === 'superseded' && (!successor || successor === data.id || byId.get(successor)?.type !== 'episode' || byId.get(successor)?.data.status !== 'active')) addLocus(findings, 'AG301', relative, 'superseded by', successor, 'a different active Episode id');
   const directory = path.dirname(record.file);
   if (listFiles(directory).length !== 1 || !existsSync(path.join(directory, 'EPISODE.md'))) add(findings, 'AG204', 'ERROR', relative);
 }
@@ -371,7 +416,10 @@ function validateStoryExecution(data, body, byId, findings, relative, policy, re
     if (!tasks.some((task) => task.data.plan_revision === data.plan_revision && ['planned', 'ready', 'active', 'blocked'].includes(task.data.status))) add(findings, 'AG604', 'ERROR', relative);
   }
   const receipts = executionReceipts(body);
-  if (receipts.invalid || !validReceiptSequence(receipts.items, data, byId, recordFile)) add(findings, 'AG606', 'ERROR', relative);
+  const receiptIssue = receipts.invalid
+    ? { field: 'Execution receipts table', found: 'malformed', expected: 'the shipped receipt header, separator, and complete rows' }
+    : receiptSequenceIssue(receipts.items, data, byId, recordFile);
+  if (receiptIssue) addLocus(findings, 'AG606', relative, receiptIssue.field, receiptIssue.found, receiptIssue.expected);
 }
 function executionReceipts(body) {
   const section = body.match(/^## Execution receipts\s*\r?\n([\s\S]*?)(?=^##\s|(?![\s\S]))/m);
@@ -384,52 +432,77 @@ function executionReceipts(body) {
   const items = rows.slice(2).map((line) => Object.fromEntries(expected.map((key, index) => [key, line.split('|').map((cell) => cell.trim()).filter(Boolean)[index]])));
   return { items, invalid: items.some((item) => Object.values(item).some((value) => !value || /[|\r\n]/.test(value))) };
 }
-function validReceiptSequence(items, story, byId, recordFile) {
-  if (!items.length) return story.status !== 'completed';
+function receiptSequenceIssue(items, story, byId, recordFile) {
+  if (!items.length) return story.status === 'completed' ? { field: 'Execution receipts', found: 'empty', expected: 'Story completion receipts' } : null;
   const seen = new Set(); const seenBindings = new Set(); let previousTimestamp = 0; let expectedId = 1;
   for (const [index, receipt] of items.entries()) {
     const storyReceipt = receipt.kind === 'story_acceptance'; const task = byId.get(receipt.work_id);
-    if (receipt.receipt_id !== `ER-${String(expectedId).padStart(4, '0')}` || seen.has(receipt.receipt_id) || !['task_acceptance', 'task_integration', 'result_adoption', 'story_acceptance'].includes(receipt.kind) || (storyReceipt ? receipt.work_id !== story.id : task?.data.parent !== story.id) || !Number.isInteger(Number(receipt.attempt)) || Number(receipt.attempt) < 1 || !isCommitSha(receipt.reviewed_sha) || !isCommitSha(receipt.patch_id) || !Number.isInteger(Number(receipt.plan_revision)) || Number(receipt.plan_revision) < 1 || Number(receipt.plan_revision) > story.plan_revision || !isAuthorityReference(receipt.authority_ref) || !isUtc(receipt.recorded_at_utc) || Date.parse(receipt.recorded_at_utc) < previousTimestamp || !validIntegrationCommit(receipt, items.slice(0, index), story.review_boundary)) return false;
+    const row = `Execution receipts row ${index + 1}`;
+    if (receipt.receipt_id !== `ER-${String(expectedId).padStart(4, '0')}`) return { field: `${row}.receipt_id`, found: receipt.receipt_id, expected: `ER-${String(expectedId).padStart(4, '0')}` };
+    if (seen.has(receipt.receipt_id)) return { field: `${row}.receipt_id`, found: receipt.receipt_id, expected: 'a receipt id not used by an earlier row' };
+    if (!['task_acceptance', 'task_integration', 'result_adoption', 'story_acceptance'].includes(receipt.kind)) return { field: `${row}.kind`, found: receipt.kind, expected: 'task_acceptance, task_integration, result_adoption, or story_acceptance' };
+    if (storyReceipt ? receipt.work_id !== story.id : task?.data.parent !== story.id) return { field: `${row}.work_id`, found: receipt.work_id, expected: storyReceipt ? `Story id ${story.id}` : 'a Task whose parent is this Story' };
+    if (!Number.isInteger(Number(receipt.attempt)) || Number(receipt.attempt) < 1) return { field: `${row}.attempt`, found: receipt.attempt, expected: 'a positive integer' };
+    if (!isCommitSha(receipt.reviewed_sha)) return { field: `${row}.reviewed_sha`, found: receipt.reviewed_sha, expected: 'a commit SHA' };
+    if (!isCommitSha(receipt.patch_id)) return { field: `${row}.patch_id`, found: receipt.patch_id, expected: 'a commit SHA' };
+    if (!Number.isInteger(Number(receipt.plan_revision)) || Number(receipt.plan_revision) < 1 || Number(receipt.plan_revision) > story.plan_revision) return { field: `${row}.plan_revision`, found: receipt.plan_revision, expected: `a positive integer no greater than Story plan revision ${story.plan_revision}` };
+    if (!isAuthorityReference(receipt.authority_ref)) return { field: `${row}.authority_ref`, found: receipt.authority_ref, expected: 'a user: authority reference' };
+    if (!isUtc(receipt.recorded_at_utc)) return { field: `${row}.recorded_at_utc`, found: receipt.recorded_at_utc, expected: 'a UTC timestamp' };
+    if (Date.parse(receipt.recorded_at_utc) < previousTimestamp) return { field: `${row}.recorded_at_utc`, found: receipt.recorded_at_utc, expected: 'a timestamp not earlier than the preceding receipt' };
+    const integration = integrationCommitIssue(receipt, items.slice(0, index), story.review_boundary);
+    if (integration) return { field: `${row}.integration_commit`, found: receipt.integration_commit, expected: integration };
     const binding = `${receipt.kind}:${receipt.work_id}:${receipt.attempt}:${receipt.plan_revision}`;
-    if (seenBindings.has(binding)) return false;
-    if (!storyReceipt && receipt.kind !== 'result_adoption' && Number(receipt.plan_revision) === story.plan_revision && task.data.plan_revision !== Number(receipt.plan_revision)) return false;
+    if (seenBindings.has(binding)) return { field: `${row} binding`, found: binding, expected: 'a kind/work/attempt/revision combination not used by an earlier row' };
+    if (!storyReceipt && receipt.kind !== 'result_adoption' && Number(receipt.plan_revision) === story.plan_revision && task.data.plan_revision !== Number(receipt.plan_revision)) return { field: `${row}.plan_revision`, found: receipt.plan_revision, expected: `Task ${task.data.id} plan revision ${task.data.plan_revision}` };
     const taskRuns = !storyReceipt && receipt.kind !== 'result_adoption' ? [...byId.values()].filter((record) => record.type === 'execution_run' && record.data.work_id === receipt.work_id && record.data.plan_revision === Number(receipt.plan_revision)) : [];
-    if (taskRuns.length && !taskRuns.some((run) => run.data.attempt === Number(receipt.attempt))) return false;
+    if (taskRuns.length && !taskRuns.some((run) => run.data.attempt === Number(receipt.attempt))) return { field: `${row}.attempt`, found: receipt.attempt, expected: `an attempt recorded for Task ${receipt.work_id} at plan revision ${receipt.plan_revision}` };
     seen.add(receipt.receipt_id); expectedId += 1; previousTimestamp = Date.parse(receipt.recorded_at_utc);
     seenBindings.add(binding);
   }
   const current = items.filter((receipt) => Number(receipt.plan_revision) === story.plan_revision);
   const storyAcceptance = current.filter((receipt) => receipt.kind === 'story_acceptance' && receipt.work_id === story.id);
-  if (story.status === 'completed' && (storyAcceptance.length !== 1 || current.at(-1) !== storyAcceptance[0])) return false;
+  if (story.status === 'completed' && (storyAcceptance.length !== 1 || current.at(-1) !== storyAcceptance[0])) return { field: 'Story acceptance placement', found: storyAcceptance.map((receipt) => receipt.receipt_id), expected: 'exactly one current-plan story_acceptance receipt as the final current receipt' };
   if (storyAcceptance.length) {
     const repositoryRoot = recordFile.slice(0, recordFile.lastIndexOf(`${path.sep}.exorail${path.sep}`));
     const aggregate = storyAcceptance[0].reviewed_sha;
-    for (const receipt of current.filter((item) => ['task_integration', 'result_adoption'].includes(item.kind))) if (!gitContains(repositoryRoot, receipt.integration_commit, aggregate)) return false;
+    for (const receipt of current.filter((item) => ['task_integration', 'result_adoption'].includes(item.kind))) if (!gitContains(repositoryRoot, receipt.integration_commit, aggregate)) return { field: `${receipt.receipt_id}.integration_commit`, found: receipt.integration_commit, expected: `a commit reachable from Story acceptance reviewed_sha ${aggregate}` };
   }
   if (story.status === 'completed') for (const task of [...byId.values()].filter((item) => item.type === 'task' && item.data.parent === story.id && item.data.status !== 'superseded')) {
     const rows = current.filter((receipt) => receipt.work_id === task.data.id);
-    if (!rows.some((receipt) => receipt.kind === 'result_adoption') && (!rows.some((receipt) => receipt.kind === 'task_acceptance') || !rows.some((receipt) => receipt.kind === 'task_integration'))) return false;
+    const missing = ['task_acceptance', 'task_integration'].filter((kind) => !rows.some((receipt) => receipt.kind === kind));
+    if (!rows.some((receipt) => receipt.kind === 'result_adoption') && missing.length) return { field: `Task ${task.data.id} completion receipts`, found: missing.map((kind) => `missing ${kind}`), expected: 'result_adoption, or both task_acceptance and task_integration for the current plan revision' };
   }
-  return true;
+  return null;
 }
 function isCommitSha(value) { return /^[a-f0-9]{7,64}$/i.test(value ?? ''); }
 // Acceptance and integration retain one meaning each. Acceptance always records
 // its reviewed commit in `reviewed_sha`; only integration/adoption rows carry an
 // `integration_commit`, independently of the selected review boundary.
-function validIntegrationCommit(receipt, earlier, boundary) {
-  if (receipt.kind === 'story_acceptance') return receipt.integration_commit === 'none';
+function integrationCommitIssue(receipt, earlier, boundary) {
+  if (receipt.kind === 'story_acceptance') return receipt.integration_commit === 'none' ? null : 'none for story_acceptance';
   if (receipt.kind === 'task_integration') {
-    if (!isCommitSha(receipt.integration_commit)) return false;
-    if (boundary === 'task') return earlier.some((prior) => prior.kind === 'task_acceptance' && prior.work_id === receipt.work_id && prior.attempt === receipt.attempt && prior.plan_revision === receipt.plan_revision);
-    return true;
+    if (!isCommitSha(receipt.integration_commit)) return 'a commit SHA for task_integration';
+    if (boundary === 'task' && !earlier.some((prior) => prior.kind === 'task_acceptance' && prior.work_id === receipt.work_id && prior.attempt === receipt.attempt && prior.plan_revision === receipt.plan_revision)) return 'an earlier matching task_acceptance under task review boundary';
+    return null;
   }
-  if (receipt.kind === 'result_adoption') return isCommitSha(receipt.integration_commit);
+  if (receipt.kind === 'result_adoption') return isCommitSha(receipt.integration_commit) ? null : 'a commit SHA for result_adoption';
   const integrated = earlier.find((prior) => prior.kind === 'task_integration' && prior.work_id === receipt.work_id && prior.attempt === receipt.attempt && prior.plan_revision === receipt.plan_revision);
-  if (boundary === 'task') return !integrated && receipt.integration_commit === 'none';
-  return integrated ? receipt.integration_commit === integrated.integration_commit : receipt.integration_commit === 'none';
+  if (boundary === 'task') return !integrated && receipt.integration_commit === 'none' ? null : 'none until task_integration is recorded under task review boundary';
+  return integrated ? (receipt.integration_commit === integrated.integration_commit ? null : `matching task_integration commit ${integrated.integration_commit}`) : (receipt.integration_commit === 'none' ? null : 'none before task_integration is recorded');
 }
 function gitContains(repositoryRoot, ancestor, aggregate) { return spawnSync('git', ['merge-base', '--is-ancestor', ancestor, aggregate], { cwd: repositoryRoot, encoding: 'utf8' }).status === 0; }
 function hasExecutionReceipt(body, workId, kind, planRevision) { return executionReceipts(body).items.some((receipt) => receipt.work_id === workId && receipt.kind === kind && Number(receipt.plan_revision) === planRevision); }
+function dependencyReleased(story, upstream, byId, receipts) {
+  if (!story || !upstream || upstream.type !== 'task' || upstream.data.status !== 'completed') return false;
+  const result = [...byId.values()].find((record) => record.type === 'task_result' && record.data.parent === upstream.data.id);
+  if (!result || !Array.isArray(result.data.evidence) || !result.data.evidence.length) return false;
+  const rows = receipts.filter((receipt) => receipt.work_id === upstream.data.id);
+  if (rows.some((receipt) => receipt.kind === 'result_adoption' && Number(receipt.plan_revision) === Number(story.data.plan_revision))) return true;
+  const revision = Number(upstream.data.plan_revision);
+  const integrated = rows.some((receipt) => receipt.kind === 'task_integration' && Number(receipt.plan_revision) === revision);
+  const accepted = rows.some((receipt) => receipt.kind === 'task_acceptance' && Number(receipt.plan_revision) === revision);
+  return integrated && (story.data.review_boundary === 'story' || accepted);
+}
 function validateTaskExecution(record, parent, byId, findings) {
   const { data, relative } = record;
   // A light planned Task is valid backlog. The threshold becomes fail-closed
@@ -437,25 +510,23 @@ function validateTaskExecution(record, parent, byId, findings) {
   if (data.status === 'ready' || data.status === 'active') validateTaskReadiness(record, parent, findings);
   const usesExecution = ['execution', 'acceptance_refs', 'task_acceptance_criteria', 'change_scope', 'execution_isolation', 'logical_regions'].some((key) => data[key] !== undefined);
   if (!usesExecution) return;
-  if (!executionContracts.has(data.execution?.contract)) add(findings, 'AG607', 'ERROR', relative);
-  if (!data.execution || typeof data.execution !== 'object' || Array.isArray(data.execution) || Object.keys(data.execution).some((key) => key !== 'contract')) add(findings, 'AG607', 'ERROR', relative);
+  if (!executionContracts.has(data.execution?.contract)) addLocus(findings, 'AG607', relative, 'execution.contract', data.execution?.contract, `one of ${[...executionContracts].join(', ')}`);
+  if (!data.execution || typeof data.execution !== 'object' || Array.isArray(data.execution) || Object.keys(data.execution).some((key) => key !== 'contract')) addLocus(findings, 'AG607', relative, 'execution', data.execution, 'a nested block whose only key is contract');
   const acceptanceRefs = asArray(data.acceptance_refs);
-  if (!acceptanceRefs.length || acceptanceRefs.some((ref) => typeof ref !== 'string' || !/^(US-.*-AC-|TASK-AC-)/.test(ref))) add(findings, 'AG603');
+  if (!acceptanceRefs.length || acceptanceRefs.some((ref) => typeof ref !== 'string' || !/^(US-.*-AC-|TASK-AC-)/.test(ref))) addLocus(findings, 'AG603', relative, 'acceptance_refs', data.acceptance_refs, 'a non-empty inline list of criterion references, each starting US-<slug>-AC- or TASK-AC-');
   const scope = data.change_scope || {};
   const exceptional = ['externally_consequential', 'destructive', 'security_sensitive', 'data_sensitive', 'migration', 'public_api', 'architecture', 'parallel_integration'].includes(scope.change_class) || ['high', 'critical'].includes(scope.risk) || scope.material_replan === true;
   if (!scope || !['routine', 'externally_consequential', 'destructive', 'security_sensitive', 'data_sensitive', 'migration', 'public_api', 'architecture', 'parallel_integration'].includes(scope.change_class) || !['low', 'medium', 'high', 'critical'].includes(scope.risk) || !Array.isArray(scope.corroborated_paths)) add(findings, 'AG605');
   if (exceptional && data.contract_required !== 'required') add(findings, 'AG605');
   const contract = [...byId.values()].find((x) => x.type === 'task_contract' && x.data.parent === data.id);
   if (data.contract_required === 'required' && (!contract || !isAuthorityReference(contract.data.approval_authority))) add(findings, 'AG605');
+  const narrativeContractRequired = contractRequirementClaim(record.body);
+  if (narrativeContractRequired && narrativeContractRequired !== data.contract_required) addLocus(findings, 'AG605', relative, 'Contract requirement.contract_required', narrativeContractRequired, `front matter contract_required ${data.contract_required}`);
   if (!['parallel_safe', 'parallel_hunk_disjoint', 'sequential_only'].includes(data.execution_isolation)) add(findings, 'AG609', 'ERROR', relative);
   if (data.execution_isolation === 'parallel_hunk_disjoint' && (!Array.isArray(data.logical_regions) || !data.logical_regions.length)) add(findings, 'AG609', 'ERROR', relative);
+  const receipts = executionReceipts(parent?.body ?? '').items;
   for (const dependency of asArray(data.depends_on)) {
-    const upstream = byId.get(dependency);
-    const integrated = upstream && hasExecutionReceipt(parent.body, dependency, 'task_integration', upstream.data.plan_revision);
-    const accepted = upstream && hasExecutionReceipt(parent.body, dependency, 'task_acceptance', upstream.data.plan_revision);
-    const adopted = upstream && hasExecutionReceipt(parent.body, dependency, 'result_adoption', parent.data.plan_revision);
-    const released = adopted || (integrated && (parent.data.review_boundary === 'story' || accepted));
-    if (['ready', 'active'].includes(data.status) && (!upstream || upstream.data.status !== 'completed' || !released)) add(findings, 'AG609', 'ERROR', relative);
+    if (['ready', 'active'].includes(data.status) && !dependencyReleased(parent, byId.get(dependency), byId, receipts)) add(findings, 'AG609', 'ERROR', relative);
   }
   if (parent?.data.execution_mode === 'parallel' && data.execution_isolation === 'sequential_only' && data.status === 'active') {
     const activeWriters = [...byId.values()].filter((x) => x.type === 'task' && x.data.parent === data.parent && x.data.id !== data.id && x.data.status === 'active');
@@ -466,6 +537,10 @@ function sectionText(body, heading) {
   const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const section = body.match(new RegExp(`^## ${escaped}\\s*\\r?\\n([\\s\\S]*?)(?=^##\\s|(?![\\s\\S]))`, 'm'));
   return section?.[1]?.trim() ?? '';
+}
+function contractRequirementClaim(body) {
+  const live = sectionText(body, 'Contract requirement').replace(/```[\s\S]*?```/g, ' ').replace(/<!--[\s\S]*?(?:-->|$)/g, ' ');
+  return live.match(/`contract_required`\s+is\s+`(required|not_required)`\s*:/i)?.[1] ?? null;
 }
 function observableCriterion(value) {
   if (typeof value !== 'string') return false;
@@ -486,38 +561,46 @@ function storyCriterionIds(story) {
   return new Set([...sectionText(story?.body ?? '', 'Acceptance criteria').matchAll(/\b(US-[A-Za-z0-9-]+-AC-[A-Za-z0-9-]+)\b/g)].map((match) => match[1]));
 }
 function validateTaskReadiness(record, parent, findings) {
-  for (const id of taskReadinessFailures(record, parent)) add(findings, id, 'ERROR', record.relative);
+  for (const id of taskReadinessFailures(record, parent)) {
+    if (id.locus) addLocus(findings, id.id, record.relative, id.field, id.found, id.expected);
+    else add(findings, id.id, 'ERROR', record.relative);
+  }
 }
 function taskReadinessFailures(record, parent) {
   const failures = [];
   const criteria = asArray(record.data.task_acceptance_criteria);
-  if (!criteria.length || criteria.some((criterion) => !observableCriterion(criterion))) failures.push('AG620');
+  if (!criteria.length) failures.push({ id: 'AG620', locus: true, field: 'task_acceptance_criteria', found: criteria, expected: 'at least one observable acceptance criterion' });
+  else {
+    const index = criteria.findIndex((criterion) => !observableCriterion(criterion));
+    if (index >= 0) failures.push({ id: 'AG620', locus: true, field: `task_acceptance_criteria[${index + 1}]`, found: criteria[index], expected: 'a non-generic criterion of at least 12 characters that names an observable output, result, report, evidence, receipt, response, status, artifact, record, file, listing, diff, or assertion' });
+  }
   const knownStoryCriteria = storyCriterionIds(parent);
   const references = asArray(record.data.acceptance_refs);
-  if (!references.length || references.some((reference) => typeof reference !== 'string' || !knownStoryCriteria.has(reference))) failures.push('AG621');
+  if (!references.length || references.some((reference) => typeof reference !== 'string' || !knownStoryCriteria.has(reference))) failures.push({ id: 'AG621' });
   const acceptance = sectionText(record.body, 'Acceptance');
   const qualityGate = sectionText(record.body, 'Quality gate');
-  if (!observableCriterion(acceptance) || !qualityGateNamesEvidence(qualityGate)) failures.push('AG622');
+  if (!observableCriterion(acceptance)) failures.push({ id: 'AG622', locus: true, field: 'Acceptance', found: acceptance, expected: 'an observable Acceptance section that names an inspectable output, result, report, evidence, receipt, response, status, artifact, record, file, listing, diff, or assertion' });
+  else if (!qualityGateNamesEvidence(qualityGate)) failures.push({ id: 'AG622', locus: true, field: 'Quality gate', found: qualityGate, expected: 'an observable Quality gate that names verification evidence and a run, verify, inspect, assert, check, compare, review, or execute action' });
   return failures;
 }
 function validateResultExecution(record, parent, byId, findings) {
-  const { data } = record;
+  const { data, relative } = record;
   const usesExecution = ['acceptance_evidence', 'execution_run_id', 'scope_paths'].some((key) => data[key] !== undefined);
   if (!usesExecution) return;
-  if (!Array.isArray(data.acceptance_evidence) || !data.acceptance_evidence.length || data.acceptance_evidence.some((item) => typeof item !== 'string')) add(findings, 'AG603');
-  if (parent.data.execution?.contract && data.execution_run_id === undefined) add(findings, 'AG607');
+  if (!Array.isArray(data.acceptance_evidence) || !data.acceptance_evidence.length || data.acceptance_evidence.some((item) => typeof item !== 'string')) addLocus(findings, 'AG603', relative, 'acceptance_evidence', data.acceptance_evidence, 'a non-empty inline list of strings naming the evidence for each acceptance reference');
+  if (parent.data.execution?.contract && data.execution_run_id === undefined) addLocus(findings, 'AG607', relative, 'execution_run_id', undefined, 'the id of the Run this Result closes, because its Task declares an execution contract');
   if (data.execution_run_id !== undefined) { const run = byId.get(data.execution_run_id); if (!run || run.type !== 'execution_run' || run.data.work_id !== parent.data.id || run.data.status !== 'terminal' || run.data.terminal_outcome !== 'result_candidate' || run.data.result_id !== data.id) add(findings, 'AG607'); }
-  if (!Array.isArray(data.scope_paths) || data.scope_paths.some((entry) => !asArray(parent.data.affected_paths).includes(entry))) add(findings, 'AG607');
+  if (!Array.isArray(data.scope_paths) || data.scope_paths.some((entry) => !asArray(parent.data.affected_paths).includes(entry))) addLocus(findings, 'AG607', relative, 'scope_paths', data.scope_paths, `an inline list drawn from the Task's affected_paths: ${JSON.stringify(asArray(parent.data.affected_paths))}`);
 }
 function validateReviewContext(data, findings, relative) {
   const validList = (value, allowEmpty) => Array.isArray(value) && (allowEmpty || value.length > 0) && value.every((item) => typeof item === 'string' && item.trim().length > 0);
-  if (data.review_focus !== undefined && !validList(data.review_focus, false)) add(findings, 'AG206', 'ERROR', `${relative}:review_focus`);
-  if (data.not_verified !== undefined && !validList(data.not_verified, true)) add(findings, 'AG206', 'ERROR', `${relative}:not_verified`);
+  if (data.review_focus !== undefined && !validList(data.review_focus, false)) addLocus(findings, 'AG206', relative, 'review_focus', data.review_focus, 'a non-empty inline list of non-empty strings');
+  if (data.not_verified !== undefined && !validList(data.not_verified, true)) addLocus(findings, 'AG206', relative, 'not_verified', data.not_verified, 'an inline list of non-empty strings, possibly empty');
 }
 function validateContainer(record, byId, findings) {
   const childType = record.type === 'epic' ? 'feature' : 'user_story';
   const children = [...byId.values()].filter((x) => x.type === childType && x.data.parent === record.data.id);
-  if (record.data.status === 'active' && !children.some((child) => ['ready', 'active', 'blocked'].includes(child.data.status))) add(findings, 'AG301', 'ERROR', record.relative);
+  if (record.data.status === 'active' && !children.some((child) => ['ready', 'active', 'blocked'].includes(child.data.status))) addLocus(findings, 'AG301', record.relative, `${childType} child statuses`, children.map((child) => `${child.data.id}:${child.data.status}`), `at least one ${childType} child in ready, active, or blocked state`);
   if (record.data.status === 'completed' && !children.length) add(findings, 'AG303');
   if (record.data.status === 'completed' && !children.every((child) => child.data.status === 'completed')) add(findings, 'AG303');
 }
@@ -539,8 +622,8 @@ function waveConflict(left, right) {
 function validateMilestone(record, byId, findings) {
   const stories = asArray(record.data.stories);
   if (!stories.length || new Set(stories).size !== stories.length || stories.some((id) => byId.get(id)?.type !== 'user_story')) add(findings, 'AG203');
-  if (record.data.target_date_utc && !isUtc(record.data.target_date_utc)) add(findings, 'AG208');
-  if (record.data.status === 'active' && !stories.some((id) => ['ready', 'active', 'blocked'].includes(byId.get(id)?.data.status))) add(findings, 'AG301', 'ERROR', record.relative);
+  if (record.data.target_date_utc && !isUtc(record.data.target_date_utc)) addLocus(findings, 'AG208', record.relative, 'target_date_utc', record.data.target_date_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z');
+  if (record.data.status === 'active' && !stories.some((id) => ['ready', 'active', 'blocked'].includes(byId.get(id)?.data.status))) addLocus(findings, 'AG301', record.relative, 'Story statuses', stories.map((id) => `${id}:${byId.get(id)?.data.status ?? 'missing'}`), 'at least one listed Story in ready, active, or blocked state');
   if (record.data.status === 'completed' && !stories.every((id) => byId.get(id)?.data.status === 'completed')) add(findings, 'AG303');
 }
 function validateAdapter(data, findings) {
@@ -584,24 +667,48 @@ function validateRunAndActionUniqueness(records, findings) {
       if (run.data.attempt !== index + 1) { add(findings, 'AG624', 'ERROR', `${slice}: skipped predecessor before attempt ${run.data.attempt}`); break; }
       if (index > 0 && ordered[index - 1].data.status !== 'terminal') { add(findings, 'AG624', 'ERROR', `${slice}: predecessor attempt ${ordered[index - 1].data.attempt} is not terminal`); break; }
       if (index > 0 && ordered[index - 1].data.terminal_outcome === 'result_candidate') { add(findings, 'AG625', 'ERROR', `${slice}: attempt ${run.data.attempt} follows a terminal result candidate`); break; }
+      if (index > 0 && ['cancelled', 'abandoned'].includes(ordered[index - 1].data.terminal_outcome)) { add(findings, 'AG628', 'ERROR', `${slice}: attempt ${run.data.attempt} follows terminal ${ordered[index - 1].data.terminal_outcome}`); break; }
     }
   }
   const actions = records.filter((record) => record.type === 'external_action').map((record) => record.data.idempotency_key);
   if (new Set(actions).size !== actions.length) add(findings, 'AG607');
 }
+function validateTaskRunLifecycle(records, findings) {
+  for (const task of records.filter((record) => record.type === 'task')) {
+    const attempts = attemptsFor(task, records);
+    if (task.data.status === 'ready' && attempts.length) {
+      const latest = attempts.at(-1);
+      const recovery = latest.data.status === 'open'
+        ? 'complete the transition to active'
+        : latest.data.terminal_outcome === 'failed'
+          ? 'restore active and use retry admission'
+          : latest.data.terminal_outcome === 'result_candidate'
+            ? 'use the existing Result/review route'
+            : 'supersede the Task and create a successor';
+      addLocus(findings, 'AG626', task.relative, 'status/current-revision execution Runs', 'ready with recorded Run', recovery);
+    }
+  }
+}
 function validateTiming(record, findings, policy) {
   const t = record.data.timing;
   if (!t || Object.keys(t).length === 0) { if (policy.timingRequired) add(findings, 'AG305'); return; }
   const minutes = ['active_minutes', 'blocked_minutes', 'review_wait_minutes']; const intervals = timingIntervals(record.body);
-  if (!isUtc(t.started_at_utc) || !isUtc(t.completed_at_utc) || Date.parse(t.completed_at_utc) < Date.parse(t.started_at_utc) || !Number.isInteger(t.remediation_attempts) || t.remediation_attempts < 0 || t.remediation_attempts > 3 || !minutes.every((key) => Number.isInteger(t[key]) && t[key] >= 0) || intervals.invalid) { add(findings, 'AG306'); return; }
-  if (!intervals.items.length && minutes.some((key) => t[key] !== 0)) { add(findings, 'AG306'); return; }
+  const timingError = (field, found, expected) => addLocus(findings, 'AG306', record.relative, field, found, expected);
+  if (!isUtc(t.started_at_utc)) { timingError('timing.started_at_utc', t.started_at_utc, 'an RFC 3339 UTC timestamp'); return; }
+  if (!isUtc(t.completed_at_utc) || Date.parse(t.completed_at_utc) < Date.parse(t.started_at_utc)) { timingError('timing.completed_at_utc', t.completed_at_utc, `an RFC 3339 UTC timestamp no earlier than ${t.started_at_utc}`); return; }
+  if (!Number.isInteger(t.remediation_attempts) || t.remediation_attempts < 0 || t.remediation_attempts > 3) { timingError('timing.remediation_attempts', t.remediation_attempts, 'an integer from 0 through 3'); return; }
+  const invalidMinutes = minutes.find((key) => !Number.isInteger(t[key]) || t[key] < 0);
+  if (invalidMinutes) { timingError(`timing.${invalidMinutes}`, t[invalidMinutes], 'a non-negative whole minute count'); return; }
+  if (intervals.invalid) { timingError('Timing intervals', 'malformed or incomplete table', 'rows with kind, started_at_utc and completed_at_utc'); return; }
+  if (!intervals.items.length && minutes.some((key) => t[key] !== 0)) { timingError('Timing intervals', 'missing', 'interval rows whose whole-minute sums match timing totals'); return; }
   let previous = Date.parse(t.started_at_utc); const sums = { active: 0, blocked: 0, review_wait: 0 };
   for (const interval of intervals.items) {
     const start = Date.parse(interval.started_at_utc); const end = Date.parse(interval.completed_at_utc);
-    if (!['active', 'blocked', 'review_wait'].includes(interval.kind) || !isUtc(interval.started_at_utc) || !isUtc(interval.completed_at_utc) || !Number.isFinite(start) || !Number.isFinite(end) || start < previous || end < start || end > Date.parse(t.completed_at_utc)) { add(findings, 'AG306'); return; }
+    if (!['active', 'blocked', 'review_wait'].includes(interval.kind) || !isUtc(interval.started_at_utc) || !isUtc(interval.completed_at_utc) || !Number.isFinite(start) || !Number.isFinite(end) || start < previous || end < start || end > Date.parse(t.completed_at_utc)) { timingError('Timing intervals', interval, `ordered ${interval.kind} rows within ${t.started_at_utc} through ${t.completed_at_utc}`); return; }
     sums[interval.kind] += (end - start) / 60000; previous = end;
   }
-  if (sums.active !== t.active_minutes || sums.blocked !== t.blocked_minutes || sums.review_wait !== t.review_wait_minutes) add(findings, 'AG306');
+  const mismatched = [['active', 'active_minutes'], ['blocked', 'blocked_minutes'], ['review_wait', 'review_wait_minutes']].find(([kind, field]) => sums[kind] !== t[field]);
+  if (mismatched) { const [kind, field] = mismatched; timingError(`timing.${field}`, t[field], `the computed ${kind} interval sum: ${sums[kind]}`); }
 }
 function timingIntervals(body) {
   const section = body.match(/^## Timing intervals\s*\r?\n([\s\S]*?)(?=^##\s|(?![\s\S]))/m);
@@ -617,8 +724,8 @@ function timingIntervals(body) {
 function validateProjections(root, records, team, findings) {
   const projectionRoot = path.join(root, '.exorail', 'projections'); if (!existsSync(projectionRoot)) return;
   const episodeIndex = path.join(projectionRoot, 'EPISODE_INDEX.md');
-  if (!episodeEnabled(root) && existsSync(episodeIndex)) add(findings, 'AG501');
-  for (const name of projectionNamesFor(root)) { const file = path.join(projectionRoot, name); if (!existsSync(file)) { add(findings, 'AG501'); continue; } const expected = projectionContent(name, records, team); if (readFileSync(file, 'utf8') !== expected) add(findings, 'AG501'); }
+  if (!episodeEnabled(root) && existsSync(episodeIndex)) addLocus(findings, 'AG501', 'projections/EPISODE_INDEX.md', 'projection', 'left over while episodes are disabled', 'no EPISODE_INDEX.md until episodes are enabled and generated');
+  for (const name of projectionNamesFor(root)) { const file = path.join(projectionRoot, name); const relative = `projections/${name}`; if (!existsSync(file)) { addLocus(findings, 'AG501', relative, 'projection', 'missing', 'current generator-owned content'); continue; } const expected = projectionContent(name, records, team); if (readFileSync(file, 'utf8') !== expected) addLocus(findings, 'AG501', relative, 'projection', 'stale or manually edited content', 'current generator-owned content'); }
 }
 function asArray(value) { return Array.isArray(value) ? value : []; }
 function isRole(value) { return typeof value === 'string' && /^[a-z][a-z0-9_-]*$/.test(value); }
@@ -662,15 +769,8 @@ export function deriveExecutableFrontier(root, storyId) {
     if (stories.length === 0) throw new Error(`unknown Story ${storyId}: this workspace has no Story records yet. Create one under .exorail/planning/epics/<epic>/features/<feature>/stories/, following .exorail/method/PROJECT_SETUP.md`);
     throw new Error(`unknown Story ${storyId}: this workspace has ${stories.join(', ')}`);
   }
-  const tasks = records.filter((record) => record.type === 'task' && record.data.parent === storyId).sort((left, right) => left.data.id.localeCompare(right.data.id));
-  const receipts = executionReceipts(story.body).items.filter((receipt) => Number(receipt.plan_revision) === story.data.plan_revision);
-  const satisfied = (dependency) => {
-    const rows = receipts.filter((receipt) => receipt.work_id === dependency);
-    if (rows.some((receipt) => receipt.kind === 'result_adoption')) return true;
-    const integrated = rows.some((receipt) => receipt.kind === 'task_integration');
-    const accepted = rows.some((receipt) => receipt.kind === 'task_acceptance');
-    return story.data.review_boundary === 'story' ? integrated : integrated && accepted;
-  };
+  const tasks = storyTasks(story, records);
+  const receipts = executionReceipts(story.body).items;
   // A proposed blocking decision prevents the affected Task from becoming
   // ready. The frontier is the surface OPERATING_FLOW.md names for launch, so
   // it must report that, or the launch surface contradicts the launch rule.
@@ -695,13 +795,13 @@ export function deriveExecutableFrontier(root, storyId) {
   for (const task of tasks.filter((record) => ['planned', 'ready', 'blocked'].includes(record.data.status))) {
     const reasons = [];
     if (task.data.status === 'blocked') reasons.push('status_blocked');
-    if (storyDecisionOpen || openDecisionRequests(task.body).length > 0) reasons.push('decision_request_open');
-    if (task.data.plan_revision !== story.data.plan_revision) reasons.push('revision_stale');
-    if (task.data.execution?.contract && !executionContracts.has(task.data.execution.contract)) reasons.push('execution_contract_unavailable');
-    for (const dependency of asArray(task.data.depends_on)) if (!satisfied(dependency)) reasons.push(`dependency_unavailable:${dependency}`);
-    for (const failure of taskReadinessFailures(task, story)) reasons.push(`readiness_incomplete:${failure}`);
-    if (remediationExhausted(task, records)) reasons.push('remediation_exhausted:attempts_1_to_3');
+    reasons.push(...sharedAdmissionReasons(task, story, records, { tasks, receipts, storyDecisionOpen }));
     (reasons.length ? blocked : eligible).push(reasons.length ? { task_id: task.data.id, reasons } : task.data.id);
+  }
+  for (const task of tasks.filter((record) => record.data.status === 'active')) {
+    const attempts = attemptsFor(task, records); const latest = attempts.at(-1);
+    if (remediationExhausted(task, records)) blocked.push({ task_id: task.data.id, reasons: ['remediation_exhausted:attempts_1_to_3'] });
+    else if (latest?.data.status === 'terminal' && ['cancelled', 'abandoned'].includes(latest.data.terminal_outcome)) blocked.push({ task_id: task.data.id, reasons: [`supersession_required:terminal_${latest.data.terminal_outcome}`] });
   }
   // Dependency order already removes unavailable work. A sequential Story adds
   // the missing rule for independently ready work: only its first eligible
@@ -719,6 +819,7 @@ export function deriveExecutableFrontier(root, storyId) {
   };
 }
 function byIdTaskContract(tasks, taskId) { return tasks.find((task) => task.data.id === taskId)?.data.execution?.contract; }
+function storyTasks(story, records) { return records.filter((record) => record.type === 'task' && record.data.parent === story.data.id).sort((left, right) => left.data.id.localeCompare(right.data.id)); }
 function attemptsFor(task, records) {
   return records.filter((record) => record.type === 'execution_run' && record.data.work_id === task.data.id && record.data.plan_revision === task.data.plan_revision)
     .sort((left, right) => left.data.attempt - right.data.attempt);
@@ -726,6 +827,41 @@ function attemptsFor(task, records) {
 function remediationExhausted(task, records) {
   const attempts = attemptsFor(task, records);
   return attempts.length === 3 && attempts.every((attempt) => attempt.data.status === 'terminal' && attempt.data.terminal_outcome !== 'result_candidate');
+}
+function sharedAdmissionReasons(task, story, records, { tasks = storyTasks(story, records), receipts = executionReceipts(story.body).items, storyDecisionOpen = openDecisionRequests(story.body).length > 0 } = {}) {
+  const byId = new Map(records.map((record) => [record.data.id, record])); const reasons = [];
+  if (storyDecisionOpen || openDecisionRequests(task.body).length > 0) reasons.push('decision_request_open');
+  if (task.data.plan_revision !== story.data.plan_revision) reasons.push('revision_stale');
+  if (task.data.execution?.contract && !executionContracts.has(task.data.execution.contract)) reasons.push('execution_contract_unavailable');
+  for (const dependency of asArray(task.data.depends_on)) if (!dependencyReleased(story, tasks.find((candidate) => candidate.data.id === dependency), byId, receipts)) reasons.push(`dependency_unavailable:${dependency}`);
+  for (const failure of taskReadinessFailures(task, story)) reasons.push(`readiness_incomplete:${failure.id}`);
+  return reasons;
+}
+function evaluateAdmission(task, story, records, mode) {
+  const attempts = attemptsFor(task, records); const latest = attempts.at(-1);
+  const reasons = sharedAdmissionReasons(task, story, records);
+  if (mode === 'initial') {
+    if (task.data.status !== 'ready') reasons.unshift(`status_not_ready:${task.data.status}`);
+    if (attempts.length) reasons.unshift('current_revision_run_exists');
+  } else if (mode === 'retry') {
+    if (task.data.status !== 'active') reasons.unshift(`status_not_active:${task.data.status}`);
+    if (!latest || latest.data.status !== 'terminal' || latest.data.terminal_outcome !== 'failed') reasons.unshift('latest_attempt_not_terminal_failed');
+    if (attempts.some((attempt) => attempt.data.status === 'open')) reasons.unshift('open_attempt_exists');
+    if (attempts.length >= 3) reasons.unshift('attempt_limit_exhausted');
+  } else reasons.unshift(`unsupported_admission_mode:${mode}`);
+  return { admitted: reasons.length === 0, mode, reasons, latest_attempt: latest?.data.id ?? 'none' };
+}
+export function evaluateTaskAdmission(root, taskId, mode) {
+  const blocking = validateForAdmission(root);
+  if (blocking.length) {
+    const error = new Error(`workflow_invalid: ${blocking.map((finding) => finding.id).join(', ')}`);
+    error.reason = 'workflow_invalid'; error.findings = blocking; throw error;
+  }
+  const findings = []; const records = collect(root, findings);
+  const task = records.find((record) => record.type === 'task' && record.data.id === taskId);
+  const story = task && records.find((record) => record.type === 'user_story' && record.data.id === task.data.parent);
+  if (findings.some((finding) => finding.severity === 'ERROR') || !task || !story) throw new Error('task admission inputs are invalid');
+  return evaluateAdmission(task, story, records, mode);
 }
 
 export function deriveCapabilityResolution(root, capability, bindings = new Map(), { required = false, manualRequested = false } = {}) {
@@ -808,8 +944,11 @@ export function buildInvocationEnvelope(root, taskId, capability, bindings = new
   const task = records.find((record) => record.type === 'task' && record.data.id === taskId);
   const story = task && records.find((record) => record.type === 'user_story' && record.data.id === task.data.parent);
   if (findings.length || !task || !story) throw new Error('invocation envelope inputs are invalid');
+  const mode = task.data.status === 'ready' ? 'initial' : task.data.status === 'active' ? 'retry' : 'initial';
+  const admission = evaluateTaskAdmission(root, taskId, mode);
+  if (!admission.admitted) throw new Error(`work ${taskId} is not admitted for ${mode}: ${admission.reasons.join(', ')}`);
   const frontier = deriveExecutableFrontier(root, story.data.id);
-  if (!frontier.eligible.includes(taskId)) throw new Error(`work ${taskId} is not in the executable frontier`);
+  if (mode === 'initial' && !frontier.eligible.includes(taskId)) throw new Error(`work ${taskId} is not in the executable frontier`);
   const resolution = deriveCapabilityResolution(root, capability, bindings, options);
   const selected = resolution.available ? resolution.selected_adapter_id : 'none';
   if (options.requireAdapter === true && selected === 'none') throw new Error(`required capability is unavailable: ${resolution.reason}`);
@@ -822,7 +961,7 @@ export function buildInvocationEnvelope(root, taskId, capability, bindings = new
     acceptance_refs: sorted(task.data.acceptance_refs), dependencies: sorted(task.data.depends_on),
     allowed_scope_paths: sorted(task.data.affected_paths), consumed_policy: policy,
     capability_resolution: resolution, selected_adapter_id: selected,
-    frontier, governance_input_digest: digest
+    frontier, admission, governance_input_digest: digest
   };
 }
 
@@ -975,9 +1114,13 @@ export function resumptionRoutes(records) {
   // while a Decision request is open sent a reader off to run a command when
   // the truth was that a person had to answer first: the surface named the
   // request elsewhere and never said it was what stood in the way.
+  // A Result waiting for human review outranks planning guidance. It does not
+  // replace it: work that is genuinely ready stays listed underneath, so the
+  // reader sees the act that is owed first and the work that can proceed next.
   if (decisions.length > 0) return [humanDecisionRoute(decisions)];
-  if (currentRows.length === 0) return [emptyRoute(records, decisions)];
-  return currentRows.map((row) => nextRoute(row, records));
+  const pending = pendingAcceptance(records);
+  const rest = currentRows.length === 0 ? [emptyRoute(records, decisions)] : currentRows.map((row) => nextRoute(row, records));
+  return pending.length > 0 ? [pendingReviewRoute(pending, records), ...rest] : rest;
 }
 
 // A route is a structured object, and the Markdown below is rendered from it.
@@ -1039,6 +1182,52 @@ function humanDecisionRoute(decisions) {
     reason: `${host.data.id} raised ${request.request_id} and asks ${request.requested_decision}${more}`,
     required_condition: `Who answers: the holder of \`user:\` authority for this repository. Why it is not derivable: the records state the options, not which one is chosen. Record the answer as the request's \`resolution\` and \`authority_ref\` in ${host.relative}`,
     targets: [target.record(host.relative), target.field('resolution', host.relative), target.field('authority_ref', host.relative)]
+  });
+}
+
+// A Result keeps review_pending for life; acceptance lives in the receipt
+// ledger. What is owed is therefore a missing task_acceptance receipt at this
+// revision, not the Result's own status.
+// The frontier's own release predicate, read for a Story that has nothing
+// current. Telling that Story to "plan the work" was right while one of its
+// light Tasks could be refined, and wrong when every one of them depends on
+// output not yet accepted: refining such a Task to ready is refused with
+// AG609, and P-1's guidance deliberately leaves those Tasks light until their
+// predecessor completes. Two derived views of one state must not disagree, so
+// this reads dependencyReleased exactly as sharedAdmissionReasons does. It
+// returns the held Tasks and what holds each, or null when any light Task has
+// no unreleased dependency and planning is the right answer.
+function heldByDependency(story, records) {
+  const tasks = storyTasks(story, records);
+  const light = tasks.filter((task) => task.data.status === 'planned');
+  if (light.length === 0) return null;
+  const byId = new Map(records.map((record) => [record.data.id, record]));
+  const receipts = executionReceipts(story.body).items;
+  const holds = light.map((task) => ({ task, upstream: asArray(task.data.depends_on).filter((dependency) => !dependencyReleased(story, tasks.find((candidate) => candidate.data.id === dependency), byId, receipts)) }));
+  return holds.every((hold) => hold.upstream.length > 0) ? holds : null;
+}
+
+function pendingAcceptance(records) {
+  return records.filter((row) => {
+    if (row.type !== 'task_result' || row.data.status !== 'review_pending') return false;
+    const task = records.find((item) => item.type === 'task' && item.data.id === row.data.parent);
+    const story = task && records.find((item) => item.type === 'user_story' && item.data.id === task.data.parent);
+    if (!task || !story) return false;
+    return !hasExecutionReceipt(story.body, task.data.id, 'task_acceptance', Number(row.data.based_on_plan_revision));
+  });
+}
+
+function pendingReviewRoute(pending, records) {
+  const first = pending[0];
+  const task = records.find((row) => row.type === 'task' && row.data.id === first.data.parent);
+  const story = task ? records.find((row) => row.type === 'user_story' && row.data.id === task.data.parent) : undefined;
+  const more = pending.length > 1 ? ` (${pending.length - 1} further Result${pending.length === 2 ? '' : 's'} ${pending.length === 2 ? 'is' : 'are'} also waiting)` : '';
+  return route('human_question', {
+    subject: first.data.parent,
+    imperative: `review the Result recorded for ${first.data.parent} and accept or refuse it`,
+    reason: `its Result is review_pending, so the work is delivered and not yet accepted${more}`,
+    required_condition: 'Who acts: the holder of `user:` authority. Acceptance is recorded as a task_acceptance receipt in the Story, and integration as task_integration; neither is derivable from the records',
+    targets: [target.record(first.relative), ...(story ? [target.section('## Execution receipts', story.relative, 'write')] : [])]
   });
 }
 
@@ -1175,6 +1364,18 @@ export function nextRoute(row, records) {
       targets: [target.record(row.relative), target.section('## Decision record', row.relative, 'write'), target.document(FLOW, 'states the replan and supersession route')]
     });
   }
+  if (row.type === 'task' && row.data.status === 'active') {
+    const latest = attemptsFor(row, records).at(-1);
+    if (latest?.data.status === 'terminal' && ['cancelled', 'abandoned'].includes(latest.data.terminal_outcome)) {
+      return route('recover', {
+        subject: row.data.id,
+        imperative: `supersede ${row.relative} and create a successor Task`,
+        reason: `its latest current-revision Run is terminal ${latest.data.terminal_outcome}, so the same Task cannot start another attempt`,
+        required_condition: 'Record the resolved Decision or Challenge, protected authority, successor Task and current Story revision before resuming work',
+        targets: [target.record(row.relative), target.section('## Decision record', row.relative, 'write'), target.document(FLOW, 'states the replan and supersession route')]
+      });
+    }
+  }
   // Naming the state is not naming the recovery. "Start only after current
   // guards pass" told a reader they were blocked and left them to discover by
   // what, which is the shape of answer PA09 exists to stop.
@@ -1272,6 +1473,18 @@ export function nextRoute(row, records) {
       });
     }
     if (row.type === 'user_story') {
+      const held = heldByDependency(row, records);
+      if (held) {
+        const upstream = [...new Set(held.flatMap((hold) => hold.upstream))];
+        const waiting = held.map((hold) => hold.task.data.id);
+        return route('recover', {
+          subject: row.data.id,
+          imperative: `wait for ${upstream.join(', ')} to be accepted and integrated before refining ${waiting.join(', ')}`,
+          reason: `every Task left to plan under it builds on output that is not yet accepted and integrated, so refining one to ready now is refused with AG609`,
+          required_condition: `A dependency is released by a task_acceptance and a task_integration receipt for the upstream Task in this Story's Execution receipts; \`${FRONTIER} --story ${row.data.id}\` reports each hold as dependency_unavailable`,
+          targets: [target.record(row.relative), target.command(FRONTIER)]
+        });
+      }
       return route('recover', {
         subject: row.data.id,
         imperative: `plan the work under ${row.relative}`,

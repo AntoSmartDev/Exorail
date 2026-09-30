@@ -21,6 +21,9 @@ reconstructed.
    resolved Policy; runtime workspace and branch names are local observations.
 5. Verify every acceptance reference. Remediate safely for at most three
    cycles, then record an internally clean immutable Result in `review_pending`.
+   To tie the execution to that Result, record its terminal Run first and name
+   it in the Result; without that binding the Result is valid but not
+   observable.
 6. Use the Task review boundary by default, or follow the explicitly authorized
    Story boundary. Reconcile integration before unblocking dependents.
 7. When every Task is integrated, run whole-Story review and ask for Story
@@ -32,16 +35,20 @@ Execution modes are `sequential` or `parallel`; derived Task isolation decides
 whether work is parallel-safe, hunk-disjoint or sequential-only. Dependencies
 always win. Verification profiles are `minimal`, `standard`, or `full`; children
 may not weaken them. `task` review is the default boundary. `story` requires
-explicit current human authority and resolved Policy eligibility; it never
+the current declared `user:<decision-reference>` authority-reference form and
+resolved Policy eligibility; it never
 removes the mandatory whole-Story review.
 
 ## Evidence and history
 
 Clean Results are immutable evidence, not self-acceptance. Store durable design
 alternatives in ADRs and typed decisions/challenges in `DECISIONS.md`. A
-protected human record uses `user:<decision-reference>` and must resolve outside
-agent-authored prose. Legacy work records may be retained as historical evidence
-but must not direct schema 0.2 execution.
+a protected route records the declared repository-local
+`user:<decision-reference>` authority-reference form. The baseline checks that
+form in the current snapshot; it does not resolve an external source, attest
+human origin, authenticate identity, prevent a direct repository writer from
+creating it, or make it single-use. Legacy work records may be retained as
+historical evidence but must not direct schema 0.2 execution.
 
 ## Trust boundary
 
@@ -50,7 +57,7 @@ Use exactly one claim-state label for a reported fact:
 `mechanically_verified` means a defined local check observed the fact;
 `agent_declared` means an agent supplied it without independent verification;
 `human_decision_required` means only a current human Decision can settle it;
-and `not_verified` means Exorail has no verification basis for it.
+and `not_verified` means ExoRail has no verification basis for it.
 
 Use provenance separately to describe where supporting evidence came from:
 `declared`, `git_linked`, `externally_attested`, or
@@ -62,6 +69,14 @@ release approval, authenticated identity, or permission to create a PR, merge,
 publish, or move queue state. Completion attribution is repository-declared, not
 proof of a person's identity. Retrieved knowledge is non-authoritative until a
 separate verification or current human Decision establishes how it may be used.
+
+## Optional deployment boundary
+
+An adopter may configure deployment-owned file protection; ExoRail does not
+enforce it. The installed-project classification and its operational costs are
+defined once in `STRUCTURE_REFERENCE.md#optional-deployment-capability-boundary`.
+File-level protection cannot isolate `authority_ref` values inside ordinary work
+records, and it does not authenticate human origin or identity.
 
 ## Native operation without an adapter
 

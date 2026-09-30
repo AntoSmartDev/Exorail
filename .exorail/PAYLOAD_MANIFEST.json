@@ -6,22 +6,22 @@
     {
       "path": "AGENTS.md",
       "kind": "text",
-      "sha256": "30ed64e0fe72f02600d815ee6621ff53190e7705053dcf8b955acd20c5728e86"
+      "sha256": "2f7a4c0e2d6010088d81bd5b5bd7a2f1005a30261f391cc019b800d4eae21fdb"
     },
     {
       "path": "CURRENT_CURSOR.md",
       "kind": "text",
-      "sha256": "55d4571a84fbb2234df0affd44e83872a99ea7284630747402d1a109dbb32247"
+      "sha256": "07c3d2de8091f4bf6f124e04427be14fd803257ea9eb84e5e360cbd6faf6bb54"
     },
     {
       "path": "DECISIONS.md",
       "kind": "text",
-      "sha256": "7f9380bc1651392cbad16033d03ab3ab6a9f9d203cd3a4c89e71caa561a5cfcc"
+      "sha256": "f4734935f65c3ebbfa6ee0d2e2947991288ad43ea01b74206dba618e0f0c03d7"
     },
     {
       "path": "KNOWLEDGE_INDEX.md",
       "kind": "text",
-      "sha256": "2dce319e5b0835619b4fd63df175f68c4ac5f9dcb45f1503dd43d4257f48bca6"
+      "sha256": "001acba73b20c2cda8d02ba27e086e6eeac2b088697eb5d8c9eb868fc92ee4a7"
     },
     {
       "path": "local/.gitignore",
@@ -31,52 +31,52 @@
     {
       "path": "method/FINDINGS.md",
       "kind": "text",
-      "sha256": "ce87998da19c77cd111c3cdba0d3e70c7f68309e641a641246e8e4f9f6ca3c81"
+      "sha256": "a36f5ef1f93300e7a10305ad00d91e209dc76d8269057a2b92c9f224ce69c87f"
     },
     {
       "path": "method/OPERATING_FLOW.md",
       "kind": "text",
-      "sha256": "5bf7500f26dfa677cbeed0cd8a5519d123bfe2e0e887834c347aec84587aee09"
+      "sha256": "0866744a98c959f99d8e3f88a098260e072bbf8985d3afd70ed8e7ea3e18929c"
     },
     {
       "path": "method/PLAYBOOK.md",
       "kind": "text",
-      "sha256": "283d9fc5da7ff15ca879d11bd80f24f569ed4511eb2174b67327b943a6a7a421"
+      "sha256": "0866cb125943c61170ff827fe2dbe2b364f1ae806c026ba2344c690821e5cd3d"
     },
     {
       "path": "method/PROJECT_SETUP.md",
       "kind": "text",
-      "sha256": "d84e7b1b80dd8da5064176b7fb5fb98ef71ce5425e1b975aa8257ee43e8bb085"
+      "sha256": "822dbfd639e45ee0d9ae62abee373de48c566b90ebefaae8c4d20d9b2a9a8c8e"
     },
     {
       "path": "method/STRUCTURE_REFERENCE.md",
       "kind": "text",
-      "sha256": "79675bdd389849c8b7f8b84249f3f519e627e9f0e8f43394cd40bc4a82d40051"
+      "sha256": "7b32c73bd0908c9ba5e05603300b86c7f86a9a337f5aea018ca61161418c2ba5"
     },
     {
       "path": "method/WORKFLOW_RULES.md",
       "kind": "text",
-      "sha256": "1cbe02fbf5a2720a5a4edd30f9309788ed4d11af30ec11543916686ef822923b"
+      "sha256": "b746dc7d2ad028edade829e59e86ca7da5f10f921410ceae57ecc1b7a210131f"
     },
     {
       "path": "PROJECT_READINESS.md",
       "kind": "text",
-      "sha256": "79c597f8b02e6ffcb1d4ebefb6d78d189790afe3f2dd48d9957ae2c86f3abb1c"
+      "sha256": "30794169d250517c4b5468f624302c9e30a6bbca1cbaf705fd7e79da7f030932"
     },
     {
       "path": "prompts/START_NEW_PROJECT_PROMPT.md",
       "kind": "text",
-      "sha256": "d72de6967c934cb87fd7cf92749d94e19c8e59555e429a302535899f98bbda6b"
+      "sha256": "6c3fd7e39245d7097486c60d995731ce3e35420d0787d06108569e956aed5169"
     },
     {
       "path": "prompts/SWITCH_LLM_PROMPT.md",
       "kind": "text",
-      "sha256": "2419226d120c531bb81a7d42f751bf8b3eed9d5d0670ada44e873bcf6f1a829e"
+      "sha256": "bf019a1ef4bfa69b2b3ab4885daafbc7702f34ac94f6bc862cabc7f9d061a5b5"
     },
     {
       "path": "README.md",
       "kind": "text",
-      "sha256": "20830ac5ac6f8efbe1ebab989f753c8a4efd6d4302edb261b5cddb94d1884de7"
+      "sha256": "0b9e8eabf0858ca37136fcea543828152750263187dfd8151af296428e08f26b"
     },
     {
       "path": "templates/ACCEPTANCE.md",
@@ -104,11 +104,6 @@
       "sha256": "2d1357806bf18759c26a3035a6ca63dbd45d25542b29df646e397bcdc3432fe7"
     },
     {
-      "path": "templates/BACKLOG.md",
-      "kind": "text",
-      "sha256": "27316b4f7cc75ca0995194173ca9f1767328384b2a02360e5ed2484e488b7fa5"
-    },
-    {
       "path": "templates/CONTEXT_MAP.md",
       "kind": "text",
       "sha256": "d5defe82229b62654bf0c26ade6037b03b9ec1abe63fd8eb5e9fc6c3082d51e5"
@@ -116,7 +111,7 @@
     {
       "path": "templates/CONTEXT.md",
       "kind": "text",
-      "sha256": "bf4095df776c80ee8e36fcca2cef7010f3e811c2efed272e2aeeae3cd34544f5"
+      "sha256": "8f8635670191b95a7a110ea95afa761b7272c0ed31a8b65e5dc4d00c980c8684"
     },
     {
       "path": "templates/CONTRACT.md",
@@ -131,7 +126,7 @@
     {
       "path": "templates/DECISIONS.md",
       "kind": "text",
-      "sha256": "bbbbfa3739404bc5ecb3a78f31c79c122f9a59f65ae523a3e7da419a9a505bde"
+      "sha256": "e781d2b17b1ccd0d4086c1eb3813a485043452441eb18ba5cf3c29ed2730e6f5"
     },
     {
       "path": "templates/ENGINEERING.md",
@@ -151,7 +146,7 @@
     {
       "path": "templates/EXECUTION_RUN.md",
       "kind": "text",
-      "sha256": "22882b026a9a97910591da0681a66ba12a6656ddbec046f44bbe1073e2ce1b28"
+      "sha256": "4f89c829f86e587031db4674cd1626d1f91bbe6860c09ea27e43cefda22ec5f8"
     },
     {
       "path": "templates/EXTERNAL_ACTION.md",
@@ -166,7 +161,7 @@
     {
       "path": "templates/KNOWLEDGE_INDEX.md",
       "kind": "text",
-      "sha256": "b040fe2537c3b3ab3e425d89dfc75da59d0455282ce93f5466ebe30a58066f3e"
+      "sha256": "4e4a42089794567daae4180c4fd0edd45e7b3d32e1ee96214203360673003fc8"
     },
     {
       "path": "templates/knowledge-tree/BOUNDED_CONTEXT.md",
@@ -251,7 +246,7 @@
     {
       "path": "templates/README.md",
       "kind": "text",
-      "sha256": "14d60869a379390a50eb7a4b409b88e2d2215956a44291d4937717cbe8863ad9"
+      "sha256": "d872097db224cee4ac0906a3f138d6e6a419b1dfc472f9516b332250cea16866"
     },
     {
       "path": "templates/READY_CHECKLIST_TEMPLATE.md",
@@ -261,7 +256,7 @@
     {
       "path": "templates/RESULT.md",
       "kind": "text",
-      "sha256": "6c1c7f11a66c534818a819825a7ffbb03c0915bd2649dca77e71285a48f4c097"
+      "sha256": "b1af0aa17bca42728e19e48b015d02c3052a8f1bf8afd40f671f3eab12a403d9"
     },
     {
       "path": "templates/ROADMAP.md",
@@ -276,7 +271,7 @@
     {
       "path": "templates/STORY.md",
       "kind": "text",
-      "sha256": "a7944827faa0459b729442e93d3c6fc0b37c1332d3e98ebe71db26ef7362aead"
+      "sha256": "c46c707cfa4050426c54f031246f92fe35f73813a082ed4b9b6ccdf0cc885c76"
     },
     {
       "path": "templates/TARGET_STRUCTURE.md",
@@ -291,7 +286,7 @@
     {
       "path": "templates/TASK.md",
       "kind": "text",
-      "sha256": "16513721864527da33990d4dabc6838c1f200b0cd919d38252d96808b0c8d0f8"
+      "sha256": "2de63c042da2c4b2f4683cb0f8bd3d4342f6e8c17bc4fa16e93fae5ad9441d8f"
     },
     {
       "path": "templates/TEAM.json",
@@ -309,6 +304,11 @@
       "sha256": "ab909e2116304b041c48141842b016e8647aeec72010d72973bfc444d4745ec2"
     },
     {
+      "path": "tools/derive-governance-input-digest.mjs",
+      "kind": "text",
+      "sha256": "e6c51f71a21b85eeb70dff540033175115f9643ed9215aecd4f6923a562a9551"
+    },
+    {
       "path": "tools/derive-review-brief.mjs",
       "kind": "text",
       "sha256": "08689538b1f0e9b3f2f789b632e91095523dcbf7d64166d5ad3bc01eb970e941"
@@ -317,6 +317,11 @@
       "path": "tools/derive-review-readiness.mjs",
       "kind": "text",
       "sha256": "91560de553115cca42fd2b87ad8f3b50dd1d5dc09dcaf9525f826543e2eda053"
+    },
+    {
+      "path": "tools/derive-task-review-readiness.mjs",
+      "kind": "text",
+      "sha256": "4b86865efea5ab0aef19469d7460b2deb4dd4f7cbfea6c09eaacb5c3baa82d74"
     },
     {
       "path": "tools/derive-team-view.mjs",
@@ -361,12 +366,17 @@
     {
       "path": "tools/lib/review-readiness.mjs",
       "kind": "text",
-      "sha256": "5bbcfebe6b849b9534d4156b91ce041567a1eb7b20360250418380d50041f8fc"
+      "sha256": "a3245fbabac1b4f708a9cf74501079d98d1727057a1fb4cb115a4be0d3c66e71"
     },
     {
       "path": "tools/lib/schema-0.2.mjs",
       "kind": "text",
-      "sha256": "1afe03b41e709a7df5b7f018447a362cc33ef4c723619e9eacceee796a9aea4a"
+      "sha256": "dbd86edd5cf036256445a207188c9556c73cb88370434c41a68384a22516a631"
+    },
+    {
+      "path": "tools/lib/task-review-readiness.mjs",
+      "kind": "text",
+      "sha256": "d8c0dd0ff4b8a697db901653d24a9972adca0e3db3880beeda35f9a0e3e17fc3"
     },
     {
       "path": "tools/lib/team-view.mjs",
@@ -381,7 +391,7 @@
     {
       "path": "tools/README.md",
       "kind": "text",
-      "sha256": "3fb5df3b67d815dbf4cf3fc22be73c2e766ddd64d1fcfe90b5f407349be79433"
+      "sha256": "2c4d8dc647e389869b5d466ac74e5b82d1c6ed7d16d7d9785fada77dfbec7d57"
     },
     {
       "path": "tools/validate-text-files.mjs",

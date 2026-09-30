@@ -49,6 +49,8 @@ projection or by weakening a predicate.
 | AG623 | Task cannot create attempt 4: record a replan, split, or human decision after attempt 3 | `execution_run` attempt count for one Task and plan revision | Stop the slice and use a Decision, replan or successor Task; do not add a fourth attempt. |
 | AG624 | Task attempt sequence is not resumable | Attempt numbering and predecessor terminal state | Restore a contiguous `1..n` sequence with each prior attempt terminal. |
 | AG625 | Task cannot start another attempt after a terminal result candidate | A later `execution_run` after `result_candidate` | Use the existing review/acceptance route or a Decision/replan successor Task. |
+| AG626 | Ready Task has a current-revision execution Run | Task status and current-revision Run slice | For an open Run complete the transition to `active`; after `failed`, restore `active` and use retry admission; after `cancelled`/`abandoned`, supersede and create a successor; after `result_candidate`, use the existing Result/review route. |
+| AG628 | Task starts another attempt after `cancelled` or `abandoned` | Same-Task/current-revision predecessor outcome | Preserve the old Task, supersede it, and create a successor Task at attempt `1`. |
 | TXT000 | Text validation could not run | Repository root, Git worktree root, or supplied input paths | Run the command from the Git worktree root and pass existing file paths. |
 | TXT101 | UTF-8 BOM is present | File encoding | Save the file as UTF-8 without a byte order mark. |
 | TXT102 | File is not valid UTF-8 | File encoding | Re-encode the file as UTF-8. |

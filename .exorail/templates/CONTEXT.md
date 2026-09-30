@@ -3,6 +3,9 @@ schema: "0.2"
 id: CTX-<slug>
 type: context
 title: <bounded context>
+# `title` heads the document and `name` is the context's identity label. Both
+# are required and the validator never compares them: the same phrase in both
+# is normal, and a shorter `name` is equally valid.
 name: <bounded context>
 status: active
 # Role IDs use [a-z][a-z0-9_-]*, for example payments_owner.

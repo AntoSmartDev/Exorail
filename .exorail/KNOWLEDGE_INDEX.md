@@ -22,7 +22,8 @@ canonical source before readiness is `ready`; a `deferred` row is promoted to
 | Integrations | deferred | active Task uses external system | none | none |
 | Security | deferred | active Task changes access or sensitive data | none | none |
 | Engineering and verification | required | always | none | setup required |
-| Roadmap | required | always | Epic/Feature/Story tree and projections | setup required |
+| Roadmap | required | always | Epic/Feature/Story tree and projections, created by planning before readiness is set | setup required |
+| Known defects | deferred | active Task touches an area the project's defect register, issue list or known-issues document records | none | none |
 
 Setup maps each required row to one reachable canonical source. Context-specific
 knowledge may be added when it reduces repeated broad reads. Historical records

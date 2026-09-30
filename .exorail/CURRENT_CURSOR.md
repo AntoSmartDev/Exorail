@@ -4,6 +4,10 @@ This file is not a live position report. It is authoritative only for an empty
 planning workspace. If `.exorail/planning/` contains work, regenerate
 projections and read `.exorail/projections/RESUMPTION.md` instead.
 
+This file is spent once planning contains work. No tool reads it, so you may
+delete it then; if you keep it, keep it as a historical setup note and never
+read it as a position report.
+
 ## Setup
 
 - readiness: `not_ready`

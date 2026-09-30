@@ -92,7 +92,7 @@ number.
 
 - 0.2 is a clean break; there is no in-place upgrade from any earlier release
   or schema.
-- Optional adapters extend the baseline of repository, Exorail and one capable
+- Optional adapters extend the baseline of repository, ExoRail and one capable
   coding agent. They are not required, and their absence affects only the
   delegation route.
 - Semantic preflight, change impact and convergence remain post-0.2 work and are
@@ -110,4 +110,4 @@ number.
 
 ## v0.1.0 - 2026-07-12
 
-- Initial clean public baseline for Exorail.
+- Initial clean public baseline for ExoRail.

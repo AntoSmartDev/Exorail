@@ -11,7 +11,9 @@ For a Task, verify parent Story `plan_revision`, dependencies, execution policy,
 derived isolation, review choice, required Contract and sources before acting.
 A planned Task is not executable. An internally clean Result is immutable
 `review_pending` evidence, not human acceptance or integration. Do not infer
-human approval; protected authority is only `user:<decision-reference>`.
+human approval; protected routes require the declared
+`user:<decision-reference>` authority-reference form. The form does not by
+itself attest human origin.
 
 Resume the Story status in plain language: name active Tasks, completed Tasks
 ready for review, blocked dependencies and the next recommended action. Mention

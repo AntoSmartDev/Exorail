@@ -95,7 +95,9 @@ mandatory final whole-Story review.
   commit it accepts. `story_acceptance` always uses `none`, and
   `story_acceptance.reviewed_sha` names the reviewed aggregate whose ancestry
   contains every Task integration. A `result_adoption` names the commit of the
-  adopted work.
+  adopted work. An agent must not add, copy or simulate a `user:` reference or
+  receipt: stop and wait for the owner to issue the reference before recording
+  the event.
 
   ## Execution receipts
 

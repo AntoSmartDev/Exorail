@@ -6,7 +6,7 @@ work_id: TASK-<task-slug>
 plan_revision: 1
 attempt: 1
 execution_contract: controlled-task@1
-governance_input_digest: execution-governance-input@1:<sha256>
+governance_input_digest: execution-governance-input@1:<sha256> # native: derive while Task is ready with tools/derive-governance-input-digest.mjs
 adapter_id: none
 adapter_descriptor_revision: none
 external_ref: none

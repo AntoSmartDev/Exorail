@@ -1,6 +1,6 @@
-# Exorail workflow
+# ExoRail workflow
 
-This directory is the static Exorail payload. Project authority is materialized
+This directory is the static ExoRail payload. Project authority is materialized
 only in the registered paths configured by `WORKFLOW_CONFIG.md`.
 
 Schema 0.2 and release 0.2.0 are the canonical clean-break line. Schema 0.5
@@ -16,7 +16,7 @@ G3 implementation, with their configuration, lifecycle and validation. This
 README is static payload navigation and never lists current work, milestones,
 or delivery status.
 
-The stable boundary is: runtimes execute; Exorail governs, records, validates
+The stable boundary is: runtimes execute; ExoRail governs, records, validates
 and authorizes progression. Integration, Execution and Projection Adapters are
 replaceable descriptors around the repository-native protocol. A repository
 without adapters remains valid and retains all canonical history.

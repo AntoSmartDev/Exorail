@@ -6,7 +6,17 @@ parent: TASK-<slug>
 status: review_pending
 based_on_plan_revision: 1
 evidence: [<repository-relative evidence path or command result>]
+# Run binding — declare these three together, or none of them. They are
+# optional, and they are what makes a Result observable: the Run, the
+# acceptance evidence and the scope touched bind into one chain a reviewer can
+# check. Record the Run and declare them whenever the execution should be tied
+# to this Result. Omitting all three stays valid, and costs exactly that:
+# nothing links this Result to an execution, the scope it touched is not
+# stated, and `tools/derive-task-review-readiness.mjs` reports evidence_missing
+# for it even after acceptance and integration.
 # execution_run_id: RUN-<slug>-1
+# acceptance_evidence: [US-<slug>-AC-1]
+# scope_paths: [src/example.mjs]
 # completed_by_member_id: <member-id>
 # review_focus: [<review concern>]
 # not_verified: [<explicitly unverified behavior>]

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 472" width="880" height="472" role="img" aria-labelledby="title desc">
   <title id="title">Fail-closed optional capabilities</title>
-  <desc id="desc">Five independently required conditions under one brace: presence, activation, availability, explicit human authority and invocation. They are not stages and no arrows connect them. A crossed line shows any single failure blocks only the delegated route. A separate band carries the one real sequence, the fixed order of a consequential external action, and a closing band states the native repository route stays complete.</desc>
+  <desc id="desc">Five independently required conditions under one brace: presence, activation, availability, a declared user authority-reference form and invocation. They are not stages and no arrows connect them. A crossed line shows any single failure blocks only the delegated route. A separate band carries the one real sequence, the fixed order of a consequential external action, and a closing band states the native repository route stays complete.</desc>
 
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -54,7 +54,7 @@
   <text class="key" x="451" y="178" text-anchor="middle">the host can bind it</text>
   <rect class="boxh" x="546" y="132" width="150" height="62" rx="8"/>
   <text class="body" x="621" y="158" text-anchor="middle">authority</text>
-  <text class="key" x="621" y="178" text-anchor="middle">an explicit human act</text>
+  <text class="key" x="621" y="178" text-anchor="middle">declared user:&lt;reference&gt; form</text>
   <rect class="box" x="716" y="132" width="150" height="62" rx="8"/>
   <text class="body" x="791" y="158" text-anchor="middle">invocation</text>
   <text class="key" x="791" y="178" text-anchor="middle">only then does it run</text>

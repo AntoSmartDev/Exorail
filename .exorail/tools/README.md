@@ -16,7 +16,9 @@ node ./.exorail/tools/validate-workflow.mjs
 node ./.exorail/tools/generate-projections.mjs
 node ./.exorail/tools/generate-projections.mjs --check
 node ./.exorail/tools/derive-executable-frontier.mjs --story US-<slug>
+node ./.exorail/tools/derive-governance-input-digest.mjs --task TASK-<slug>
 node ./.exorail/tools/derive-review-readiness.mjs --base-sha <base> --head-sha <head> --json
+node ./.exorail/tools/derive-task-review-readiness.mjs --task TASK-<slug> --base-sha <base> --head-sha <checked-head> --json
 node ./.exorail/tools/derive-review-brief.mjs --story US-<slug> --base-sha <base> --head-sha <head> --json
 node ./.exorail/tools/derive-team-view.mjs --json
 node ./.exorail/tools/derive-team-view.mjs --local --json
@@ -32,6 +34,9 @@ validate the maintained materialized schema 0.2 fixture. `npm run
 verify:workflow` intentionally validates the current directory as a target
 workspace and therefore requires a root `.exorail/` tree; it is not a source
 repository self-check.
+
+Neither npm script exists in an adopted workspace, and neither is missing from
+one: the command list above is the complete set an adopted project runs.
 
 `validate-workflow.mjs` validates canonical artifact identity, topology,
 front matter, policy inheritance, task prerequisites, revision, optional or
@@ -58,14 +63,22 @@ derivation, never a canonical status: the record's own status remains
 surface can say what is held and why instead of only what is free. It is
 a Runtime output, never stored back into Core and never supplied by an adapter.
 Its delegation capability metadata does not block the complete no-adapter path.
+`derive-governance-input-digest.mjs` is a read-only native-path command: it
+derives a digest only when initial or retry admission succeeds, always reports
+`adapter_id: none`, and never writes canonical records. The digest is not a Run
+identity or proof of dispatch. A Runtime attempt with an adapter uses its
+Runtime envelope instead; on a refusal, follow the reported correction rather
+than inventing a shape-valid digest.
 The shipped runtime library also exposes deterministic capability resolution,
 effective-configuration explanation and governance-input digest derivation;
 local bindings are passed by the host and never read from canonical state.
 
-`generate-projections.mjs` generates the seven derived read models:
+`generate-projections.mjs` generates six derived read models:
 `WORK_INDEX.md`, `STORY_INDEX.md`, `MILESTONE_FORECAST.md`,
-`DEPENDENCY_GRAPH.md`, `TEAM_VIEW.md`, `EPISODE_INDEX.md`, and
-`RESUMPTION.md`. Projections are never authoritative; manual or stale content
+`DEPENDENCY_GRAPH.md`, `TEAM_VIEW.md` and `RESUMPTION.md`. A seventh,
+`EPISODE_INDEX.md`, is generated only while `WORKFLOW_CONFIG.md` enables
+episodes; with episodes off it is not generated, and a copy left
+behind is stale. Projections are never authoritative; manual or stale content
 is rejected as AG501.
 
 `generate-payload-manifest.mjs` generates the schema 0.2 technical payload
@@ -77,8 +90,8 @@ and common mojibake markers for supplied repository-relative text paths. Run it
 from the target Git worktree root; it rejects an arbitrary non-Git directory so
 repository-relative paths cannot escape the intended project.
 
-The installed tool runtime is Node.js. The legacy PowerShell parity helper is
-kept only as historical evidence and is not an operational dependency. Adapter
+The installed tool runtime is Node.js, and these `.mjs` tools are the whole of
+it: nothing else is installed and no other runtime is required. Adapter
 families and namespaced capabilities are opaque descriptors without implicit
 trust, authority, dispatch or Core access. These tools do not contact external
 systems or perform provider side effects.
@@ -98,6 +111,14 @@ the command reports stale readiness, regenerate it from the recorded identity,
 inspect the reported scope, and replan or repeat review as needed before asking
 for human acceptance. The command diagnoses preparation and provides no
 authority or automated recovery.
+
+`derive-task-review-readiness.mjs` is a separate, read-only technical
+observation for one Task. It requires an invocation-supplied base and the
+current checked `HEAD`; it follows the Task's current integration receipt, Run
+and Result only when every link is present. Its base and declared Task paths
+constrain the observed range but do not prove complete historical coverage.
+It provides neither acceptance nor integration authority and never changes a
+receipt, Result, Run or Task state.
 
 `derive-review-brief.mjs` is a read-only Projection command. It combines the
 Git-backed readiness observation with declared Task scope, Result review

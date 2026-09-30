@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 424" width="880" height="424" role="img" aria-labelledby="title desc">
   <title id="title">Authoring, admission, authority, acceptance and integration are separate</title>
-  <desc id="desc">Five steps left to right: an agent authors, Exorail applies deterministic admission, a human supplies protected user authority, a human accepts, and integration is bound to a commit. A blocked dashed arc with a cross shows an agent cannot shortcut from authoring to authority.</desc>
+  <desc id="desc">Five steps left to right: an agent authors, ExoRail applies deterministic admission, a protected route requires a declared user authority-reference form, a human accepts, and integration is bound to a commit. A blocked dashed arc with a cross shows authoring does not itself satisfy that route.</desc>
 
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -50,7 +50,7 @@
   <rect class="box" x="36" y="112" width="136" height="66" rx="8"/>
   <text class="stage" x="104" y="138" text-anchor="middle">Author</text>
   <text class="key" x="104" y="160" text-anchor="middle">drafts the records</text>
-  <text class="key" x="274" y="100" text-anchor="middle">Exorail</text>
+  <text class="key" x="274" y="100" text-anchor="middle">ExoRail</text>
   <rect class="boxm" x="206" y="112" width="136" height="66" rx="8"/>
   <text class="stage" x="274" y="138" text-anchor="middle">Admission</text>
   <text class="key" x="274" y="160" text-anchor="middle">deterministic checks</text>
@@ -75,7 +75,7 @@
   <line class="cross" x1="279" y1="224" x2="261" y2="242"/>
   <text class="note" x="270" y="288" text-anchor="middle">No amount of authored text or successful execution converts into authority.</text>
   <rect class="boxm" x="40" y="314" width="800" height="90" rx="8"/>
-  <text class="body" x="56" y="340">Protected authority is only an explicit user:&lt;decision-reference&gt;.</text>
-  <text class="note" x="56" y="361">Roles, member attribution, agents, chats and runtimes can neither synthesize nor inherit it.</text>
+  <text class="body" x="56" y="340">Protected routes require declared user:&lt;decision-reference&gt; form.</text>
+  <text class="note" x="56" y="361">The baseline checks that form; it does not attest human origin or prevent direct repository writes.</text>
   <text class="note" x="56" y="382">Missing or contested meaning routes to a typed Decision or Contract Challenge instead.</text>
 </svg>

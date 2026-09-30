@@ -1,88 +1,166 @@
-# Exorail — AI-Native Software Delivery System
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/exorail-header-dark.svg">
+  <img alt="ExoRail, Agentic Development Platform — when Human-in-the-loop is not enough, you need Human-in-the-project." src="assets/exorail-header.svg" width="860">
+</picture>
+
+# ExoRail
+
+**Agentic Development Platform** — the Human-AI Software Delivery Control Plane
+for continuing projects.
+
+**When Human-in-the-loop is not enough, you need Human-in-the-project.**
 
 [![Verify](https://github.com/AntoSmartDev/Exorail/actions/workflows/verify.yml/badge.svg)](https://github.com/AntoSmartDev/Exorail/actions/workflows/verify.yml)
 
-**AI-assisted delivery with durable context, explicit authority, and a next safe step.**
+</div>
 
 ---
 
-**New here? Three lines, then read on.**
+## An Agentic Development Platform for continuing software projects
 
-1. **Install** — copy `.exorail/` and `AGENTS.md` into your repository. The
-   runnable commands, including what to do when a `.exorail/` already exists,
-   are under [Install in a target repository](#install-in-a-target-repository).
-   For the shape of the first hour instead, read
-   [Start in three steps](#start-in-three-steps).
-2. **Start** — tell a capable coding agent to run
-   `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`. Bring whatever you actually
-   have: an idea, a brief, documents, or an existing codebase.
-3. **When a check refuses you** — read `.exorail/method/FINDINGS.md`. It is the
-   operator reference for every validator finding, with the canonical correction
-   for each. Reach for it before reading any tool source.
+**ExoRail is an Agentic Development Platform built as a Human-AI Software
+Delivery Control Plane.** It is the project-level layer that keeps software
+delivery coherent while humans, AI agents, coding harnesses, tools and
+repository state move together toward an outcome.
 
-**On Windows, before you create any canonical records:** run
-`git config core.longpaths true` **in the target repository**. Without it Git prints `Filename too long`,
-**exits 0**, stages nothing, and then reports a clean tree — a silent failure
-that looks like success. `.exorail/method/PROJECT_SETUP.md` explains why.
+Architecturally, it is a **repository-native Project Control Plane**.
+Operationally, it enables **Human-AI Project Orchestration**: guided definition,
+durable Project Memory, governed execution, verification, acceptance,
+integration, replanning, recovery and continued evolution.
 
-Everything below is context and depth. You do not need it to begin.
+**Human-in-the-project** is the thesis behind this model: human judgment and
+authority remain part of the durable project lifecycle.
 
----
+**Agents and harnesses execute work. ExoRail keeps the project coherent around
+that work.**
 
-**Exorail is an AI-native, repository-native software delivery system that makes
-Spec-Driven Delivery Governance (SDDG) operational throughout the software lifecycle.**
-It starts from whatever you have — an idea, incomplete evidence, a specification
-or an existing codebase — and guides delivery through understanding, definition,
-implementation, verification, human acceptance, integration, replanning, recovery
-and continued evolution.
+ExoRail coordinates the project around coding agents and optional multi-agent
+frameworks; it does not replace them or require a hosted agent-fleet control
+plane.
 
-Exorail does not stop when code is generated, a Task is marked finished, or a
-pull request is reviewed. It preserves project meaning, evidence, Decisions,
-delivery history and the next valid action needed to continue later without
-rebuilding the project from chat memory.
+> **Agents have sessions. Projects have lifecycles.**
 
-Exorail uses durable governance records without reducing software delivery to a
-governance ledger or control plane. It guides understanding, definition, delivery
-and change in the repository where the work lives.
+> **The agent can change. The harness can change. The LLM can change. The
+> provider can change. The project should outlive all of them.**
 
-**The complete baseline is intentionally small:**
+**New here?** [Start in three steps](#start-in-three-steps). If ExoRail blocks
+progression, use [the finding reference](.exorail/method/FINDINGS.md) to
+understand the correction and recovery route.
+
+**Windows prerequisite:** before creating canonical records, enable
+`git config core.longpaths true`. [Why this matters](#install-the-clean-break).
+
+The native route requires no server, database, broker, hosted control plane,
+external orchestrator or ALM platform:
 
 ```text
-your repository + Exorail + one capable LLM-powered coding agent
+your repository + ExoRail + one capable LLM-powered coding agent
 ```
 
-Any capable coding agent can participate when it can read repository instructions,
-modify repository files, run the required local commands and preserve the Exorail
-workflow contract.
+## Is ExoRail solving your problem?
 
-No server, database, broker, hosted control plane, external orchestrator or ALM
-platform is required for the native route.
+AI-assisted delivery can work locally while the project loses continuity around
+it. Does any of this sound familiar?
 
-> **The coding agent can change. The LLM can change. The provider can change.
-> The project should outlive the tools used to build it.**
+- Every new AI session needs the project explained again.
+- Important decisions, constraints and trade-offs disappear into chat history.
+- You have an idea, request, brief or existing codebase, but cannot tell which
+  facts, constraints, acceptance criteria or Decisions must become explicit
+  before the next slice is safe to execute.
+- Missing specification turns into agent assumptions instead of visible gaps,
+  focused questions and reviewable choices.
+- Agents can produce code, but nobody can reliably say what may happen next.
+- Independent work can fan out, but safely converging it becomes another
+  coordination problem.
+- “The agent finished” is too easily confused with “the project accepted the
+  result.”
+- Changing agent, harness, model or provider means rebuilding context and
+  assumptions.
+- Human-in-the-loop provides checkpoints, but human judgment and authority are
+  not explicit across the whole project lifecycle.
+- The repository, tools, agents, CI and workflows exist, but no durable
+  project-wide layer keeps their meaning coherent over time.
 
-The practical promise is simple: **less remembering, less rediscovery, fewer
-silent leaps, and a clearer route from the evidence you start with to delivery
-you can defend.**
+**If these problems feel familiar, you are already dealing with the problem
+ExoRail was built to solve.** It keeps the project—not a session, provider or
+runtime—as the durable centre of delivery.
 
-Exorail is grounded in the core principles of modern **Spec-Driven Development
-(SDD)** and extends them through **Spec-Driven Delivery Governance (SDDG)**.
-It keeps intent connected to execution, evidence, authority, acceptance,
-integration, revision and evolution.
+ExoRail does not require perfect up-front specification. It helps turn available
+evidence into a smallest reliable project frame: known facts, explicit gaps,
+constraints, Decisions and one sufficiently defined delivery slice.
 
-## Why Exorail is different
+Five terms place ExoRail precisely:
 
-Exorail is designed for the point at which software work becomes hard to carry
-forward: the specification is incomplete, the codebase has history, people and
-agents need to collaborate, and a plausible implementation is not enough to
-call delivery complete.
+| Positioning layer | Meaning |
+| --- | --- |
+| **Agentic Development Platform** | Market category: software-development platforms in which AI agents participate materially in the engineering lifecycle. |
+| **Human-AI Software Delivery Control Plane** | The product category: a layer coordinating people, AI execution, tools, evidence and continuity across delivery. |
+| **Repository-native Project Control Plane** | The architectural role: durable project meaning lives with the work, rather than in a particular agent session, provider or hosted service. |
+| **Human-AI Project Orchestration** | The operating model: coordinating intent, reasoning, execution, deterministic rules, verification and human authority. |
+| **Spec-Driven Delivery Governance (SDDG)** | The assurance discipline: deterministic safeguards and explicit evidence/authority boundaries keep the lifecycle reliable. |
+
+```text
+human intent + judgment + authority
+                │
+                ▼
+     ExoRail: durable project meaning
+     knowledge · Decisions · delivery graph
+     evidence · acceptance · revision history
+                │
+                ▼
+       agent / harness / LLM / tools
+                │
+                ▼
+              repository
+```
+
+Governance is how this orchestration stays reliable, not the product's sole
+definition. ExoRail is grounded in **Spec-Driven Development (SDD)** and
+extends it through **Spec-Driven Delivery Governance (SDDG)**: AI can reason and
+execute; deterministic rules protect known invariants; humans retain
+consequential judgment and authority.
+
+## Start with what you actually have
+
+**You do not need to arrive with a finished specification.** ExoRail helps
+establish the smallest reliable project frame needed to plan and deliver the
+next useful slice.
+
+```text
+idea / problem / goal
+blueprint / specification / product documents
+existing repository / existing system
+interrupted work / delivered product
+                 ↓
+              ExoRail
+                 ↓
+known evidence + explicit gaps + Decisions + constraints
+                 ↓
+first reliable delivery slice
+```
+
+| Starting point | What the current method makes explicit |
+| --- | --- |
+| **Greenfield** — an idea, problem or objective | Intent, constraints, material gaps and Decisions before they silently become implementation assumptions. |
+| **Blueprint / specification** — briefs, requirements, product or architecture documents | Evidenced project knowledge, unresolved gaps and a connection from the stated outcome to a reviewable Story. |
+| **Brownfield** — an existing repository or system | Observed current reality, declared future intent and relevant boundaries, without inventing historical delivery records. |
+| **Ongoing or delivered project** — interrupted work or an existing product | The current project position, preserved evidence and a route to resume, repair or evolve it. |
+
+This is focused, progressive setup—not a claim of a fully autonomous discovery
+engine, complete semantic sufficiency analysis or automatic risk profiling. The
+method makes uncertainty visible, routes consequential ambiguity to Decisions
+or Challenges, and defines only the next slice to the detail it can support.
+
+### What ExoRail changes
 
 **Start from incomplete reality without inventing what is missing.**
 An idea, partial documentation, a brownfield repository or an already delivered
-system is enough to begin. Exorail makes known facts, inferences, gaps and
+system is enough to begin. ExoRail makes known facts, inferences, gaps and
 Decisions explicit, then defines only the next delivery slice to the level at
 which it can safely be executed.
-[How progressive definition works](#start-from-what-you-have)
+[How progressive definition works](#start-with-what-you-actually-have)
 
 **A Project Memory built for people and AI agents.**
 Material knowledge, Decisions, evidence, Results, revisions and delivery
@@ -90,7 +168,7 @@ history remain durable and navigable in the repository, rather than being left
 in a particular person's or agent's chat context. This is operational memory:
 the same state that explains the project also helps determine what may safely
 happen next.
-[How Exorail Project Memory works](#exorail-project-memory)
+[How ExoRail Project Memory works](#exorail-project-memory)
 
 **See the project across time, and give each actor the context that matters.**
 Past evidence and Decisions, present blockers and active work, and planned or
@@ -121,7 +199,7 @@ the exact change that was inspected.
 **The project can resume, replan and evolve without losing its history.**
 Material change affects future work through revisions and scoped recovery; it
 does not rewrite completed Results or receipts.
-[How Exorail survives interruption and change](#resumability-replan-and-targeted-recovery)
+[How ExoRail survives interruption and change](#resumability-replan-and-targeted-recovery)
 
 **A delivery loop has a safe exit, not an endless retry.**
 Controlled attempts are bounded, a terminal candidate closes its attempt slice,
@@ -141,20 +219,20 @@ the project model or making heavyweight infrastructure a prerequisite.
 This README is intentionally layered rather than split into separate “beginner”
 and “expert” versions.
 
-- **New to Exorail?** Read *What Exorail gives you*, the
+- **New to ExoRail?** Read *What ExoRail gives you*, the
   [delivery example](#exorail-in-one-delivery-example) and
   [Start in three steps](#start-in-three-steps). That is enough to understand
   the product and try it.
-- **Evaluating Exorail for professional use?** Continue through team delivery,
+- **Evaluating ExoRail for professional use?** Continue through team delivery,
   verification, SDDG governance, safeguards, portability and the repository
   architecture.
 
 The same product is being described at increasing depth: **value → example →
 mechanism → architecture → reference**.
 
-## What Exorail gives you
+## What ExoRail gives you
 
-| Need | Exorail keeps durable and actionable |
+| Need | ExoRail keeps durable and actionable |
 | --- | --- |
 | **Start from incomplete reality** | Turn an idea, partial evidence, an existing repository or a delivered system into a progressively defined project without inventing missing facts. |
 | **Know what is fact, inference, decision or still unknown** | Keep observed evidence, supported inference, human authority, contradictions and unverified limits distinguishable instead of flattening them into one AI-generated narrative. |
@@ -168,13 +246,13 @@ mechanism → architecture → reference**.
 | **Work with people and multiple agents** | Keep provider-neutral attribution, dependencies, scope and isolation explicit while preserving human authority. |
 | **Keep project meaning independent as tools change** | Add, replace or remove LLMs, coding agents, runtimes, ALM providers or adapters without moving durable project meaning out of the repository. |
 
-## Exorail in one delivery example
+## ExoRail in one delivery example
 
 Suppose the request is:
 
 > **“Add SSO to this existing application.”**
 
-A typical Exorail-guided path looks like this:
+A typical ExoRail-guided path looks like this:
 
 ```text
 existing repository + request
@@ -206,7 +284,7 @@ later defect or requirement change
 original intent + Decisions + evidence + integration history are still available
 ```
 
-This example combines several Exorail properties at once: incomplete input can be
+This example combines several ExoRail properties at once: incomplete input can be
 made explicit without inventing facts; dependencies control parallel work;
 execution does not equal acceptance; human authority remains distinct; and the
 delivery history survives the agent or session that produced it.
@@ -223,48 +301,50 @@ delivery history survives the agent or session that produced it.
 The agent establishes the **smallest reliable project frame**, makes gaps and
 Decisions visible, and proposes the first safe delivery slice.
 
-In Exorail, an assumption does not silently become implementation authority.
+In ExoRail, an assumption does not silently become implementation authority.
 
 Detailed copy and validation commands are [below](#install-in-a-target-repository).
 
-## Start from what you have
+## What setup produces from each starting point
 
-| Your starting point | What Exorail helps establish | What remains durable |
+The entry model above describes what you can bring. Setup turns that evidence
+into durable, repository-native project state and the next safe route.
+
+| Starting point | Setup makes durable | It then supports |
 | --- | --- | --- |
-| **Idea or incomplete brief** | Intent, open questions, constraints, readiness and the smallest safe next step | A project frame stating what is known, missing or awaiting a Decision |
-| **Specification or product documents** | Canonical knowledge, acceptance, constraints and a first reviewable Story | A baseline another person or agent can understand without reconstructing the conversation |
-| **Existing repository / brownfield system** | Observed behaviour, declared intent, legacy boundaries and non-regression context | A route from existing code to deliberate future work rather than invented history |
-| **Interrupted session or changed assumption** | Explicit replan, preserved history and a resumption route | A durable position with the next allowed action |
-| **Completed delivery** | Accepted Results, evidence, receipts and integration history | The context required to diagnose defects, extend the system and evolve it later |
+| **Idea or incomplete brief** | Intent, explicit gaps, constraints, readiness and Decisions in the project frame | A focused question or the smallest justified delivery slice |
+| **Specification or product documents** | Routed project knowledge, acceptance and constraints | A reviewable Story when the outcome and acceptance are known |
+| **Existing repository / brownfield system** | Observed current reality, declared future intent and relevant boundaries | New deliberate work without inventing historical delivery records |
+| **Interrupted or delivered project** | Current position, Results, receipts, evidence and revision history | Resumption, repair or later evolution from durable state |
 
-## The lifecycle Exorail keeps operational
+## The lifecycle ExoRail keeps operational
 
 ```text
 Understand → Define → Deliver → Evolve
 ```
 
-| Phase | Exorail makes operational | Human responsibility remains |
+| Phase | ExoRail makes operational | Human responsibility remains |
 | --- | --- | --- |
 | **Understand** | Evidence classification, focused discovery, knowledge routing, gaps, readiness and Decisions | Product direction and unresolved trade-offs |
 | **Define** | Outcome, acceptance, risk, dependencies, Policy and a reviewable delivery slice | Whether the proposed slice is valuable and ready to authorize |
 | **Deliver** | Executable frontier, scoped work, verification, immutable Results, receipts, review readiness and integration state | Acceptance, consequential authority and whole-Story outcome |
 | **Evolve** | Material change, plan revision, supersession, resumption, fixes and future work | Whether to change scope, accept risk or close an outcome |
 
-![The Exorail delivery path: Understand, Define, Deliver and Evolve, with explicit human authority at Task acceptance, Story-base integration and whole-Story outcome.](assets/exorail-delivery-path.svg)
+![The ExoRail delivery path: Understand, Define, Deliver and Evolve, with explicit human authority at Task acceptance, Story-base integration and whole-Story outcome.](assets/exorail-delivery-path.svg)
 
 The canonical work path is `Epic → Feature → User Story → Task`. A Milestone
 collects Stories and a Context tags work; neither is a parent. Definition remains
 progressive: establish a reliable frame, define a useful slice, execute, learn,
 then refine or replan.
 
-Progressive does not mean vague. Exorail keeps the future visible at the level
+Progressive does not mean vague. ExoRail keeps the future visible at the level
 that is currently justified, while requiring sufficient non-generic detail only
 for the work that is about to become executable. This preserves direction without
 turning speculative future decomposition into false certainty.
 
 ## Team development without a shared cursor
 
-Exorail is designed so several people or agents can work from the same repository
+ExoRail is designed so several people or agents can work from the same repository
 without turning one developer's session position into global project state.
 
 The key separation is:
@@ -303,7 +383,7 @@ and integration state.
 
 ### Parallel work without hidden dependency races
 
-Exorail derives an executable frontier from the current project state. Independent
+ExoRail derives an executable frontier from the current project state. Independent
 Tasks may appear in the frontier together; a dependent Task remains blocked.
 
 ```text
@@ -317,10 +397,10 @@ in parallel, while `C` stays held until the required upstream conditions are
 satisfied. A runtime reporting success is not enough to release `C`: the relevant
 Result, acceptance and verified integration state still matter.
 
-For parallel work, Exorail uses **separate branches/worktrees when isolation is
+For parallel work, ExoRail uses **separate branches/worktrees when isolation is
 required**. This prevents two active Tasks from sharing the same mutable working
 directory and reduces accidental overwrites, mixed diffs and commits containing
-another Task's changes. Local Git mechanics remain Git; Exorail adds the delivery
+another Task's changes. Local Git mechanics remain Git; ExoRail adds the delivery
 semantics that determine which work is independent, what scope belongs to each
 Task, and when downstream work may safely begin.
 
@@ -335,7 +415,7 @@ parallel implementation
 → whole-Story review
 ```
 
-This is why team parallelism in Exorail is not just “run several agents at once”.
+This is why team parallelism in ExoRail is not just “run several agents at once”.
 It is **governed concurrency over one durable project state**.
 
 ### What is shared and what stays personal
@@ -360,7 +440,7 @@ not a capability this README claims as already automatic.
 
 ## See the project across time
 
-Exorail is not only a description of the current work. Its repository-native
+ExoRail is not only a description of the current work. Its repository-native
 state lets a person or agent inspect **where the project came from, where it
 stands now, and what can happen next**.
 
@@ -379,7 +459,7 @@ repository, and generated projections remain rebuildable.
 
 ## Operational guidance during delivery
 
-| Moment | Exorail provides | Why it matters |
+| Moment | ExoRail provides | Why it matters |
 | --- | --- | --- |
 | **Understand** | Evidence classification, knowledge routing, readiness and visible gaps | A plausible assumption does not become established truth |
 | **Clarify / Decide** | Typed Decision requests and Contract Challenges with evidence, impact and options | Ambiguity becomes an explicit route to resolution rather than an invented continuation |
@@ -398,7 +478,7 @@ for active work. A short handoff or summary may orient an agent, but it does not
 replace the Story, Task, Decisions, Results, receipts and required reads stored
 in the repository.
 
-Exorail also keeps session changes explicit. A compaction or task-boundary
+ExoRail also keeps session changes explicit. A compaction or task-boundary
 handoff can preserve the small amount of temporary context that still matters
 without turning conversation history into project truth. When a different coding
 agent or LLM takes over, `.exorail/prompts/SWITCH_LLM_PROMPT.md` routes it back
@@ -453,7 +533,7 @@ Today 0.2 carries these profiles, testing rules and evidence fields, but it does
 particular change has sufficient evidence. That stronger verification-sufficiency
 derivation remains a post-0.2 evolution.
 
-### Exorail also knows when not to proceed
+### ExoRail also knows when not to proceed
 
 An unmet dependency, open Decision, invalid lifecycle state, unsafe scope or
 unavailable required capability becomes an explicit block. Recovery remains
@@ -463,16 +543,16 @@ refresh or a documented native route.
 Recovery is scoped rather than destructive: setup or knowledge can be invalidated
 without discarding unrelated accepted project history. Repeated failure is also
 bounded. A Task gets at most three safe remediation cycles; if the blocker
-persists, Exorail stops the loop and surfaces the evidence, blocker, required
+persists, ExoRail stops the loop and surfaces the evidence, blocker, required
 human decision or need for a materially different plan.
 
 ## SDD, SDDG and the **G**
 
-**Exorail is grounded in the core principles of modern Spec-Driven Development
+**ExoRail is grounded in the core principles of modern Spec-Driven Development
 (SDD) and extends them through Spec-Driven Delivery Governance (SDDG).**
 
 SDD gives the specification a central role in connecting intent to implementation.
-Exorail keeps that discipline connected to the wider software lifecycle — before
+ExoRail keeps that discipline connected to the wider software lifecycle — before
 the specification is complete, throughout execution and verification, and after
 delivery when the system must be fixed or evolved.
 
@@ -484,7 +564,7 @@ SDDG
 → extends that discipline across delivery: execution, evidence, authority,
   acceptance, integration, revision and evolution
 
-Exorail
+ExoRail
 → makes that governed lifecycle operational and durable in the repository
 ```
 
@@ -497,13 +577,13 @@ and protected authority boundaries.
 | **Knowledge** | What the project knows, where it comes from, what is missing and what must be read before acting. |
 | **Consistency** | Whether canonical state, dependencies, revisions and derived views remain mechanically coherent. |
 | **Evidence & verifiability** | What demonstrates that work happened, what was checked and what remains unverified. |
-| **Decision & authority** | Which choices require protected human authority and how Exorail prevents an agent, role or tool from manufacturing it. |
+| **Decision & authority** | Which choices require the declared protected `user:` authority-reference form, kept distinct from agent, role or tool labels. |
 | **Review, acceptance & integration** | Keeps implementation, verification, acceptance and integration as distinct auditable events. |
 | **Change & revision** | Lets the project evolve without rewriting completed history or silently changing prior meaning. |
 | **Execution** | Governs what may start, within what scope and constraints, while keeping execution success distinct from accepted completion. |
 | **Portability & anti-lock-in** | Keeps project meaning independent from the current LLM, coding agent, runtime, ALM or provider. |
 
-These governance areas describe **what Exorail protects**. They are different
+These governance areas describe **what ExoRail protects**. They are different
 from implementation layers such as Core, Runtime, Policy, Adapters, Projection
 and Guidance, which describe **where those responsibilities live technically**.
 
@@ -535,9 +615,9 @@ important product capabilities include:
 | **Consequential external actions** | Protected side effects use explicit authority, evidence and project-global idempotency instead of treating capability availability as permission. |
 | **Fail-closed optional capabilities** | Descriptor presence, Policy activation, local availability and invocation are separate. Installed does not mean enabled; enabled does not mean authorized. |
 | **Rebuildable projections** | Derived navigation and review surfaces are digest-checked, regenerable and never compete with canonical state. |
-| **Payload integrity** | The distributable carries a manifest of the Exorail-owned payload so adoption and release checks can reason about the exact shipped files rather than an informal copy of the workflow. |
+| **Payload integrity** | The distributable carries a manifest of the ExoRail-owned payload so adoption and release checks can reason about the exact shipped files rather than an informal copy of the workflow. |
 | **Provider/runtime portability** | Adapter descriptors and history keep provider details outside durable project semantics so implementations can be added or replaced without ordinary project migration. |
-| **Complete no-adapter path** | Repository + Exorail + one capable coding agent remains a complete first-class workflow, not a degraded fallback. |
+| **Complete no-adapter path** | Repository + ExoRail + one capable coding agent remains a complete first-class workflow, not a degraded fallback. |
 
 ## A few safeguards that matter every day
 
@@ -549,7 +629,7 @@ important product capabilities include:
   empty queue.
 - **Verification is proportionate.** The selected profile and project testing
   strategy must be applied to the actual risk and change surface; a green
-  Exorail validator is never a substitute for builds, tests, security analysis
+  ExoRail validator is never a substitute for builds, tests, security analysis
   or engineering review.
 - **The LLM may author meaning, but it does not legitimize its own progression.**
   Operational work must pass deterministic admission before it can advance.
@@ -558,8 +638,11 @@ important product capabilities include:
 - **Review stays attached to the right change.** Acceptance and integration
   retain reviewed identity so later commits or rebases cannot silently make an
   older review current.
-- **Replan preserves history.** Material change creates a new revision and
-  affects future work; completed Results and receipts are not rewritten.
+- **Replan preserves the supported record route.** Material change creates a
+  new revision and affects future work; the supported workflow retains
+  completed Results and receipts and supersedes rather than edits them. The
+  current snapshot validator does not by itself prove historical non-rewrite or
+  integrity of prior Git history.
 - **Capability is not authorization.** An adapter may exist and be healthy while
   still being disabled or unauthorized for a consequential action.
 - **Derived views cannot become truth.** Projections can be deleted and rebuilt
@@ -569,11 +652,11 @@ important product capabilities include:
 
 ## Progressive capability without architectural migration
 
-Exorail is useful before any external integration exists. Capability can be
+ExoRail is useful before any external integration exists. Capability can be
 added progressively as the project or organization needs it:
 
 ```text
-repository + Exorail + LLM-powered coding agent
+repository + ExoRail + LLM-powered coding agent
 ↓
 Git / CI observations
 ↓
@@ -596,13 +679,13 @@ Three adapter families keep those extensions outside the durable Core:
 | **Execution** | Long-running execution, retries, pause/resume, runtime-specific parallelism or sub-agents | Dependency release, Result acceptance or human authority |
 | **Projection** | PR descriptions, review surfaces, HTML/IDE/dashboard or other optimized views | Canonical state |
 
-Adapters extend Exorail; they do not complete it. Their implementations can
+Adapters extend ExoRail; they do not complete it. Their implementations can
 change independently while the project continues to use the same durable
 semantics.
 
-## Extend Exorail with adapters
+## Extend ExoRail with adapters
 
-**Adapters let Exorail use external systems without letting those systems become
+**Adapters let ExoRail use external systems without letting those systems become
 the source of project meaning or authority.** They add optional capability
 around the repository-native model; they do not move canonical planning,
 Decisions, Results, evidence semantics, acceptance, integration or the
@@ -610,7 +693,7 @@ executable frontier into a provider.
 
 The current 0.2 contract defines the capability boundary, portable descriptors,
 deterministic selection and fail-closed activation. The named products below
-are **planned Exorail integrations**: roadmap targets, not adapters that ship
+are **planned ExoRail integrations**: roadmap targets, not adapters that ship
 with 0.2. The native route remains complete without any of them.
 
 ### The adapter model in one minute
@@ -638,7 +721,7 @@ activation mode as `disabled`, `manual` or `on_demand`; the declared adapter
 order provides deterministic selection when more than one eligible binding can
 satisfy it.
 
-| Family | Planned integration lane | What it can add | Exorail still owns |
+| Family | Planned integration lane | What it can add | ExoRail still owns |
 | --- | --- | --- | --- |
 | **Integration — ALM** | Azure DevOps, Jira, GitHub/GitLab-class systems | Work-item and PR observations, provider identity mapping, explicitly authorized provider-facing mutations | Canonical planning, Decisions, Results, authority and lifecycle semantics |
 | **Integration — CI** | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins and equivalent CI | Normalized build and test observations/evidence | Acceptance and lifecycle authority; a green CI run is not acceptance |
@@ -653,11 +736,11 @@ project history. That is portability, not a promise of zero operational work.
 
 ### Integration Adapters: observe, map, retrieve and act under authority
 
-Integration Adapters connect Exorail to external systems for observations,
+Integration Adapters connect ExoRail to external systems for observations,
 provider identity mapping, permitted knowledge retrieval and explicitly
 authorized consequential mutations. An ALM adapter can observe external work
-state or pull-request context, map an Exorail member to an Azure DevOps or Jira
-identity, and perform a provider-facing action only through Exorail's existing
+state or pull-request context, map an ExoRail member to an Azure DevOps or Jira
+identity, and perform a provider-facing action only through ExoRail's existing
 authority and External Action boundary. The provider does not become the owner
 of planning or project history.
 
@@ -672,9 +755,11 @@ can inform verification evidence; they never make a CI provider the project
 authority, and a green run never equals acceptance.
 
 Identity integration is a separate planned lane. It improves mapping, routing
-and discoverability, but **identity mapping is neither Exorail authentication
-nor protected authority**. Roles, provider accounts and member attribution
-cannot synthesize `user:<decision-reference>`.
+and discoverability, but **identity mapping is neither ExoRail authentication
+nor protected authority**. Roles, provider accounts and member attribution are
+not themselves a declared `user:<decision-reference>` authority-reference form;
+the repository-native baseline checks that declared form rather than
+authenticating its origin.
 
 #### Knowledge Integration Adapter: external context, not external truth
 
@@ -689,7 +774,7 @@ local-engineering-docs · cross-project-knowledge
 ```
 
 Source configuration belongs to the adapter; capability activation belongs to
-Exorail Policy. Enabling `integration.retrieve_context@1` does not silently
+ExoRail Policy. Enabling `integration.retrieve_context@1` does not silently
 enable every configured corporate source, and enabling a source does not grant
 the project capability. More than one eligible binding may expose that same
 portable capability—for example, a local and a corporate knowledge adapter—and
@@ -714,11 +799,11 @@ Decision / Result / evidence   → promotes material outcomes when justified
 ```
 
 This keeps RAG, vector stores, embeddings, chunking, ranking and transport as
-replaceable implementation details rather than Exorail Core semantics.
+replaceable implementation details rather than ExoRail Core semantics.
 
 ### Execution Adapters: runtime mechanics, not delivery authority
 
-A planned Execution Adapter can connect Exorail to LangGraph, OpenAI Agents
+A planned Execution Adapter can connect ExoRail to LangGraph, OpenAI Agents
 SDK, Claude Agent SDK, Microsoft Agent Framework or Google ADK for long-running
 execution, runtime-specific parallelism, sub-agents, retries, observation,
 pause/resume and cancellation. None of these named integrations ships with 0.2.
@@ -727,23 +812,23 @@ The current capability contract already recognizes `execution.durable@1`,
 `execution.observe@1`, `execution.pause_resume@1` and `execution.cancel@1`.
 Those portable execution semantics remain separate from any one runtime.
 
-**LangGraph execution success is not Exorail completion.** The runtime must not
+**LangGraph execution success is not ExoRail completion.** The runtime must not
 own executable-frontier authority, protected human authority, acceptance,
-dependency release or whole-Story outcome. It receives Exorail-admissible work
-and returns normalized observations or result candidates; Exorail governs the
+dependency release or whole-Story outcome. It receives ExoRail-admissible work
+and returns normalized observations or result candidates; ExoRail governs the
 delivery semantics around them.
 
 Execution adapters do not directly chain to arbitrary other adapters. When a
 runtime needs permitted external knowledge, the boundary remains governed:
 
 ```text
-Execution Adapter → normalized capability request → Exorail Runtime
+Execution Adapter → normalized capability request → ExoRail Runtime
                   → integration.retrieve_context@1 → Knowledge Integration Adapter
 ```
 
 ### Projection Adapters: views that can always be rebuilt
 
-Projection Adapters derive useful views from Exorail state: review or PR
+Projection Adapters derive useful views from ExoRail state: review or PR
 surfaces, IDE navigation, dashboards, HTML views and team/delivery topology.
 The current contract recognizes `projection.render@1`. A rendered
 provider-facing description is a Projection; publishing or mutating it in a
@@ -762,7 +847,7 @@ a review or IDE Projection Adapter:
 ALM / CI / identity ──┐       corporate knowledge ──┐
                        └── Integration Adapters ────┤
                                                      ↓
-                    Exorail: Project Memory · Decisions · authority
+                    ExoRail: Project Memory · Decisions · authority
                               evidence · delivery graph · revision history
                                                      ↓
                           Execution Adapter → runtime execution
@@ -771,7 +856,7 @@ ALM / CI / identity ──┐       corporate knowledge ──┐
 ```
 
 This can add enterprise observations, external context, long-running or
-multi-agent runtime mechanics and optimized navigation while Exorail retains
+multi-agent runtime mechanics and optimized navigation while ExoRail retains
 canonical meaning, authority, Results, acceptance, integration semantics and
 delivery topology.
 
@@ -788,7 +873,7 @@ query, work identity and permitted source scope; an execution adapter receives
 a governed work envelope and deliberately routed knowledge; a projection
 adapter receives only the state needed to render its view. Credentials remain
 local and binding-owned. This supports enterprise integration without claiming
-that Exorail is an IAM system.
+that ExoRail is an IAM system.
 
 Professional Progressive means adding this operational power without upgrading
 from a weak project model to a different enterprise one. The same durable
@@ -797,24 +882,24 @@ identity, knowledge, execution and projection integrations.
 
 ## Architectural deep dives
 
-### Exorail Project Memory
+### ExoRail Project Memory
 
 **Project Memory** is the name for the durable, navigable project continuity
-created when Exorail keeps material knowledge and governed delivery state in the
+created when ExoRail keeps material knowledge and governed delivery state in the
 repository. It is not a new database, a hosted service or a separate canonical
 record type. It is the combined effect of repository-native intent,
 architecture, constraints, Decisions, Stories, Tasks, Results, receipts,
 revisions, evidence and rebuildable navigation.
 
 It has useful similarities to a *second brain*: a person, session or agent may
-forget, while the project does not have to. The analogy stops there. Exorail is
+forget, while the project does not have to. The analogy stops there. ExoRail is
 not a personal note store or an undifferentiated archive; it preserves
 project-relevant meaning with provenance, lifecycle and authority boundaries.
 
 It also has useful **LLM-oriented wiki** properties: the knowledge is
 human-readable, machine-consumable, persistent, incrementally maintained and
 available to a new coding agent. A wiki mainly answers “what do we know?”;
-Exorail additionally keeps “why do we believe it?”, “what was decided?”, “what
+ExoRail additionally keeps “why do we believe it?”, “what was decided?”, “what
 changed?”, “what was verified?”, “what remains uncertain?” and “what may happen
 next?” connected to delivery. It is therefore not merely a wiki.
 
@@ -853,12 +938,12 @@ represented by durable project state.
 session. `.exorail/KNOWLEDGE_INDEX.md`, the active Story or Task, required reads,
 Decisions, constraints and evidence identify the smallest relevant canonical
 source set. Handoffs and model switches orient the incoming actor back through
-that state. Exorail does not require RAG, embeddings, a vector database or a
+that state. ExoRail does not require RAG, embeddings, a vector database or a
 context server, and no summary acquires authority merely because it is concise.
 
 Trust remains explicit inside that context. A mechanically observed fact, an
 agent declaration, a supported inference, a human Decision and an unverified
-limit are not interchangeable forms of truth. Exorail keeps those distinctions
+limit are not interchangeable forms of truth. ExoRail keeps those distinctions
 visible so a convenient summary or plausible generated statement cannot quietly
 become durable authority. Reusable technical Episodes require accepted Result
 provenance; that grounds reusable knowledge without claiming automatic semantic
@@ -876,7 +961,7 @@ subsystem.
 
 ### Governed delivery graph
 
-Exorail behaves as a **governed delivery graph**. This describes delivery
+ExoRail behaves as a **governed delivery graph**. This describes delivery
 semantics, not an execution-graph runtime or scheduler.
 
 ```text
@@ -897,24 +982,24 @@ human acceptance + verified integration
 dependent work can converge into a new frontier
 ```
 
-Exorail may declare `sequential` or `parallel` execution policy where required,
+ExoRail may declare `sequential` or `parallel` execution policy where required,
 but these are not separate product modes. Policy can constrain concurrency; the
 actual delivery topology is derived from dependencies, declared scope,
 isolation, authority, acceptance and integration state. A parallel wave is
 permitted only when that governed state allows it, and a sequential Story cannot
-be bypassed. Parallelism is therefore not a claim that Exorail natively spawns
+be bypassed. Parallelism is therefore not a claim that ExoRail natively spawns
 agents: it is a governed option for independent work, while closeout remains
 serial where review, acceptance, integration or a dependency requires it.
 
 This has useful properties often associated with graph-engineered agent
-workflows, while Exorail deliberately owns delivery semantics rather than
+workflows, while ExoRail deliberately owns delivery semantics rather than
 execution-graph runtime mechanics.
 
 The graph also explains why more agents do not mean less control. Authoring,
 deterministic validation, protected authority, human acceptance and integration
 are deliberately separate. An LLM can propose meaning and carry out scoped
-work, but it cannot manufacture the authority that validates its own mutation or
-advance the project by declaring success.
+work, but authoring or declaring success does not satisfy a protected route's
+separately required authority-reference form.
 
 ### Authority, Decisions and non-self-legitimizing agents
 
@@ -924,16 +1009,20 @@ deterministic validation, protected authority, human acceptance and integration
 are distinct operations.
 
 Where an ambiguity, contradiction, unsafe scope or missing evidence blocks
-work, Exorail routes it as a Decision or typed Contract Challenge. The request
+work, ExoRail routes it as a Decision or typed Contract Challenge. The request
 records evidence, impact, options, recommendation, requested decision and the
 next permitted action; it does not pretend to infer a semantic truth. Where
-protected authority is required, it must be supplied explicitly through
-`user:<decision-reference>`; roles, member attribution, agents, chats and
-runtimes cannot synthesize or inherit it.
+protected authority is required, the route requires an explicit declared
+`user:<decision-reference>` form. Roles, member attribution, agents, chats and
+runtimes are not that form and do not replace the required human decision.
 
 Authority is therefore an input to a mechanical operation, never a product of
 one. This prevents an agent from converting a plausible assumption, successful
 execution or its own review into permission to progress governed project state.
+The repository-native baseline checks the declared form where that route requires
+it; a form writable by the same fully privileged repository writer does not by
+itself attest human origin, authenticate identity, resolve an external source or
+provide single-use protection.
 
 ![Authoring, deterministic admission, protected human authority, acceptance and integration as five separate operations, with the shortcut from authoring to authority explicitly blocked.](assets/authority-separation.svg)
 
@@ -944,7 +1033,7 @@ execution or its own review into permission to progress governed project state.
 An adapter descriptor may be present without being activated by project Policy.
 An activated capability may be unavailable on the local host. A locally
 available capability may still lack the explicit authority required for a
-consequential action. Exorail therefore separates:
+consequential action. ExoRail therefore separates:
 
 ```text
 presence ≠ activation ≠ availability ≠ invocation ≠ authority
@@ -963,7 +1052,7 @@ reachable or self-declared.
 
 **A reachable tool is not permission to mutate the world.**
 
-For consequential or destructive external mutations, Exorail records a durable
+For consequential or destructive external mutations, ExoRail records a durable
 External Action rather than treating a successful tool call as sufficient
 governance:
 
@@ -981,6 +1070,11 @@ Controlled execution is similarly bounded. A minimal Execution Run preserves
 the governed attempt, terminal outcome and relevant evidence after an external
 runtime disappears or changes; worker topology, prompts, checkpoints,
 heartbeats and event streams remain runtime-owned.
+
+Its governance input digest identifies the normalized work and Policy inputs
+actually consumed at dispatch. It is neither the Run identity nor dispatch
+authority, and it deliberately excludes local binding, health and unrelated
+Policy so a later configuration change cannot silently reinterpret an attempt.
 
 ### Review integrity and orientation
 
@@ -1004,7 +1098,7 @@ semantic correctness, build quality, security approval or a whole-Story outcome.
 
 ### Resumability, replan and targeted recovery
 
-Exorail is intended for continuing software work, not a one-shot agent run.
+ExoRail is intended for continuing software work, not a one-shot agent run.
 When a session ends, a person changes, an LLM is replaced or the plan meets new
 evidence, durable state and required reads provide the route back in. Local
 identity, worktree state and runtime scratch context remain local rather than
@@ -1032,7 +1126,7 @@ attempt is rejected. This makes the stop visible instead of treating a stuck
 agent, session handoff or recurring failure as permission to keep trying.
 
 The bounded limit is an exit into a decision, not a dead end. When new evidence
-requires a material replan, Exorail preserves the old revision and its immutable
+requires a material replan, ExoRail preserves the old revision and its immutable
 attempt records. An unattempted affected Task can move to the current revision.
 A Task with one or more recorded attempts stays on its original revision, is
 marked `superseded`, and receives a successor Task at the current revision that
@@ -1049,11 +1143,11 @@ decisions. The complete ordered procedure is in the
 
 ### Professional Progressive
 
-**Professional Progressive** describes Exorail's adoption philosophy:
+**Professional Progressive** describes ExoRail's adoption philosophy:
 professional delivery semantics from the first repository, with progressively
 richer operational depth as the project needs it.
 
-The small native baseline—repository + Exorail + one capable LLM-powered coding
+The small native baseline—repository + ExoRail + one capable LLM-powered coding
 agent—already keeps durable project meaning, explicit Decisions, evidence,
 authority boundaries, verification discipline, review integrity, history and
 resumability. It is not a weak “starter mode”. Git/CI observation, identity and
@@ -1065,12 +1159,12 @@ Those additions extend routes; they do not own canonical project meaning or
 force an architectural migration. The result is portability: different tools can
 be used where they are useful, while the project remains readable and governable
 without being locked to a particular provider, runtime or adapter. This enables
-a practical best-tool-per-task outcome; it does not claim that Exorail
+a practical best-tool-per-task outcome; it does not claim that ExoRail
 automatically chooses the best model, agent or runtime.
 
-## What Exorail deliberately does not claim
+## What ExoRail deliberately does not claim
 
-Exorail guides and governs delivery; it does not pretend to replace engineering
+ExoRail guides and governs delivery; it does not pretend to replace engineering
 judgment.
 
 - `ready_for_review` is preparation, **not approval**.
@@ -1093,7 +1187,7 @@ proved complete.
 
 ## Who it is for
 
-Exorail is for continuing software work where durable context, explicit
+ExoRail is for continuing software work where durable context, explicit
 authority, verifiability and handoff justify a small process overhead:
 greenfield systems, unfamiliar or brownfield repositories, modernization,
 work shared by people and AI agents, parallel delivery, and software expected to
@@ -1117,7 +1211,7 @@ edits.
 
 ## Install the clean break
 
-Exorail 0.2 is a clean break.
+ExoRail 0.2 is a clean break.
 
 Nothing from an earlier version is converted, and no upgrade path is provided.
 If the target already has a workflow container, the commands below move it aside
@@ -1206,12 +1300,14 @@ Run these from the target repository with a maintained Node.js LTS release:
 | Validate canonical workflow state | `node ./.exorail/tools/validate-workflow.mjs` |
 | Regenerate derived navigation | `node ./.exorail/tools/generate-projections.mjs` |
 | See executable work | `node ./.exorail/tools/derive-executable-frontier.mjs --story US-<slug>` |
+| Derive a native Task digest | `node ./.exorail/tools/derive-governance-input-digest.mjs --task TASK-<slug>` |
 | Prepare a review range | `node ./.exorail/tools/derive-review-readiness.mjs --base-sha <base> --head-sha <head> --json` |
+| Observe one Task's technical review evidence | `node ./.exorail/tools/derive-task-review-readiness.mjs --task TASK-<slug> --base-sha <base> --head-sha <checked-head> --json` |
 | Create a review orientation | `node ./.exorail/tools/derive-review-brief.mjs --story US-<slug> --base-sha <base> --head-sha <head> --json` |
 | Inspect declared team attribution | `node ./.exorail/tools/derive-team-view.mjs --json` |
 | Check workflow text encoding | `node ./.exorail/tools/validate-text-files.mjs AGENTS.md .exorail/AGENTS.md` |
 
-`generate-payload-manifest.mjs` is maintainer-only: it identifies the Exorail
+`generate-payload-manifest.mjs` is maintainer-only: it identifies the ExoRail
 payload during package closeout and is not part of a target project's workflow.
 
 To move work to a different LLM-powered coding agent, have the incoming agent
@@ -1225,7 +1321,7 @@ a provider. `validate-workflow.mjs` emits stable findings, and
 
 ## Recover when the workflow stops
 
-When Exorail blocks a path, read the named finding and the active Story or
+When ExoRail blocks a path, read the named finding and the active Story or
 Task. The next action is deliberately practical:
 
 | You see | Recover by |
@@ -1257,7 +1353,7 @@ authentication nor authority.
 Adapters can later add external identity mapping, ALM or CI integration,
 execution runtimes, knowledge retrieval and projected views. They are
 replaceable: provider and runtime details stay local to their adapter while
-Exorail retains the durable project meaning, Result evidence and authority
+ExoRail retains the durable project meaning, Result evidence and authority
 trail.
 
 Their absence affects only a delegation route, never the native repository route.

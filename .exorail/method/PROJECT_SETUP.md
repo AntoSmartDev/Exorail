@@ -56,6 +56,13 @@ non-regression baseline as its own Task, or records a Decision request if the
 baseline cannot be established within it. A Quality gate over untested code is
 not satisfied by asserting that nothing broke.
 
+Refine that baseline Task alone, and leave the Tasks that follow it as light
+records until it completes. A sequential Story offers only its first eligible
+Task, and it selects that Task by identifier order, not by the order the Story's
+`## Task backlog` lists. Refining the later change first therefore hands the
+slice to the very change the baseline exists to protect, and the frontier reports
+the baseline as waiting on it.
+
 ## First work
 
 A Story requires a parent Feature and a Feature requires a parent Epic, so

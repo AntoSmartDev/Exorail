@@ -8,7 +8,8 @@ Record proposed, accepted, deferred, and superseded project decisions.
 ## Rules
 
 - A proposed blocking decision prevents the affected Task from becoming ready.
-- An accepted human decision records its actual `user:<reference>` source.
+- An accepted human decision records its declared `user:<reference>`
+  authority-reference form.
 - A Decision request lives in its affected Story or Task, in that record's
   `## Decision requests` table. This file is the durable register of decisions,
   not a request host: a decision arrives here when it is taken.

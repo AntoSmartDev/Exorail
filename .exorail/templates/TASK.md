@@ -6,6 +6,11 @@ title: <specific executable outcome>
 parent: US-<parent-slug>
 status: planned
 plan_revision: 1
+# Declare a dependency only when this Task must build on another Task's
+# accepted and integrated output: each id listed holds this Task out of ready
+# until that Task has a task_acceptance and a task_integration receipt. A Task
+# that only has to come after another needs no dependency; the order of a
+# sequential Story already places it.
 depends_on: []
 affected_paths: []
 contract_required: not_required
@@ -16,21 +21,46 @@ contract_required: not_required
 # owner_member_id: <member-id>
 # assignee_member_id: <member-id>
 # reviewer_member_id: <member-id>
-# Optional Task overrides — omit all three unless this Task must be at least as
+# Optional Task overrides. Omit both, or declare both: the validator reads them
+# as one pair, so a Task that sets only one is refused with AG401 even when the
+# value it sets matches its Story. Declared together, each must be at least as
 # restrictive as its parent Story: execution_mode: sequential | parallel;
 # verification_profile: minimal | standard | full.
 # execution_mode: sequential
 # verification_profile: standard
-# Controlled-execution fields — copy only when a Task enters controlled work:
+# Refining to ready: uncomment all of the following together. A light planned
+# Task needs none of it. A ready or active Task needs every line, and the
+# validator refuses one that is missing any. Each acceptance criterion names
+# something a reviewer can inspect: an output, result, report, evidence,
+# response, status, file, listing, diff or assertion.
+# task_acceptance_criteria: ["node test/example.test.mjs prints 0 failed in its report"]
+# acceptance_refs: [US-<slug>-AC-1]
 # execution:
 #   contract: controlled-task@1
-# acceptance_refs: [US-<slug>-AC-1]
-# execution_isolation: parallel_safe | parallel_hunk_disjoint | sequential_only
+# execution_isolation: sequential_only
 # change_scope:
 #   change_class: routine
 #   risk: low
 #   corroborated_paths: []
 #   material_replan: false
+# acceptance_refs names criteria from the parent Story's Acceptance criteria.
+# execution_isolation is sequential_only, parallel_safe or
+# parallel_hunk_disjoint; the last also needs logical_regions. A change_class
+# other than routine, a high or critical risk, or material_replan: true makes
+# the Task exceptional: contract_required becomes required, and a sibling
+# Contract carrying user: approval must exist before the Task starts.
+# Choose routine only when none of the exceptional meanings below applies:
+# externally_consequential affects an outside party or system; destructive
+# removes or irreversibly changes data/capability; security_sensitive affects a
+# security boundary; data_sensitive handles protected data; migration changes a
+# live representation; public_api changes a published consumer contract;
+# architecture changes an accepted system boundary; parallel_integration joins
+# independently produced work. If the class is uncertain, do not guess a more
+# severe label: open a Decision request before refining this Task.
+# corroborated_paths is an array the resolver checks for shape; [] is correct
+# when no corroborating path exists.
+# The validator also reads three sections of the body — Contract requirement,
+# Acceptance and Quality gate — so write them for this Task.
 # Optional forecast; resolved Policy may require it for selected work.
 # forecast:
 #   effort_band: M
@@ -95,13 +125,15 @@ case needs a sibling Task Contract before execution.
 <acceptance_refs, derived execution isolation, dependencies, verification profile,
 and whether human acceptance is required before Story-base integration>
 
-## Quality gate
-
 Run the derived verification profile and compare the implementation with every
 acceptance reference. Remediate only while the attempt remains safe and within
 scope, for at most three cycles. A clean result is `review_pending`, not
 accepted or integrated. Stop for a typed human Decision when a blocker,
 material replan, unsafe scope, missing evidence or non-convergence occurs.
+
+## Quality gate
+
+<commands, checks, and evidence required>
 
 ## Handoff
 

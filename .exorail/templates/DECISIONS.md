@@ -22,7 +22,8 @@ Use a separate ADR only for significant architectural decisions that require det
 ## Rules
 
 - a `proposed` decision with `Blocking: yes` prevents readiness
-- an accepted human decision records `user:<decision-reference>` as its actual source
+- an accepted human decision records the declared
+  `user:<decision-reference>` authority-reference form
 - routine Decision requests record a recommendation, evidence and the requested
   human decision; material changes, exceptions, residual-risk acceptance and
   Story outcome acceptance additionally record impact, practical options and

@@ -19,8 +19,10 @@
   `review_boundary: task|story`. The default is `task`. Story-boundary review
   requires explicit current human authority permitted by resolved Policy and never skips
   final whole-Story validation.
-- Protected authority is only `user:<decision-reference>`. Role, agent, chat
-  and session labels are descriptive and cannot approve, accept or authorize.
+- Protected routes require the declared `user:<decision-reference>`
+  authority-reference form. Role, agent, chat and session labels are
+  descriptive and cannot approve, accept or authorize; the baseline checks the
+  form, not human origin or identity.
 - Parallel Tasks have isolated runtime workspaces and atomic review artifacts.
   Derived dependencies constrain only their downstream subgraph; manual Git
   integration is reconciled before dependent work starts.
