@@ -167,9 +167,9 @@ export function validate(root) {
     if (type === 'execution_run') { if (!isUtc(data.started_at_utc)) addLocus(findings, 'AG208', relative, 'started_at_utc', data.started_at_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z'); }
     else if (!isUtc(data.created_at_utc)) addLocus(findings, 'AG208', relative, 'created_at_utc', data.created_at_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z');
     else if (type !== 'task_result' && !isUtc(data.updated_at_utc)) addLocus(findings, 'AG208', relative, 'updated_at_utc', data.updated_at_utc, 'an RFC 3339 UTC timestamp, for example 2026-09-20T09:00:00Z');
-    if (!['task_contract', 'task_result', 'execution_run', 'external_action'].includes(type) && (!data.title || String(data.title).length > 120)) add(findings, 'AG210');
+    if (!['task_contract', 'task_result', 'execution_run', 'external_action'].includes(type) && (typeof data.title !== 'string' || !data.title.trim() || data.title.length > 120)) addLocus(findings, 'AG210', relative, 'title', data.title, 'a non-empty string title of at most 120 characters');
     if (byId.has(data.id)) add(findings, 'AG205'); else byId.set(data.id, record);
-    for (const heading of info.headings) if (!hasRequiredSection(body, heading)) add(findings, 'AG210');
+    for (const heading of info.headings) if (!hasRequiredSection(body, heading)) addLocus(findings, 'AG210', relative, `## ${heading}`, sectionText(body, heading), `a non-empty ## ${heading} section`);
     validateLinks(record, exo, findings);
     if (!canonicalPath(relative, data, type)) addLocus(findings, 'AG202', relative, 'path', relative, canonicalPathShape(type, data.id));
     if (data.risk && !['low', 'medium', 'high', 'critical'].includes(data.risk)) add(findings, 'AG212');
@@ -589,7 +589,7 @@ function validateResultExecution(record, parent, byId, findings) {
   if (!usesExecution) return;
   if (!Array.isArray(data.acceptance_evidence) || !data.acceptance_evidence.length || data.acceptance_evidence.some((item) => typeof item !== 'string')) addLocus(findings, 'AG603', relative, 'acceptance_evidence', data.acceptance_evidence, 'a non-empty inline list of strings naming the evidence for each acceptance reference');
   if (parent.data.execution?.contract && data.execution_run_id === undefined) addLocus(findings, 'AG607', relative, 'execution_run_id', undefined, 'the id of the Run this Result closes, because its Task declares an execution contract');
-  if (data.execution_run_id !== undefined) { const run = byId.get(data.execution_run_id); if (!run || run.type !== 'execution_run' || run.data.work_id !== parent.data.id || run.data.status !== 'terminal' || run.data.terminal_outcome !== 'result_candidate' || run.data.result_id !== data.id) add(findings, 'AG607'); }
+  if (data.execution_run_id !== undefined) { const run = byId.get(data.execution_run_id); if (!run || run.type !== 'execution_run' || run.data.work_id !== parent.data.id || run.data.status !== 'terminal' || run.data.terminal_outcome !== 'result_candidate' || run.data.result_id !== data.id) addLocus(findings, 'AG607', relative, 'execution_run_id', data.execution_run_id, `a terminal result_candidate Run for Task ${parent.data.id} whose result_id is ${data.id}`); }
   if (!Array.isArray(data.scope_paths) || data.scope_paths.some((entry) => !asArray(parent.data.affected_paths).includes(entry))) addLocus(findings, 'AG607', relative, 'scope_paths', data.scope_paths, `an inline list drawn from the Task's affected_paths: ${JSON.stringify(asArray(parent.data.affected_paths))}`);
 }
 function validateReviewContext(data, findings, relative) {

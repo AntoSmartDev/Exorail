@@ -4,15 +4,15 @@
 
   <style>
     .rail   { stroke: #7a8699; stroke-width: 3; }
-    .stop   { fill: #ffffff; stroke: #3f6fb5; stroke-width: 3; }
+    .stop   { fill: #ffffff; stroke: #0b78db; stroke-width: 3; }
     .gate   { fill: #ffffff; stroke: #b5762f; stroke-width: 3; }
     .stage  { font: 600 17px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #1f2933; }
     .note   { font: 400 13px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #52606d; }
-    .head   { font: 700 19px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #1f2933; }
+    .head   { font: 700 22px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #1f2933; }
     .key    { font: 400 12px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #52606d; }
   </style>
 
-  <text class="head" x="40" y="42">The ExoRail delivery path</text>
+  <text class="head" x="40" y="42">Delivery is a project lifecycle</text>
 
   <!-- legend -->
   <circle class="stop" cx="404" cy="36" r="7"/>
@@ -39,7 +39,7 @@
   <circle class="stop" cx="72" cy="302" r="11"/>
   <text class="stage" x="104" y="298">Deliver</text>
   <text class="note" x="104" y="320">Only work the derived frontier admits. Verification produces an</text>
-  <text class="note" x="104" y="338">immutable Result — which is evidence, not acceptance.</text>
+  <text class="note" x="104" y="338">immutable Result — evidence, not acceptance.</text>
 
   <!-- two human gates inside Deliver -->
   <circle class="gate" cx="72" cy="374" r="9"/>

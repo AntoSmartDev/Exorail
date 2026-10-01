@@ -125,7 +125,10 @@ Git-backed readiness observation with declared Task scope, Result review
 context and links to canonical sources. Claim state and provenance remain
 separate: Git facts are `mechanically_verified`/`git_linked`; Result context is
 `agent_declared`/`declared`; open decisions are `human_decision_required`.
-Its output is a rebuildable CI artifact, never a canonical review record.
+Its output is a rebuildable CI artifact, never a canonical review record. The
+JSON/Markdown output uses `review-brief@2`; its open-decision Markdown table has
+five positional columns, so consumers of the earlier three-column table must
+regenerate and read the new shape rather than treating it as `review-brief@1`.
 
 `derive-team-view.mjs` is a read-only Projection query. It renders the tracked
 `TEAM.json` registry and canonical member attribution without a provider,

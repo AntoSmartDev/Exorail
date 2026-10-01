@@ -6,7 +6,7 @@ parent: TASK-<slug>
 status: review_pending
 based_on_plan_revision: 1
 evidence: [<repository-relative evidence path or command result>]
-# Run binding — declare these three together, or none of them. They are
+# Recommended Run binding — declare these three together, or none of them. They are
 # optional, and they are what makes a Result observable: the Run, the
 # acceptance evidence and the scope touched bind into one chain a reviewer can
 # check. Record the Run and declare them whenever the execution should be tied
@@ -14,6 +14,17 @@ evidence: [<repository-relative evidence path or command result>]
 # nothing links this Result to an execution, the scope it touched is not
 # stated, and `tools/derive-task-review-readiness.mjs` reports evidence_missing
 # for it even after acceptance and integration.
+# acceptance_evidence must be a non-empty inline list of evidence strings.
+# scope_paths must be an inline list whose entries occur in this Task's
+# affected_paths by exact string equality (case-sensitive, without separator
+# normalization or directory-prefix matching). An empty list [] is valid when
+# there are no file changes to declare, for example a verification-only outcome;
+# do not invent a path.
+# This is declared scope, not proof of the actual changes. Task review readiness
+# (tools/derive-task-review-readiness.mjs) compares Git-observed paths against
+# the Task's affected_paths; an empty declaration does not bypass that check.
+# That separate Git check uses normalized path/prefix matching, not the exact
+# list-membership rule above.
 # execution_run_id: RUN-<slug>-1
 # acceptance_evidence: [US-<slug>-AC-1]
 # scope_paths: [src/example.mjs]

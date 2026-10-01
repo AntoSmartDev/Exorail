@@ -31,7 +31,7 @@
     {
       "path": "method/FINDINGS.md",
       "kind": "text",
-      "sha256": "a36f5ef1f93300e7a10305ad00d91e209dc76d8269057a2b92c9f224ce69c87f"
+      "sha256": "1dc405bcfff424fe499ba654017f534e07a277e7f2c9afc1e94d9045a644b36f"
     },
     {
       "path": "method/OPERATING_FLOW.md",
@@ -146,7 +146,7 @@
     {
       "path": "templates/EXECUTION_RUN.md",
       "kind": "text",
-      "sha256": "4f89c829f86e587031db4674cd1626d1f91bbe6860c09ea27e43cefda22ec5f8"
+      "sha256": "a3c54a50833ece5ecb1822409258fe6b68ededfb92092973746f51c33d6d7ecf"
     },
     {
       "path": "templates/EXTERNAL_ACTION.md",
@@ -256,7 +256,7 @@
     {
       "path": "templates/RESULT.md",
       "kind": "text",
-      "sha256": "b1af0aa17bca42728e19e48b015d02c3052a8f1bf8afd40f671f3eab12a403d9"
+      "sha256": "533056412e71bf2056589878ae04f7a5cd76df252b6b9d36cac8fc90760f5289"
     },
     {
       "path": "templates/ROADMAP.md",
@@ -361,7 +361,7 @@
     {
       "path": "tools/lib/review-brief.mjs",
       "kind": "text",
-      "sha256": "4f622320400563f596b521f874b7ac16f310dd7aa4e45bb9af5bc929d927acf3"
+      "sha256": "970398b3717c691e04463f50c7b901d021c76f7ffd341197e2a196081e3686df"
     },
     {
       "path": "tools/lib/review-readiness.mjs",
@@ -371,7 +371,7 @@
     {
       "path": "tools/lib/schema-0.2.mjs",
       "kind": "text",
-      "sha256": "dbd86edd5cf036256445a207188c9556c73cb88370434c41a68384a22516a631"
+      "sha256": "69bef6e4d3a23b9069c71a7643007b5b84edd218f832776a0f242af87b014360"
     },
     {
       "path": "tools/lib/task-review-readiness.mjs",
@@ -391,7 +391,7 @@
     {
       "path": "tools/README.md",
       "kind": "text",
-      "sha256": "2c4d8dc647e389869b5d466ac74e5b82d1c6ed7d16d7d9785fada77dfbec7d57"
+      "sha256": "b3b1ebb63b5db13f6dd089c4c3918421722ce84876fe8ab45e5093839ad4f0d7"
     },
     {
       "path": "tools/validate-text-files.mjs",

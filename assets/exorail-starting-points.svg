@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 600" width="760" height="600" role="img" aria-labelledby="title desc">
+  <title id="title">From what you have to a reliable delivery slice</title>
+  <desc id="desc">ExoRail can begin with an idea or goal, a blueprint or product documents, an existing repository or system, or interrupted work or a delivered product. It makes known evidence, gaps, Decisions and constraints explicit before defining the first reliable delivery slice.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#71869a"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .diagram-title { fill: #172b40; font-size: 21px; font-weight: 700; }
+    .label { fill: #47719d; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+    .title { fill: #172b40; font-size: 18px; font-weight: 700; }
+    .body { fill: #465b70; font-size: 15px; }
+    .input-group { fill: #fbfcfe; stroke: #d3dee9; stroke-width: 1.5; }
+    .input { fill: #f5f7fa; stroke: #a7b6c5; stroke-width: 1.5; }
+    .control { fill: #f0f7ff; stroke: #5696d4; stroke-width: 1.8; }
+    .frame { fill: #edf3f8; stroke: #8da7bf; stroke-width: 1.5; }
+    .slice { fill: #eef8f2; stroke: #69a682; stroke-width: 1.8; }
+    .flow { fill: none; stroke: #71869a; stroke-width: 2.2; marker-end: url(#arrow); }
+    @media (prefers-color-scheme: dark) {
+      .diagram-title, .title { fill: #edf5fc; }
+      .label { fill: #86c4ff; }
+      .body { fill: #bacbdd; }
+      .input-group { fill: #12202e; stroke: #3a4d60; }
+      .input { fill: #172431; stroke: #587086; }
+      .control { fill: #142b42; stroke: #5aa2e6; }
+      .frame { fill: #1b3042; stroke: #668aa8; }
+      .slice { fill: #193527; stroke: #73b78f; }
+    }
+  </style>
+
+  <text class="diagram-title" x="40" y="38">From what you have to a reliable delivery slice</text>
+
+  <rect class="input-group" x="40" y="66" width="680" height="191" rx="14"/>
+  <text class="label" x="58" y="89">START WITH ANY OF THESE</text>
+  <rect class="input" x="58" y="101" width="312" height="62" rx="9"/>
+  <text class="body" x="76" y="139">Idea, problem or goal</text>
+  <rect class="input" x="390" y="101" width="312" height="62" rx="9"/>
+  <text class="body" x="408" y="139">Blueprint, spec or product docs</text>
+  <rect class="input" x="58" y="177" width="312" height="62" rx="9"/>
+  <text class="body" x="76" y="215">Existing repository or system</text>
+  <rect class="input" x="390" y="177" width="312" height="62" rx="9"/>
+  <text class="body" x="408" y="215">Interrupted work or delivered product</text>
+
+  <path class="flow" d="M 380 258 V 287"/>
+  <rect class="control" x="190" y="294" width="380" height="70" rx="12"/>
+  <text class="title" x="380" y="337" text-anchor="middle">ExoRail</text>
+
+  <path class="flow" d="M 380 365 V 391"/>
+  <rect class="frame" x="120" y="398" width="520" height="75" rx="12"/>
+  <text class="title" x="380" y="427" text-anchor="middle">A reliable project frame</text>
+  <text class="body" x="380" y="454" text-anchor="middle">Known evidence · explicit gaps · Decisions · constraints</text>
+
+  <path class="flow" d="M 380 474 V 498"/>
+  <rect class="slice" x="180" y="505" width="400" height="70" rx="12"/>
+  <text class="title" x="380" y="534" text-anchor="middle">First reliable delivery slice</text>
+  <text class="body" x="380" y="557" text-anchor="middle">Enough definition to begin useful work</text>
+</svg>

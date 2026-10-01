@@ -1,81 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 424" width="880" height="424" role="img" aria-labelledby="title desc">
-  <title id="title">Authoring, admission, authority, acceptance and integration are separate</title>
-  <desc id="desc">Five steps left to right: an agent authors, ExoRail applies deterministic admission, a protected route requires a declared user authority-reference form, a human accepts, and integration is bound to a commit. A blocked dashed arc with a cross shows authoring does not itself satisfy that route.</desc>
-
-  <defs>
-    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path class="ah" d="M 0 0 L 10 5 L 0 10 z"/>
-    </marker>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 458" width="880" height="458" role="img" aria-labelledby="title desc">
+  <title id="title">Authoring is not authority</title>
+  <desc id="desc">An agent may draft project records and ExoRail may validate admission, but neither operation supplies a protected decision. Task acceptance, Task integration and whole-Story outcome are distinct human-gated events, each requiring its own declared user authority-reference form. The repository checks the form but does not authenticate its human origin.</desc>
   <style>
     text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-    .head { font-size: 19px; font-weight: 700; fill: #1f2933; }
-    .stage { font-size: 15px; font-weight: 600; fill: #1f2933; }
-    .body { font-size: 13.5px; fill: #1f2933; }
-    .note { font-size: 12.5px; fill: #52606d; }
-    .key { font-size: 12px; fill: #52606d; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; fill: #52606d; }
-    .box { fill: #3f6fb5; fill-opacity: .07; stroke: #3f6fb5; stroke-width: 2; }
-    .boxh { fill: #b5762f; fill-opacity: .09; stroke: #b5762f; stroke-width: 2; }
-    .boxm { fill: #7a8699; fill-opacity: .06; stroke: #7a8699; stroke-width: 2; stroke-dasharray: 5 4; }
-    .stop { fill: #3f6fb5; }
-    .gate { fill: #b5762f; }
-    .rail { stroke: #7a8699; stroke-width: 3; fill: none; }
-    .arrow { stroke: #7a8699; stroke-width: 2; fill: none; marker-end: url(#a); }
-    .ah { fill: #7a8699; }
-    .blocked { stroke: #b5762f; stroke-width: 2.5; fill: none; stroke-dasharray: 6 5; }
-    .cross { stroke: #b5762f; stroke-width: 2.5; stroke-linecap: round; }
+    .head { font-size: 22px; font-weight: 700; fill: #172b40; }
+    .sub { font-size: 14px; fill: #52677b; }
+    .label { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; fill: #47719d; }
+    .stage { font-size: 16px; font-weight: 700; fill: #172b40; }
+    .body { font-size: 13.5px; fill: #465b70; }
+    .mono { font: 13px ui-monospace, SFMono-Regular, Consolas, monospace; fill: #465b70; }
+    .card { fill: #f5f9ff; stroke: #7fb1e8; stroke-width: 1.5; }
+    .amber { fill: #fff9f1; stroke: #bd803d; stroke-width: 1.5; }
+    .quiet { fill: #f5f7fa; stroke: #d3dee9; stroke-width: 1.5; }
+    .cross { stroke: #bd803d; stroke-width: 2.5; stroke-linecap: round; }
     @media (prefers-color-scheme: dark) {
-      .head, .stage, .body { fill: #e6edf3; }
-      .note, .key, .mono { fill: #9aa7b4; }
-      .box { fill: #6ea8fe; fill-opacity: .12; stroke: #6ea8fe; }
-      .boxh { fill: #e0a34a; fill-opacity: .14; stroke: #e0a34a; }
-      .boxm { fill: #8b98a5; fill-opacity: .10; stroke: #8b98a5; }
-      .stop { fill: #6ea8fe; }
-      .gate { fill: #e0a34a; }
-      .rail, .arrow { stroke: #8b98a5; }
-      .ah { fill: #8b98a5; }
-      .blocked, .cross { stroke: #e0a34a; }
+      .head, .stage { fill: #edf5fc; }
+      .sub, .body, .mono { fill: #bacbdd; }
+      .label { fill: #86c4ff; }
+      .card { fill: #142b42; stroke: #4d91d2; }
+      .amber { fill: #332819; stroke: #dba15e; }
+      .quiet { fill: #172431; stroke: #3a4d60; }
+      .cross { stroke: #dba15e; }
     }
   </style>
 
-  <text class="head" x="40" y="34">An agent may author meaning. It cannot authorize its own progression.</text>
-  <circle class="stop" cx="474" cy="54" r="7"/>
-  <text class="key" x="488" y="58">agent</text>
-  <circle class="gate" cx="548" cy="54" r="7"/>
-  <text class="key" x="562" y="58">human</text>
-  <rect class="boxm" x="614" y="47" width="14" height="14" rx="3"/>
-  <text class="key" x="636" y="58">mechanical</text>
-  <text class="key" x="104" y="100" text-anchor="middle">coding agent</text>
-  <rect class="box" x="36" y="112" width="136" height="66" rx="8"/>
-  <text class="stage" x="104" y="138" text-anchor="middle">Author</text>
-  <text class="key" x="104" y="160" text-anchor="middle">drafts the records</text>
-  <text class="key" x="274" y="100" text-anchor="middle">ExoRail</text>
-  <rect class="boxm" x="206" y="112" width="136" height="66" rx="8"/>
-  <text class="stage" x="274" y="138" text-anchor="middle">Admission</text>
-  <text class="key" x="274" y="160" text-anchor="middle">deterministic checks</text>
-  <text class="key" x="444" y="100" text-anchor="middle">human</text>
-  <rect class="boxh" x="376" y="112" width="136" height="66" rx="8"/>
-  <text class="stage" x="444" y="138" text-anchor="middle">Authority</text>
-  <text class="key" x="444" y="160" text-anchor="middle">user:&lt;decision&gt;</text>
-  <text class="key" x="614" y="100" text-anchor="middle">human</text>
-  <rect class="boxh" x="546" y="112" width="136" height="66" rx="8"/>
-  <text class="stage" x="614" y="138" text-anchor="middle">Acceptance</text>
-  <text class="key" x="614" y="160" text-anchor="middle">a human accepts</text>
-  <text class="key" x="784" y="100" text-anchor="middle">human</text>
-  <rect class="boxh" x="716" y="112" width="136" height="66" rx="8"/>
-  <text class="stage" x="784" y="138" text-anchor="middle">Integration</text>
-  <text class="key" x="784" y="160" text-anchor="middle">bound to a commit</text>
-  <line class="arrow" x1="172" y1="145" x2="202" y2="145"/>
-  <line class="arrow" x1="342" y1="145" x2="372" y2="145"/>
-  <line class="arrow" x1="512" y1="145" x2="542" y2="145"/>
-  <line class="arrow" x1="682" y1="145" x2="712" y2="145"/>
-  <path class="blocked" d="M 100 186 C 100 250, 440 250, 440 186"/>
-  <line class="cross" x1="261" y1="224" x2="279" y2="242"/>
-  <line class="cross" x1="279" y1="224" x2="261" y2="242"/>
-  <text class="note" x="270" y="288" text-anchor="middle">No amount of authored text or successful execution converts into authority.</text>
-  <rect class="boxm" x="40" y="314" width="800" height="90" rx="8"/>
-  <text class="body" x="56" y="340">Protected routes require declared user:&lt;decision-reference&gt; form.</text>
-  <text class="note" x="56" y="361">The baseline checks that form; it does not attest human origin or prevent direct repository writes.</text>
-  <text class="note" x="56" y="382">Missing or contested meaning routes to a typed Decision or Contract Challenge instead.</text>
+  <text class="head" x="40" y="37">Authoring is not authority</text>
+  <text class="sub" x="40" y="61">Writing a plausible record and passing deterministic checks are not protected decisions.</text>
+
+  <text class="label" x="40" y="101">AGENT WORK AND MECHANICAL ADMISSION</text>
+  <rect class="card" x="40" y="116" width="385" height="82" rx="10"/>
+  <text class="stage" x="56" y="148">Agent drafts project records</text>
+  <text class="body" x="56" y="174">Work, evidence, options and recommendations</text>
+  <path d="M 429 157 H 451" stroke="#8197ab" stroke-width="2"/>
+  <path d="M 451 157 l -8 -5 v 10 Z" fill="#8197ab"/>
+  <rect class="quiet" x="455" y="116" width="385" height="82" rx="10"/>
+  <text class="stage" x="471" y="148">ExoRail checks admission</text>
+  <text class="body" x="471" y="174">Schema, Policy, dependencies and current state</text>
+
+  <rect class="quiet" x="40" y="215" width="800" height="50" rx="10"/>
+  <line class="cross" x1="57" y1="232" x2="73" y2="248"/>
+  <line class="cross" x1="73" y1="232" x2="57" y2="248"/>
+  <text class="stage" x="88" y="246">Neither operation creates a protected authority reference.</text>
+
+  <text class="label" x="40" y="300">SEPARATE HUMAN-GATED PROJECT EVENTS</text>
+  <rect class="amber" x="40" y="314" width="250" height="67" rx="10"/>
+  <text class="stage" x="56" y="342">Task acceptance</text>
+  <text class="body" x="56" y="365">Accepts Result evidence</text>
+  <rect class="amber" x="315" y="314" width="250" height="67" rx="10"/>
+  <text class="stage" x="331" y="342">Task integration</text>
+  <text class="body" x="331" y="365">Binds an exact commit</text>
+  <rect class="amber" x="590" y="314" width="250" height="67" rx="10"/>
+  <text class="stage" x="606" y="342">Whole-Story outcome</text>
+  <text class="body" x="606" y="365">Accepts the delivery slice</text>
+
+  <text class="mono" x="40" y="411">Each protected event requires a declared user:&lt;decision-reference&gt; form.</text>
+  <text class="body" x="40" y="438">The baseline checks that form; it does not attest human origin or prevent direct repository writes.</text>
 </svg>

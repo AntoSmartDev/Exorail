@@ -1,9 +1,17 @@
 # Finding reference — schema 0.2
 
 This is the authoritative operator reference for stable validator findings.
-Read the named record path first, correct the canonical artifact or generated
-projection, then rerun the validator. Do not suppress a finding by editing a
-projection or by weakening a predicate.
+When a finding names a record path, read it first, correct the canonical
+artifact or generated projection, then rerun the validator. Do not suppress a
+finding by editing a projection or by weakening a predicate.
+
+Known diagnostic limit: `AG210` and the measured Result-to-Run `AG607` case
+name their record and field, but some other emitters still report only a finding
+code. If a bare finding does not identify the record to correct, retain the
+validator output and report the reproducible workspace case to the Exorail
+maintainer; do not guess which record to change. The maintainer owns a focused
+locus correction when the next cold adoption simulation reaches that emitter.
+This is not a claim that every finding is currently localized.
 
 | ID | Meaning | Field or relation checked | Canonical correction |
 | --- | --- | --- | --- |

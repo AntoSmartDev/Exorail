@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 488" width="760" height="488" role="img" aria-labelledby="title desc">
+  <title id="title">How ExoRail connects people, agents and project state</title>
+  <desc id="desc">Human intent, judgment and authority guide ExoRail. ExoRail keeps knowledge, Decisions, the delivery graph, evidence, acceptance and revision history coherent while agents, harnesses, LLMs and tools execute work. Both the durable project records and the code live in the repository.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#71869a"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .diagram-title { fill: #172b40; font-size: 21px; font-weight: 700; }
+    .title { fill: #172b40; font-size: 18px; font-weight: 700; }
+    .body { fill: #465b70; font-size: 14px; }
+    .small { fill: #465b70; font-size: 13px; }
+    .human { fill: #fff9f1; stroke: #bd803d; stroke-width: 1.5; }
+    .control { fill: #f0f7ff; stroke: #5696d4; stroke-width: 1.8; }
+    .execution { fill: #f5f7fa; stroke: #a7b6c5; stroke-width: 1.5; }
+    .repository { fill: #edf3f8; stroke: #8da7bf; stroke-width: 1.5; }
+    .flow { fill: none; stroke: #71869a; stroke-width: 2.2; marker-end: url(#arrow); }
+    @media (prefers-color-scheme: dark) {
+      .diagram-title, .title { fill: #edf5fc; }
+      .body, .small { fill: #bacbdd; }
+      .human { fill: #332819; stroke: #dba15e; }
+      .control { fill: #142b42; stroke: #5aa2e6; }
+      .execution { fill: #172431; stroke: #587086; }
+      .repository { fill: #1b3042; stroke: #668aa8; }
+    }
+  </style>
+
+  <text class="diagram-title" x="45" y="38">How ExoRail connects people, agents and project state</text>
+
+  <g transform="translate(0 48)">
+  <rect class="human" x="45" y="25" width="405" height="82" rx="12"/>
+  <text class="title" x="66" y="58">Human</text>
+  <text class="body" x="66" y="83">intent · judgment · authority</text>
+
+  <path class="flow" d="M 247 108 V 148"/>
+
+  <rect class="control" x="45" y="155" width="405" height="142" rx="12"/>
+  <text class="title" x="66" y="190">ExoRail: durable project meaning</text>
+  <text class="body" x="66" y="224">Knowledge · Decisions · delivery graph</text>
+  <text class="body" x="66" y="251">Evidence · acceptance · revision history</text>
+
+  <path class="flow" d="M 451 226 H 493"/>
+
+  <rect class="execution" x="500" y="155" width="215" height="142" rx="12"/>
+  <text class="title" x="520" y="190">Execution</text>
+  <text class="small" x="520" y="224">agent · harness</text>
+  <text class="small" x="520" y="251">LLM · tools</text>
+
+  <path class="flow" d="M 247 298 V 345"/>
+  <path class="flow" d="M 607 298 V 345"/>
+
+  <rect class="repository" x="45" y="352" width="670" height="65" rx="12"/>
+  <text class="title" x="66" y="379">Repository</text>
+  <text class="body" x="66" y="402">Durable project records and source code live together</text>
+  </g>
+</svg>
