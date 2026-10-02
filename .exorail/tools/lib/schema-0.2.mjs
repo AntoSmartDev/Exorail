@@ -421,7 +421,7 @@ function validateStoryExecution(data, body, byId, findings, relative, policy, re
     : receiptSequenceIssue(receipts.items, data, byId, recordFile);
   if (receiptIssue) addLocus(findings, 'AG606', relative, receiptIssue.field, receiptIssue.found, receiptIssue.expected);
 }
-function executionReceipts(body) {
+export function executionReceipts(body) {
   const section = body.match(/^## Execution receipts\s*\r?\n([\s\S]*?)(?=^##\s|(?![\s\S]))/m);
   if (!section) return { items: [], invalid: false };
   const rows = section[1].split(/\r?\n/).filter((line) => line.trim().startsWith('|'));
@@ -613,7 +613,7 @@ function isParallelMember(data) { return data.execution_mode === 'parallel' || d
 // Two wave members conflict on a shared resource, and on a shared path unless
 // both are hunk-disjoint and declare non-overlapping logical regions. Runtime
 // workspace and branch bindings are deliberately outside the canonical model.
-function waveConflict(left, right) {
+export function waveConflict(left, right) {
   if (overlaps(asArray(left.resources), asArray(right.resources))) return true;
   if (!overlaps(asArray(left.affected_paths), asArray(right.affected_paths))) return false;
   const hunkDisjoint = left.execution_isolation === 'parallel_hunk_disjoint' && right.execution_isolation === 'parallel_hunk_disjoint';

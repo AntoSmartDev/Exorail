@@ -1,6 +1,8 @@
 # Schema 0.2 workflow tools
 
-Read-only Node.js tooling for the canonical schema 0.2 workflow. The
+Node.js tooling for the canonical schema 0.2 workflow. Observation commands are
+read-only; the opt-in [native Git route](../method/GIT_RUNTIME.md) performs only
+explicitly authorized Git mutations. The
 authoritative hierarchy is Epic → Feature → User Story → Task; milestones are
 Story collections and contexts are transversal tags.
 
@@ -22,6 +24,7 @@ node ./.exorail/tools/derive-task-review-readiness.mjs --task TASK-<slug> --base
 node ./.exorail/tools/derive-review-brief.mjs --story US-<slug> --base-sha <base> --head-sha <head> --json
 node ./.exorail/tools/derive-team-view.mjs --json
 node ./.exorail/tools/derive-team-view.mjs --local --json
+node ./.exorail/tools/git-runtime.mjs --request <approved-request.json> --json
 node ./.exorail/tools/validate-text-files.mjs AGENTS.md .exorail/AGENTS.md
 ```
 
@@ -93,8 +96,9 @@ repository-relative paths cannot escape the intended project.
 The installed tool runtime is Node.js, and these `.mjs` tools are the whole of
 it: nothing else is installed and no other runtime is required. Adapter
 families and namespaced capabilities are opaque descriptors without implicit
-trust, authority, dispatch or Core access. These tools do not contact external
-systems or perform provider side effects.
+trust, authority, dispatch or Core access. Observation tools do not contact
+external systems or perform provider side effects. Native Git transfers contact
+only the explicitly selected remote under their separate approved scope.
 
 `derive-review-readiness.mjs` is a read-only Runtime observation for a generic
 Git checkout. It requires both commits to be locally available (CI must fetch

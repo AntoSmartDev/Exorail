@@ -248,6 +248,9 @@ makes `execution.contract`, `change_scope` and `execution_isolation` required
 too, with optional `logical_regions`. `templates/TASK.md` shows the block whole.
 The supported `execution.contract` is `controlled-task@1`.
 Runtime binding, workspace, branch, checkpoint and event data remain local.
+The opt-in native Git team route may transfer an explicitly authorized operational
+binding journal and work refs for cross-clone coordination; personal worktree
+paths stay local and the journal adds no canonical project semantic.
 `change_scope.change_class` is one of `routine`,
 `externally_consequential`, `destructive`, `security_sensitive`,
 `data_sensitive`, `migration`, `public_api`, `architecture`, or
@@ -350,6 +353,12 @@ only one does not resolve it. The recorded resolution tells the adopter how
 the blocked work may resume without inventing a value.
 
 ## Story execution and integration
+
+For native branch/worktree preparation, waves, serial integration, delivery and
+shared coordination, follow [GIT_RUNTIME](GIT_RUNTIME.md). The following manual
+route remains the fallback. Native execution declares its target/base up front
+and consumes a bounded act enumerating the permitted Story actions; acceptance
+and delivery retain separate human acts.
 
 At launch, derive `executable-frontier@1` from the current canonical records
 and resolved Policy with `tools/derive-executable-frontier.mjs`. For

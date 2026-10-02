@@ -81,6 +81,10 @@ do not apply; use the native repository route instead.
   Story PR. Do not create Task PRs or infer approval.
 - Preserve unrelated worktree changes and obtain explicit approval for Git
   mutations.
+- After successful native integration or delivery, move the active execution
+  context to the returned `active_workspace` before the next operation: Task to
+  Story, Story to its declared target, Feature to its project target. Verify
+  `active_branch` there; keep the finished child's worktree intact.
 - All ExoRail-owned files are English. User-facing messages use the interaction
   locale, and project deliverables follow their configured output locale.
 
@@ -88,11 +92,46 @@ do not apply; use the native repository route instead.
 
 - setup: `.exorail/method/PROJECT_SETUP.md`
 - operation: `.exorail/method/OPERATING_FLOW.md`
+- native Git lifecycle: `.exorail/method/GIT_RUNTIME.md`
 - daily use: `.exorail/method/PLAYBOOK.md`
 - invariants: `.exorail/method/WORKFLOW_RULES.md`
 - structure: `.exorail/method/STRUCTURE_REFERENCE.md`
 - commands: `.exorail/tools/README.md`
 - correcting a finding: `.exorail/method/FINDINGS.md`
+
+## Manual intent shortcuts
+
+A user may write `Exorail: <intent>` to ask the agent to follow an existing
+route. These are natural-language requests, not shell commands, slash commands,
+an installed Skill, or a new source of workflow authority. Use the installed
+sources below; the normal workflow remains available without these shortcuts.
+For an unknown intent, show the available names and ask what the user needs;
+do not invent or execute a similarly named command.
+
+| Manual intent | Existing route |
+| --- | --- |
+| `Exorail: help` | Show this list and point to `.exorail/tools/README.md` for actual tool commands. |
+| `Exorail: start` | Follow `.exorail/method/PROJECT_SETUP.md` and `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`; inspect `.exorail/KNOWLEDGE_INDEX.md` and `.exorail/PROJECT_READINESS.md` before suggesting work. A validator pass on an empty project does not mean ready to execute. |
+| `Exorail: status` | Read current canonical records and `.exorail/PROJECT_READINESS.md`; use `.exorail/projections/RESUMPTION.md` only when fresh, or `.exorail/CURRENT_CURSOR.md` only for empty planning. Distinguish declared facts, verified findings and inference; do not promise a project-wide Attention view. |
+| `Exorail: resume` | Follow `.exorail/prompts/SWITCH_LLM_PROMPT.md` and fresh `.exorail/projections/RESUMPTION.md` when available; inspect the relevant records. No prior `pause` is required, and an open human request does not block unrelated eligible work by itself. |
+| `Exorail: validate` | Run `node ./.exorail/tools/validate-workflow.mjs` as documented in `.exorail/tools/README.md`; report its actual exit code and findings. A clean structural check does not certify project completeness. |
+| `Exorail: review` | Use `.exorail/tools/README.md` to select the existing Task/Story review-readiness and Review Brief tools; require the applicable subject and real Git base/head identities. Preparation is not independent review, acceptance or integration. |
+| `Exorail: explain` | For a finding, read `.exorail/method/FINDINGS.md` and the cited record or tool output; distinguish a documented correction from an unverified causal explanation. |
+| `Exorail: team` | Use the documented read-only `derive-team-view.mjs` route in `.exorail/tools/README.md`; local identity, TEAM membership and presentation never grant authority. |
+| `Exorail: projections check` | Run `node ./.exorail/tools/generate-projections.mjs --check`; report stale or invalid inputs. Do not refresh or rewrite projections under this intent. |
+| `Exorail: switch` | Follow `.exorail/prompts/SWITCH_LLM_PROMPT.md` for a handoff; do not claim to transfer a provider session or uncommitted work automatically. |
+
+For `resume` and `switch` with non-empty planning, use
+`node ./.exorail/tools/generate-projections.mjs --check` before reading
+`.exorail/projections/RESUMPTION.md`. The linked prompt's regeneration step is not part of these
+shortcuts: if the projection is absent or stale, stop, name it, and offer the
+documented regeneration command as a separate user-requested action. Empty
+planning uses `.exorail/CURRENT_CURSOR.md` instead.
+
+If an input needed for a route is missing or stale, name it and stop that route
+rather than manufacturing a successful status, review or next action. None of
+these shortcuts resolves a Decision, accepts a Result, integrates work, refreshes
+projections or publishes a release.
 
 ## Optional deployment boundary
 

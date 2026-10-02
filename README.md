@@ -15,7 +15,7 @@
 
 ## An Agentic Development Platform for continuing software projects
 
-**ExoRail is a repository-native software delivery system for projects built with coding agents.** It guides work from definition through executable Tasks, Results, review, human acceptance and later change — without making an agent session the source of truth.
+**ExoRail is a repository-native software delivery system for projects built with coding agents.** It guides work across the software development life cycle (SDLC) — **Understand → Define → Deliver → Evolve** — from progressive project understanding and definition through planning, executable Tasks, Results, verification, review, human acceptance and Git integration, then resumption, replanning and continued evolution. Project meaning, decisions, evidence and history remain durable as humans, agents and tools change.
 
 Architecturally, it is a **repository-native Project Control Plane**. Operationally, it enables **Human-AI Project Orchestration**: guided definition, durable Project Memory, governed execution, verification, acceptance, integration, replanning, recovery and continued evolution.
 
@@ -120,7 +120,7 @@ Suppose the request is:
 
 > **“Add single sign-on (SSO) to this existing application.”**
 
-ExoRail first distinguishes observed evidence from gaps and questions requiring a human Decision, then defines one reviewable Story and derives which Tasks may start. Backend and frontend work can proceed independently, while their dependent integration Task waits until the upstream work is verified, accepted and integrated. A later change begins with the original intent, Decisions, evidence and delivery history still available; an agent finishing a Task never stands in for accepted delivery.
+ExoRail first distinguishes observed evidence from gaps and questions requiring a human Decision, then defines one reviewable Story and derives which Tasks may start. Backend and frontend work can proceed independently in their own Task worktrees, while their dependent integration Task waits until the required upstream integration and review-boundary conditions are satisfied. With Task-boundary review, shown below, upstream human acceptance precedes integration; Story-boundary review batches human acceptance at the Story while retaining Task evidence and integration gates. A later change begins with the original intent, Decisions, evidence and delivery history still available; an agent finishing a Task never stands in for accepted delivery.
 
 ![A brownfield SSO Story: two independent Tasks can run in parallel, their dependent integration Task waits for accepted integration, and human review gates remain inside Deliver.](assets/delivery-example.svg)
 
@@ -136,6 +136,25 @@ In ExoRail, an assumption does not silently become implementation authority.
 
 Detailed copy and validation commands are [below](#install-in-a-target-repository).
 
+## Everyday requests to the coding agent
+
+Write these requests in your coding-agent conversation after installing ExoRail. The agent follows the existing method or invokes the relevant native tool.
+
+| Request | When to use it | What the agent does |
+| --- | --- | --- |
+| `Exorail: help` | Find the available entrypoints | Lists these requests and points to the native tool reference. |
+| `Exorail: start` | Begin from an idea, documents or an existing repository | Guides setup, inspects available knowledge and readiness, makes gaps explicit and proposes the first safe delivery slice. |
+| `Exorail: status` | Understand the current project position | Reads relevant canonical records and fresh views; distinguishes declared state, mechanically verified findings and inference. |
+| `Exorail: resume` | Continue interrupted work | Reconstructs the relevant context from repository state and fresh resumption views; no prior pause command is required. |
+| `Exorail: validate` | Check workflow records | Runs the workflow validator and reports its actual exit code and findings; a pass does not certify product completeness. |
+| `Exorail: review` | Prepare a Task or Story for review | Uses the subject and real Git base/head identities to derive readiness and review orientation; acceptance remains a separate human decision. |
+| `Exorail: explain AG606` | Understand a finding or blocker | Reads the finding reference and cited evidence, explains the documented correction and identifies unverified assumptions. Replace `AG606` with the finding you received. |
+| `Exorail: team` | Inspect declared project members and attribution | Shows the read-only Team View; membership and local identity do not grant authority. |
+| `Exorail: projections check` | Check whether generated views are current | Runs the projection freshness check and reports stale views or invalid inputs; it does not refresh or rewrite them. |
+| `Exorail: switch` | Hand work to another agent, model or harness | Follows the handoff prompt using durable project state; it does not transfer a provider session or uncommitted work automatically. |
+
+These are natural-language requests, not shell commands, slash commands or an installed Skill. The [installed intent map](.exorail/AGENTS.md#manual-intent-shortcuts) owns their routes and limits. None performs acceptance, integration, projection refresh or publication. Unknown intentions or missing required sources are reported; resume/switch with non-empty planning stop on absent or stale resumption projections and offer regeneration as a separate action. The native workflow also works without these shortcuts.
+
 ## What setup produces from each starting point
 
 The entry model above describes what you can bring. Setup turns that evidence into durable, repository-native project state and the next safe route.
@@ -148,6 +167,8 @@ The entry model above describes what you can bring. Setup turns that evidence in
 | **Interrupted or delivered ExoRail-managed project** | Current position and existing Results, receipts, evidence and revision history | Resumption, repair or later evolution from its durable state |
 
 ## The lifecycle ExoRail keeps operational
+
+SDLC describes the breadth of this lifecycle; the four phases below remain ExoRail's operating model. Planning, execution, verification, review, acceptance and integration make Deliver operational. Resumption and replanning keep work coherent across interruption and change.
 
 ```text
 Understand → Define → Deliver → Evolve
@@ -207,9 +228,9 @@ Task B ─────┘
 
 If `C` depends on `A` and `B`, two developers or agents can work on `A` and `B` in parallel, while `C` stays held until the required upstream conditions are satisfied. A runtime reporting success is not enough to release `C`: the relevant Result, acceptance and verified integration state still matter.
 
-For parallel work, ExoRail uses **separate branches/worktrees when isolation is required**. This prevents two active Tasks from sharing the same mutable working directory and reduces accidental overwrites, mixed diffs and commits containing another Task's changes. Local Git mechanics remain Git; ExoRail adds the delivery semantics that determine which work is independent, what scope belongs to each Task, and when downstream work may safely begin.
+For parallel work, ExoRail uses **separate branches/worktrees when isolation is required**. The native Git route prepares Story branches and eligible Task-attempt worktrees, checks the integration target and advances it serially under the applicable authority and review gates. This prevents two active Tasks from sharing the same mutable working directory and reduces accidental overwrites, mixed diffs and commits containing another Task's changes. Git supplies refs, commits and merges; ExoRail coordinates their lifecycle with declared scope, dependencies, reviewed identity and integration evidence. [How native Git delivery works](#native-git-delivery-and-recovery)
 
-The closeout becomes serial where it must be serial:
+The closeout becomes serial where it must be serial. With Task-boundary review:
 
 ```text
 parallel implementation
@@ -219,6 +240,8 @@ parallel implementation
 → dependency release
 → whole-Story review
 ```
+
+With Story-boundary review, authorized technical integration releases dependent Tasks before the later human acceptance; final whole-Story review and acceptance remain required.
 
 This is why team parallelism in ExoRail is not just “run several agents at once”. It is **governed concurrency over one durable project state**.
 
@@ -236,6 +259,38 @@ This is why team parallelism in ExoRail is not just “run several agents at onc
 This separation is what prevents a repository sync or another developer's commit from becoming a shared-cursor problem.
 
 **Current boundary:** the shared team model, local identity, team-wide view, parallel isolation and dependency/integration rules are part of the 0.2 delivery model. Richer actor-resolution states and a fully personalized `current actor ∩ executable frontier` resume are a post-0.2 Runtime refinement, not a capability this README claims as already automatic.
+
+## Native Git delivery and recovery
+
+**ExoRail coordinates Git work as part of delivery.** With an explicitly named target and bounded authorization, the native route prepares branches and worktrees for executable work, integrates reviewed changes and reconstructs interrupted operations. It works with one coding agent and no optional adapter; a shared remote adds coordination across clones when selected.
+
+| Delivery step | Native route |
+| --- | --- |
+| **Allocate work identities** | Existing IDs remain valid. Optional shared numeric Epic/Feature/Story reservations use conditional claims and ownership checks; Task IDs use a Story-local ordinal. Without a remote, uniqueness is local rather than global across clones. |
+| **Prepare a Story and its next wave** | Bind the Story to an explicit target and base SHA, then create separate branches/worktrees only for currently eligible Task attempts. Independent Tasks can start from the same Story SHA; a dependent Task starts from the updated head after its prerequisites integrate. |
+| **Review and integrate Tasks** | Keep base, reviewed commit, Result and patch identity connected. Integrate one Task at a time into its Story, observe the actual merge and record integration evidence under the configured Task or Story review boundary. |
+| **Coordinate concurrent Stories** | Compare current eligible and active work across Stories, including declared paths and resources. Use one coordinator per Story and serialize writes to each shared target; distinct Story coordinators can execute independent work concurrently. |
+| **Release Story dependencies** | A dependent Story starts only when each upstream Story is accepted at its current plan revision and its accepted reviewed SHA is present in the selected target's ancestry. Start from that updated target; unknown dependencies, cycles, stale revisions or missing accepted commits hold the affected Story. |
+| **Deliver independently or as an aggregate** | An independently deliverable Story targets the named project branch directly. An aggregate delivery uses an optional Feature branch, with serial Story integration and Git ancestry evidence that the target contains the accepted Story commits. |
+| **Resume or stop safely** | Reconcile operational bindings, canonical records and actual Git objects before retrying. Dirty or unexpected worktrees, moved reviewed tips, stale targets, conflicts and uncertain outcomes stop the affected operation and preserve work for inspection. |
+
+For example, the integration relationships can be:
+
+```text
+task/TASK-us0005-01/attempt-1 → story/FEAT-0021/US-0005-payments
+                            → feature/FEAT-0021-checkout → project target
+
+or, for independent Story delivery:
+
+task/TASK-us0005-01/attempt-1 → story/FEAT-0021/US-0005-payments
+                            → project target
+```
+
+The arrows describe integration, not Git ref nesting. A Feature record does not require a Feature branch, and a branch name does not select or authorize the delivery target. Runtime bindings retain the operational association; cached worktree paths remain local. Resumption on another clone requires the explicitly transferred Runtime refs as well as the work branches.
+
+A bounded Story-start authorization can cover the named setup and eligible local Task integrations without a new confirmation for every branch. Human acceptance, Story-to-Feature/project integration, remote reservation or transfer, cleanup, coordinator takeover and publication retain their distinct authorization boundaries. **Git success is never human acceptance or accepted project completion.**
+
+Shared coordination requires the supported atomic remote updates, current registered work and the deployment's reservation protection/retention policy. Missing prerequisites stop the affected shared route; they do not remove solo/local delivery. ExoRail does not promise to detect unregistered work on another machine or to prevent a privileged writer from bypassing its supported route. See the [operating flow](.exorail/method/OPERATING_FLOW.md) and [native tool reference](.exorail/tools/README.md) for the release's invocation and recovery procedure.
 
 ## See the project across time
 
@@ -350,10 +405,15 @@ The 0.2 line adds substantially more than a richer specification format. Its imp
 | **Exact review identity** | Review readiness and receipts bind review to the actual reviewed commit/content instead of assuming current `HEAD` is equivalent. |
 | **Generated review orientation** | Read-only Review Brief and review-readiness outputs help reviewers understand current scope without becoming approval. |
 | **Resumption and replan** | Interrupted work and material change recover from durable state while completed history stays interpretable. |
+| **Explicit historical Result adoption** | A protected human decision and `result_adoption` receipt can bind completed prior-revision evidence to the current Story plan without pretending it was newly executed. Applicability is judged explicitly, never inferred from preservation alone. |
 | **Context-efficient handoff** | Selective required reads, compaction/task-boundary handoffs and the switch-agent prompt let a new session or LLM resume from project state instead of replaying chat history. |
 | **Scoped invalidation and targeted recovery** | A false or stale foundation can block the affected route without erasing unrelated accepted history. |
 | **Bounded remediation and successor loops** | A Task has at most three contiguous attempts per plan revision. A terminal candidate closes that slice; after exhaustion, a Decision, replan or split routes work forward without rewriting its attempted history. |
 | **Governed parallel work** | Dependencies, task isolation, separate workspaces and integration gates prevent parallel reports from silently releasing downstream work. |
+| **Native Git delivery and recovery** | Prepare Story and Task-attempt branches/worktrees, integrate serially into explicit targets and resume interrupted operations without treating a merge as acceptance. Independent Stories can run concurrently; a Feature branch is used only for aggregate delivery. |
+| **Optional shared ID reservation** | Reserve numeric Epic/Feature/Story IDs against a shared remote when selected; Story-scoped Task ordinals keep Task allocation local to its coordinator. Solo use needs no remote. |
+| **Manual intent entrypoints** | Ten `Exorail: <intent>` requests route a coding agent to existing installed guidance and tools, without requiring a Skill or slash-command interface. |
+| **Timing and forecast evidence** | Task estimates, assumptions and Result timing distinguish active work, blocking and review wait; projections expose declared forecasts without promising automatic tracking or prediction. |
 | **Provider-neutral team attribution** | Owner, assignee and reviewer routing remain portable; attribution never becomes authentication or protected authority. |
 | **Trust-aware guidance** | Mechanically observed facts, agent declarations, human Decisions and unverified limits remain distinguishable. |
 | **Reusable technical knowledge with provenance** | Episodes become durable only when grounded in accepted Result provenance. |
@@ -383,7 +443,7 @@ The 0.2 line adds substantially more than a richer specification format. Its imp
 ExoRail is useful before any external integration exists. Capability can be added progressively as the project or organization needs it:
 
 ```text
-repository + ExoRail + LLM-powered coding agent
+repository + ExoRail + LLM-powered coding agent + native Git delivery
 ↓
 Git / CI observations
 ↓
@@ -579,10 +639,12 @@ people / coding agents / isolated sessions / optional runtimes
         ↓
 Results + proportionate verification
         ↓
-human acceptance + verified integration
+configured review-boundary gates + verified integration
         ↓
 dependent work can converge into a new frontier
 ```
+
+Task-boundary review requires human Task acceptance before integration. Story-boundary review permits authorized technical integration to release dependent Tasks before the later acceptance; whole-Story review and acceptance still close the aggregate outcome.
 
 ExoRail may declare `sequential` or `parallel` execution policy where required, but these are not separate product modes. Policy can constrain concurrency; the actual delivery topology is derived from dependencies, declared scope, isolation, authority, acceptance and integration state. A parallel wave is permitted only when that governed state allows it, and a sequential Story cannot be bypassed. Parallelism is therefore not a claim that ExoRail natively spawns agents: it is a governed option for independent work, while closeout remains serial where review, acceptance, integration or a dependency requires it.
 
@@ -646,6 +708,8 @@ ExoRail is intended for continuing software work, not a one-shot agent run. When
 
 A material change creates a new plan revision and identifies the affected future work. Completed Results and receipts stay interpretable; unrelated accepted history is not erased merely because one route becomes stale. Recovery is also bounded: repeated safe remediation stops after three cycles and surfaces the blocker, evidence, required Decision or need for a materially different plan rather than retrying indefinitely.
 
+Preserving an old Result does not automatically make it applicable to the new plan. A human can explicitly adopt completed prior-revision evidence through a `result_adoption` receipt that binds it to the current Story revision and integration identity. This retains its original provenance rather than reporting a new execution or silently reusing obsolete evidence.
+
 This is mechanical discipline, not a claim of automatic semantic understanding. 0.2 detects defined lifecycle, dependency/revision, projection, scope and review identity drift, but semantic preflight, conservative change-impact analysis and convergence assessment remain post-0.2 capabilities.
 
 ### Controlled execution loops and successor Tasks
@@ -660,7 +724,7 @@ That separation lets a returning person or agent distinguish the next valid acti
 
 **Professional Progressive** describes ExoRail's adoption philosophy: professional delivery semantics from the first repository, with progressively richer operational depth as the project needs it.
 
-The small native baseline—repository + ExoRail + one capable LLM-powered coding agent—already keeps durable project meaning, explicit Decisions, evidence, authority boundaries, verification discipline, review integrity, history and resumability. It is not a weak “starter mode”. Git/CI observation, identity and ALM integration, external knowledge, execution runtimes, optional multi-agent orchestration infrastructure and specialized projections may be introduced later to improve automation, scale and ergonomics.
+The small native baseline—repository + ExoRail + one capable LLM-powered coding agent—already keeps durable project meaning, explicit Decisions, evidence, authority boundaries, verification discipline, review integrity, history, resumability and native Git delivery. It is not a weak “starter mode”. Provider-backed Git/CI observation, identity and ALM integration, external knowledge, execution runtimes, optional multi-agent orchestration infrastructure and specialized projections may be introduced later to improve automation, scale and ergonomics.
 
 Those additions extend routes; they do not own canonical project meaning or force an architectural migration. The result is portability: different tools can be used where they are useful, while the project remains readable and governable without being locked to a particular provider, runtime or adapter. This enables a practical best-tool-per-task outcome; it does not claim that ExoRail automatically chooses the best model, agent or runtime.
 
@@ -767,6 +831,8 @@ Then tell the chosen coding agent:
 > Read and execute `.exorail/prompts/START_NEW_PROJECT_PROMPT.md`. Configure this repository from the available evidence, identify blocking gaps, and propose the first safe delivery slice.
 
 ## Commands an adopter can use
+
+For conversational entrypoints, use the [everyday requests table](#everyday-requests-to-the-coding-agent). The commands below are actual native tools to run from your terminal.
 
 Run these from the target repository with a maintained Node.js LTS release:
 

@@ -6,7 +6,7 @@
     {
       "path": "AGENTS.md",
       "kind": "text",
-      "sha256": "2f7a4c0e2d6010088d81bd5b5bd7a2f1005a30261f391cc019b800d4eae21fdb"
+      "sha256": "715958797234fdbcdeec14b6d9fa5199ff16084322072fcb3461c29b1d5398dd"
     },
     {
       "path": "CURRENT_CURSOR.md",
@@ -34,9 +34,14 @@
       "sha256": "1dc405bcfff424fe499ba654017f534e07a277e7f2c9afc1e94d9045a644b36f"
     },
     {
+      "path": "method/GIT_RUNTIME.md",
+      "kind": "text",
+      "sha256": "57043d22c665e39357f6c15e1b2f4bf2223777fb4b3a544bdbe7f4f62fec9428"
+    },
+    {
       "path": "method/OPERATING_FLOW.md",
       "kind": "text",
-      "sha256": "0866744a98c959f99d8e3f88a098260e072bbf8985d3afd70ed8e7ea3e18929c"
+      "sha256": "66943073c05c91868e54c61dd8058854a409ad39455d4a93150b4f312cbb7ea0"
     },
     {
       "path": "method/PLAYBOOK.md",
@@ -339,9 +344,44 @@
       "sha256": "757e8e05742987caab6327804f3da2cf3c191b03979d7b5b18044ce01fef3db1"
     },
     {
+      "path": "tools/git-runtime.mjs",
+      "kind": "text",
+      "sha256": "ab6fb2afd4578cee3776344d6e2383d6a9ff0fdb137bdaed280a3df8c10b9bf1"
+    },
+    {
       "path": "tools/lib/findings.mjs",
       "kind": "text",
       "sha256": "86e77aee9fe3adac48ff8c10324358b1c328772cec3ffbf3107135b16deddfb1"
+    },
+    {
+      "path": "tools/lib/git-runtime-admission.mjs",
+      "kind": "text",
+      "sha256": "b41dac62ca840c6384f7e6fb5cadf023aff0ebd6f5a1496c87b4cae60edabde2"
+    },
+    {
+      "path": "tools/lib/git-runtime-delivery.mjs",
+      "kind": "text",
+      "sha256": "71678cbc9b3f21afd92e4fc01c135b2d1f59f27a81b3fdbbc747aa4639c572d6"
+    },
+    {
+      "path": "tools/lib/git-runtime-ids.mjs",
+      "kind": "text",
+      "sha256": "51cd04198dce40adbced3147f316ebd89d9689b83b9a36bf7806bf7012ee2e2b"
+    },
+    {
+      "path": "tools/lib/git-runtime-integration.mjs",
+      "kind": "text",
+      "sha256": "16be4bd4e7d64098c736295f3afcfa555e5a5e3495698462eb416e730e7315d6"
+    },
+    {
+      "path": "tools/lib/git-runtime-primitives.mjs",
+      "kind": "text",
+      "sha256": "472f1186f23cc307b9aa39b2326a468bfddd8776f7b56bc2f215fce60840773c"
+    },
+    {
+      "path": "tools/lib/git-runtime-workspaces.mjs",
+      "kind": "text",
+      "sha256": "89228a3b09c13acb671311cd6cf1792495e114fd145b0e02408c9bbceb0c0838"
     },
     {
       "path": "tools/lib/git.mjs",
@@ -371,7 +411,7 @@
     {
       "path": "tools/lib/schema-0.2.mjs",
       "kind": "text",
-      "sha256": "69bef6e4d3a23b9069c71a7643007b5b84edd218f832776a0f242af87b014360"
+      "sha256": "d0061d03ef52cd07891f6e99f9b8bcbf6c11008db0a904f855bd980c0f94706a"
     },
     {
       "path": "tools/lib/task-review-readiness.mjs",
@@ -391,7 +431,7 @@
     {
       "path": "tools/README.md",
       "kind": "text",
-      "sha256": "b3b1ebb63b5db13f6dd089c4c3918421722ce84876fe8ab45e5093839ad4f0d7"
+      "sha256": "ce81952400411c8e1264b5c4a1ccb80012149db5977c1ec71b4e78872e1d4184"
     },
     {
       "path": "tools/validate-text-files.mjs",
