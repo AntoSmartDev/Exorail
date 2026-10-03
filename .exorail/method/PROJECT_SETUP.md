@@ -20,6 +20,13 @@ not the index. The symptom of the missing prerequisite is therefore canonical
 records that appear committed and are not. Parallel Tasks are affected first,
 because their declared worktree adds a further prefix.
 
+Line endings: Git for Windows defaults to `core.autocrlf=true`, which checks
+files out with CRLF while ExoRail writes LF. The validators, projection checks
+and manifest check read CRLF and LF identically, so a CRLF checkout is valid.
+`validate-text-files.mjs` still reports a file that mixes both. To keep one
+ending, add a root `.gitattributes` containing `* text=auto eol=lf` and commit
+it; this is optional repository-local configuration.
+
 ## Baseline
 
 Baseline knowledge lives in `.exorail/project/` as `PRODUCT.md`,

@@ -54,7 +54,7 @@ AI-assisted delivery can work locally while the project loses continuity around 
 
 ExoRail does not require perfect up-front specification. It helps turn available evidence into a smallest reliable project frame: known facts, explicit gaps, constraints, Decisions and one sufficiently defined delivery slice.
 
-Five terms place ExoRail precisely:
+Six terms place ExoRail precisely:
 
 | Positioning layer | Meaning |
 | --- | --- |
@@ -62,6 +62,7 @@ Five terms place ExoRail precisely:
 | **Human-AI Software Delivery Control Plane** | The product category: a layer coordinating people, AI execution, tools, evidence and continuity across delivery. |
 | **Repository-native Project Control Plane** | The architectural role: durable project meaning lives with the work, rather than in a particular agent session, provider or hosted service. |
 | **Human-AI Project Orchestration** | The operating model: coordinating intent, reasoning, execution, deterministic rules, verification and human authority. |
+| **Software Development Life Cycle (SDLC)** | The lifecycle scope: project continuity across Understand → Define → Deliver → Evolve, connecting development, delivery and later change. |
 | **Spec-Driven Delivery Governance (SDDG)** | The assurance discipline: deterministic safeguards and explicit evidence/authority boundaries keep the lifecycle reliable. |
 
 ![Human intent, judgment and authority guide ExoRail; ExoRail keeps project meaning coherent while agents and tools execute work. Both project records and code live in the repository.](assets/exorail-project-control-plane.svg)
@@ -290,7 +291,7 @@ The arrows describe integration, not Git ref nesting. A Feature record does not 
 
 A bounded Story-start authorization can cover the named setup and eligible local Task integrations without a new confirmation for every branch. Human acceptance, Story-to-Feature/project integration, remote reservation or transfer, cleanup, coordinator takeover and publication retain their distinct authorization boundaries. **Git success is never human acceptance or accepted project completion.**
 
-Shared coordination requires the supported atomic remote updates, current registered work and the deployment's reservation protection/retention policy. Missing prerequisites stop the affected shared route; they do not remove solo/local delivery. ExoRail does not promise to detect unregistered work on another machine or to prevent a privileged writer from bypassing its supported route. See the [operating flow](.exorail/method/OPERATING_FLOW.md) and [native tool reference](.exorail/tools/README.md) for the release's invocation and recovery procedure.
+Shared coordination requires the supported atomic remote updates, current registered work and the deployment's reservation protection/retention policy. Missing prerequisites stop the affected shared route; they do not remove solo/local delivery. ExoRail does not promise to detect unregistered work on another machine or to prevent a privileged writer from bypassing its supported route. See the [native Git method](.exorail/method/GIT_RUNTIME.md) for approved requests, action-specific inputs and recovery, and the [native tool reference](.exorail/tools/README.md) for invocation.
 
 ## See the project across time
 
@@ -346,7 +347,7 @@ Security and trust-boundary changes are therefore treated as change-driven revie
 
 The Result keeps the reviewer-facing proof surface explicit: evidence, acceptance-criterion coverage, `review_focus`, and `not_verified`. Review readiness also checks the actual Git range, canonical readability, projection freshness, declared versus observed paths, stale review identity and open Decisions.
 
-A clean Task becomes `review_pending`; it is not accepted or integrated. Human review may occur per Task or at the Story boundary according to Policy, but Story-level batching never removes the mandatory final whole-Story review after all Tasks are integrated.
+A completed Task produces an immutable Result in `review_pending`; execution completion does not mean acceptance or integration. Human review may occur per Task or at the Story boundary according to Policy, but Story-level batching never removes the mandatory final whole-Story review after all Tasks are integrated.
 
 Today 0.2 carries these profiles, testing rules and evidence fields, but it does **not** yet mechanically prove that every verification layer implied by a particular change has sufficient evidence. That stronger verification-sufficiency derivation remains a post-0.2 evolution.
 
@@ -759,7 +760,7 @@ It is not intended for throwaway scripts, brief experiments or trivial one-off e
 | `.exorail/planning/**` | Epics, Features, Stories, Tasks, exceptional Contracts and immutable Results |
 | `.exorail/projections/**` | Generated navigation and review views, never manual authority |
 | `.exorail/TEAM.json` | Project-local provider-neutral attribution, created during setup; not identity or authority |
-| `.exorail/tools/**` | Deterministic validation and read-only derivations; none grants authority |
+| `.exorail/tools/**` | Deterministic validation, read-only derivations, projection generation and explicitly authorized native Git operations; none grants authority |
 
 ## Install the clean break
 
@@ -846,7 +847,10 @@ Run these from the target repository with a maintained Node.js LTS release:
 | Observe one Task's technical review evidence | `node ./.exorail/tools/derive-task-review-readiness.mjs --task TASK-<slug> --base-sha <base> --head-sha <checked-head> --json` |
 | Create a review orientation | `node ./.exorail/tools/derive-review-brief.mjs --story US-<slug> --base-sha <base> --head-sha <head> --json` |
 | Inspect declared team attribution | `node ./.exorail/tools/derive-team-view.mjs --json` |
+| Run a scoped native Git action | `node ./.exorail/tools/git-runtime.mjs --request <approved-request.json> --json` |
 | Check workflow text encoding | `node ./.exorail/tools/validate-text-files.mjs AGENTS.md .exorail/AGENTS.md` |
+
+For native Git, keep the request file outside the checkout and replace the placeholder with a request naming the action, exact work/target identities and required human authorization. The [native Git method](.exorail/method/GIT_RUNTIME.md#approved-requests) explains the request format, supported actions and their outcomes. A CLI flag or request file cannot supply human approval by itself. After a successful Task, Story or Feature merge, move subsequent work to the returned `active_workspace`; the subprocess cannot change your shell's directory. Finished child worktrees remain intact.
 
 `generate-payload-manifest.mjs` is maintainer-only: it identifies the ExoRail payload during package closeout and is not part of a target project's workflow.
 

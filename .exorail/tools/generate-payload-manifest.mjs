@@ -36,7 +36,7 @@ const manifest = {
 const output = `${JSON.stringify(manifest, null, 2)}\n`;
 
 if (check) {
-  if (!existsSync(manifestPath) || readFileSync(manifestPath, 'utf8') !== output) {
+  if (!existsSync(manifestPath) || readFileSync(manifestPath, 'utf8').replace(/\r\n/g, '\n') !== output) {
     console.error('PAYLOAD_MANIFEST.json is missing or stale');
     process.exit(1);
   }

@@ -106,7 +106,7 @@ export function listFiles(directory) {
 export function frontMatter(file, findings, relative = '') {
   const bytes = readFileSync(file);
   if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) { add(findings, 'AG207'); return null; }
-  const text = bytes.toString('utf8');
+  const text = bytes.toString('utf8').replace(/\r\n/g, '\n');
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
   if (!match) { addLocus(findings, 'AG206', relative, 'front matter', text.split(/\r?\n/)[0] ?? '', 'a record opens with --- , a front matter block, and a closing --- line'); return null; }
   const data = {}; let nested = null;
@@ -725,7 +725,7 @@ function validateProjections(root, records, team, findings) {
   const projectionRoot = path.join(root, '.exorail', 'projections'); if (!existsSync(projectionRoot)) return;
   const episodeIndex = path.join(projectionRoot, 'EPISODE_INDEX.md');
   if (!episodeEnabled(root) && existsSync(episodeIndex)) addLocus(findings, 'AG501', 'projections/EPISODE_INDEX.md', 'projection', 'left over while episodes are disabled', 'no EPISODE_INDEX.md until episodes are enabled and generated');
-  for (const name of projectionNamesFor(root)) { const file = path.join(projectionRoot, name); const relative = `projections/${name}`; if (!existsSync(file)) { addLocus(findings, 'AG501', relative, 'projection', 'missing', 'current generator-owned content'); continue; } const expected = projectionContent(name, records, team); if (readFileSync(file, 'utf8') !== expected) addLocus(findings, 'AG501', relative, 'projection', 'stale or manually edited content', 'current generator-owned content'); }
+  for (const name of projectionNamesFor(root)) { const file = path.join(projectionRoot, name); const relative = `projections/${name}`; if (!existsSync(file)) { addLocus(findings, 'AG501', relative, 'projection', 'missing', 'current generator-owned content'); continue; } const expected = projectionContent(name, records, team); if (readFileSync(file, 'utf8').replace(/\r\n/g, '\n') !== expected) addLocus(findings, 'AG501', relative, 'projection', 'stale or manually edited content', 'current generator-owned content'); }
 }
 function asArray(value) { return Array.isArray(value) ? value : []; }
 function isRole(value) { return typeof value === 'string' && /^[a-z][a-z0-9_-]*$/.test(value); }

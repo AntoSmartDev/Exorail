@@ -51,7 +51,7 @@
     {
       "path": "method/PROJECT_SETUP.md",
       "kind": "text",
-      "sha256": "822dbfd639e45ee0d9ae62abee373de48c566b90ebefaae8c4d20d9b2a9a8c8e"
+      "sha256": "77d82a2cd383acaf2d4e85d101458cc47920630a85f56008f369542ddbb7f0f3"
     },
     {
       "path": "method/STRUCTURE_REFERENCE.md",
@@ -336,12 +336,12 @@
     {
       "path": "tools/generate-payload-manifest.mjs",
       "kind": "text",
-      "sha256": "d2b4aa3643763da816f6d3c691894df450b76119942eef520228a3700b8eba26"
+      "sha256": "b31838c3f11315e1cff34fefbc0bc84a6dd2402c92d02b000b233420f8614b54"
     },
     {
       "path": "tools/generate-projections.mjs",
       "kind": "text",
-      "sha256": "757e8e05742987caab6327804f3da2cf3c191b03979d7b5b18044ce01fef3db1"
+      "sha256": "4e724bc7a06da4b44e284c1ea9265e148e908ec824fc33d16e8799566524958d"
     },
     {
       "path": "tools/git-runtime.mjs",
@@ -411,7 +411,7 @@
     {
       "path": "tools/lib/schema-0.2.mjs",
       "kind": "text",
-      "sha256": "d0061d03ef52cd07891f6e99f9b8bcbf6c11008db0a904f855bd980c0f94706a"
+      "sha256": "292879f92817fa96fda5fc36792d237927ffdac090257ebd875eda65b0d3a8da"
     },
     {
       "path": "tools/lib/task-review-readiness.mjs",

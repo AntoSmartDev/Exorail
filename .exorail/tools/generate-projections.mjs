@@ -14,7 +14,7 @@ if (!projectionNamesFor(root).includes('EPISODE_INDEX.md') && existsSync(episode
 }
 for (const name of projectionNamesFor(root)) {
   const target = path.join(root, '.exorail', 'projections', name); const content = projectionContent(name, records, team.members);
-  if (check) { if (!existsSync(target) || readFileSync(target, 'utf8') !== content) { console.error(`stale projection: ${name}`); stale = true; } }
+  if (check) { if (!existsSync(target) || readFileSync(target, 'utf8').replace(/\r\n/g, '\n') !== content) { console.error(`stale projection: ${name}`); stale = true; } }
   else { mkdirSync(path.dirname(target), { recursive: true }); writeFileSync(target, content, 'utf8'); console.log(`generated projections/${name}`); }
 }
 process.exitCode = stale ? 1 : 0;
