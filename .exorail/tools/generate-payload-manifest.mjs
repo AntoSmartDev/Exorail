@@ -22,7 +22,7 @@ function collect(directory, prefix = '') {
 
 function entryFor(relativePath) {
   const bytes = readFileSync(path.join(payloadRoot, relativePath));
-  const kind = textExtensions.has(path.extname(relativePath)) ? 'text' : 'binary';
+  const kind = textExtensions.has(path.extname(relativePath)) || path.basename(relativePath) === '.gitignore' ? 'text' : 'binary';
   const content = kind === 'text' ? Buffer.from(bytes.toString('utf8').replace(/\r\n|\r/g, '\n'), 'utf8') : bytes;
   return { path: relativePath, kind, sha256: createHash('sha256').update(content).digest('hex') };
 }

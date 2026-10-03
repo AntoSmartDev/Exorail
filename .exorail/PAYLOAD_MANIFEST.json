@@ -25,7 +25,7 @@
     },
     {
       "path": "local/.gitignore",
-      "kind": "binary",
+      "kind": "text",
       "sha256": "240a3e0d37d2e86b614063f5347eb02d4f99ca6c254de6b82871ff8d95532a7d"
     },
     {
@@ -336,7 +336,7 @@
     {
       "path": "tools/generate-payload-manifest.mjs",
       "kind": "text",
-      "sha256": "b31838c3f11315e1cff34fefbc0bc84a6dd2402c92d02b000b233420f8614b54"
+      "sha256": "2cb8a0d0d90b664294284109659f04dd441629947d3290f838afd823f1c355a5"
     },
     {
       "path": "tools/generate-projections.mjs",
